@@ -47,6 +47,10 @@ public class ProductTypeController extends HttpServlet {
         int page = parseInt(request.getParameter("page"), 1);
         int pageSize = 12;
         int offset = (page - 1) * pageSize;
+        // random related products
+        List<Product> randomRelated = productDAO.getRandomRelated(8);
+        request.setAttribute("randomRelated", randomRelated);
+
 
         // 3. DB
         List<Product> products = productDAO.getProductsByCategoryWithFilter(

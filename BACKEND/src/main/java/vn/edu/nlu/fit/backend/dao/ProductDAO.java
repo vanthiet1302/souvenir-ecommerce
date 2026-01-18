@@ -206,6 +206,18 @@ public class ProductDAO extends DBContextT {
         }
         return list;
     }
+    /* ================= RANDOM RELATED (PRODUCT TYPE) ================= */
+    public List<Product> getRandomRelated(int limit) {
+        String sql = """
+        SELECT *
+        FROM products
+        ORDER BY RAND()
+        LIMIT ?
+    """;
+
+        return getProductsByLimit(sql, limit);
+    }
+
 
     /* ================= PRODUCT DETAIL ================= */
     // Lấy chi tiết sản phẩm

@@ -1,6 +1,7 @@
 package vn.edu.nlu.fit.backend.dao;
 
 import vn.edu.nlu.fit.backend.model.Product;
+import vn.edu.nlu.fit.backend.Enums.ProductSort;
 import vn.edu.nlu.fit.backend.util.DBContextT;
 
 import java.sql.Connection;
@@ -73,8 +74,114 @@ public class ProductDAO extends DBContextT {
         return getProductsByLimit(sql, limit);
     }
 
-    /* ================= PRODUCT TYPE ================= */
+    // Lấy sản phẩm sau khi đã lọc
+    public List<Product> getProductsByCategoryWithFilter(
+            int categoryId,
+            Integer minPrice,
+            Integer maxPrice,
+            ProductSort sort,
+            int offset,
+            int limit) {
 
+        List<Product> list = new ArrayList<>();
+
+        StringBuilder sql = new StringBuilder("""
+        SELECT *
+        FROM products
+        WHERE category_id = ?""");
+
+        if (minPrice != null) {
+            sql.append(" AND original_price >= ?");
+        }
+        if (maxPrice != null) {
+            sql.append(" AND original_price <= ?");
+        }
+
+        // SORT
+        if (sort != null) {
+            switch (sort) {
+                case PRICE_ASC -> sql.append(" ORDER BY original_price ASC");
+                case PRICE_DESC -> sql.append(" ORDER BY original_price DESC");
+                case NEWEST -> sql.append(" ORDER BY id DESC");
+                default -> sql.append(" ORDER BY total_sold DESC");
+            }
+        } else {
+            sql.append(" ORDER BY total_sold DESC");
+        }
+
+        sql.append(" LIMIT ? OFFSET ?");
+
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+
+            int index = 1;
+            ps.setInt(index++, categoryId);
+
+            if (minPrice != null) {
+                ps.setInt(index++, minPrice);
+            }
+            if (maxPrice != null) {
+                ps.setInt(index++, maxPrice);
+            }
+
+            ps.setInt(index++, limit);
+            ps.setInt(index, offset);
+
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {list.add(mapProduct(rs));
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+    // Đếm tổng sản phẩm
+    public int countProductsByCategoryWithFilter(
+            int categoryId,
+            Integer minPrice,
+            Integer maxPrice
+    ) {
+        StringBuilder sql = new StringBuilder("""
+        SELECT COUNT(*) 
+        FROM products 
+        WHERE category_id = ?
+    """);
+
+        if (minPrice != null) {
+            sql.append(" AND original_price >= ?");
+        }
+        if (maxPrice != null) {
+            sql.append(" AND original_price <= ?");
+        }
+
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+
+            int index = 1;
+            ps.setInt(index++, categoryId);
+
+            if (minPrice != null) {
+                ps.setInt(index++, minPrice);
+            }
+            if (maxPrice != null) {
+                ps.setInt(index, maxPrice);
+            }
+
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return 0;
+    }
+
+    /* ================= PRODUCT TYPE ================= */
     // Danh sách sản phẩm theo Category
     public List<Product> getProductsByCategory(int categoryId) {
         List<Product> list = new ArrayList<>();
@@ -101,7 +208,6 @@ public class ProductDAO extends DBContextT {
     }
 
     /* ================= PRODUCT DETAIL ================= */
-
     // Lấy chi tiết sản phẩm
     public Product getProductById(int id) {
         String sql = """

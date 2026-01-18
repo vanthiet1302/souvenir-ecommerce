@@ -123,6 +123,29 @@ public class CategoryDAO extends DBContextT {
         }
         return ids;
     }
+    // get by id
+    public Category getCategoryById(int id) {
+        String sql = "SELECT * FROM categories WHERE id = ?";
+
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                return new Category(
+                        rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getString("image") // banner category
+                );
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 
 
 

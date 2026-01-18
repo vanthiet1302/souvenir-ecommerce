@@ -124,6 +124,35 @@ public class ProductDAO extends DBContextT {
         }
         return null;
     }
+    /* ================= RELATED ================= */
+    public List<Product> getRelatedProducts(int categoryId, int excludeProductId, int limit) {
+        String sql = """
+        SELECT *
+        FROM products
+        WHERE category_id = ?
+          AND id <> ?
+        ORDER BY total_sold DESC
+        LIMIT ?
+    """;
+
+        List<Product> list = new ArrayList<>();
+
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, categoryId);
+            ps.setInt(2, excludeProductId);
+            ps.setInt(3, limit);
+
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                list.add(mapProduct(rs));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
 
     /* ================= COMMON ================= */
 

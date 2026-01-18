@@ -34,7 +34,7 @@ public class ProductDetailServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        // 1. Lấy id sản phẩm
+        /* ================= 1. Lấy productId ================= */
         String idParam = request.getParameter("id");
         if (idParam == null) {
             response.sendRedirect("home");
@@ -49,23 +49,32 @@ public class ProductDetailServlet extends HttpServlet {
             return;
         }
 
-        // 2. Lấy dữ liệu từ DB
+        /* ================= 2. Lấy Product ================= */
         Product product = productDAO.getProductById(productId);
         if (product == null) {
             response.sendRedirect("home");
             return;
         }
 
+        /* ================= 3. Promotion (nếu có) ================= */
         Promotion promotion = promotionDAO.getActivePromotionByProductId(productId);
+
+        /* ================= 4. Reviews ================= */
         List<Review> reviews = reviewDAO.getReviewsByProductId(productId);
 
-        // 3. Gửi dữ liệu sang JSP
+        /* ================= 5. Related Products ================= */
+        List<Product> relatedProducts = null;
+        if (product.getCategoryId() != null) {
+            relatedProducts = productDAO.getRelatedProducts(product.getCategoryId(), productId, 5);
+        }
+
+        /* ================= 6. Gửi dữ liệu sang JSP ================= */
         request.setAttribute("product", product);
         request.setAttribute("promotion", promotion);
         request.setAttribute("reviews", reviews);
+        request.setAttribute("relatedProducts", relatedProducts);
 
-        // 4. Forward sang JSP
-        request.getRequestDispatcher("/WEB-INF/views/productDetail.jsp")
-                .forward(request, response);
+        /* ================= 7. Forward ================= */
+        request.getRequestDispatcher("/WEB-INF/views/productDetail.jsp").forward(request, response);
     }
 }

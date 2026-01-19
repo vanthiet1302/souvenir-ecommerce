@@ -21,13 +21,11 @@ public class ProductDetailServlet extends HttpServlet {
 
     private ProductDAO productDAO;
     private PromotionDAO promotionDAO;
-    private ReviewDAO reviewDAO;
 
     @Override
     public void init() {
         productDAO = new ProductDAO();
         promotionDAO = new PromotionDAO();
-        reviewDAO = new ReviewDAO();
     }
 
     @Override
@@ -56,25 +54,25 @@ public class ProductDetailServlet extends HttpServlet {
             return;
         }
 
-        /* ================= 3. Promotion (nếu có) ================= */
+        /* ================= 3. Promotion ================= */
         Promotion promotion = promotionDAO.getActivePromotionByProductId(productId);
 
-        /* ================= 4. Reviews ================= */
-        List<Review> reviews = reviewDAO.getReviewsByProductId(productId);
-
-        /* ================= 5. Related Products ================= */
+        /* ================= 4. Related Products ================= */
         List<Product> relatedProducts = null;
         if (product.getCategoryId() != null) {
-            relatedProducts = productDAO.getRelatedProducts(product.getCategoryId(), productId, 5);
+            relatedProducts = productDAO.getRelatedProducts(
+                    product.getCategoryId(), productId, 5);
         }
 
-        /* ================= 6. Gửi dữ liệu sang JSP ================= */
+        /* ================= 5. Gửi dữ liệu sang JSP ================= */
         request.setAttribute("product", product);
         request.setAttribute("promotion", promotion);
-        request.setAttribute("reviews", reviews);
         request.setAttribute("relatedProducts", relatedProducts);
+        request.setAttribute("productId", productId); // ⭐ rất quan trọng cho ReviewServlet
 
-        /* ================= 7. Forward ================= */
-        request.getRequestDispatcher("/WEB-INF/views/productDetail.jsp").forward(request, response);
+        /* ================= 6. Forward ================= */
+        request.getRequestDispatcher("/WEB-INF/views/productDetail.jsp")
+                .forward(request, response);
     }
 }
+

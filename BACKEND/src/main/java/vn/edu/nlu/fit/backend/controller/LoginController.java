@@ -5,40 +5,45 @@ import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
 import vn.edu.nlu.fit.backend.dao.UserDAO;
 import vn.edu.nlu.fit.backend.model.User;
-
 import java.io.IOException;
 
 @WebServlet(name = "LoginController", value = "/login")
 public class LoginController extends HttpServlet {
+    private UserDAO dao = new UserDAO(); // Khai báo dùng chung cho các method
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // Luôn hiện trang login khi vào đường dẫn /login bằng trình duyệt
-        request.getRequestDispatcher("login.jsp").forward(request, response);
+        // Chuyển hướng về trang login khi vào link /login
+        request.getRequestDispatcher("/login.jsp").forward(request, response);
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // 1. Lấy dữ liệu từ thẻ <input name="username"> và "password" trong login.jsp
-        String u = request.getParameter("username");
-        String p = request.getParameter("password");
+        // 1. Lấy dữ liệu từ JSP - Phải khớp với name="loginDetail"
+        String loginDetail = request.getParameter("loginDetail");
+        String password = request.getParameter("password");
 
-        // 2. Gọi lớp UserDAO để kiểm tra thông tin
-        UserDAO dao = new UserDAO();
-        User authUser = dao.login(u, p);
+        // Kiểm tra null để tránh lỗi 500 NullPointerException
+        if (loginDetail == null || loginDetail.trim().isEmpty()) {
+            request.setAttribute("error", "Vui lòng nhập Email hoặc Số điện thoại!");
+            request.getRequestDispatcher("/login.jsp").forward(request, response);
+            return;
+        }
+
+        // 2. Gọi DAO để kiểm tra đăng nhập
+        User authUser = dao.login(loginDetail, password);
 
         if (authUser != null) {
-
-
+            // ĐĂNG NHẬP THÀNH CÔNG: Lưu user vào Session
             HttpSession session = request.getSession();
             session.setAttribute("userInSession", authUser);
+
+            // Chuyển hướng về trang chủ
             response.sendRedirect(request.getContextPath() + "/home/homepage.jsp");
         } else {
-            // TRƯỜNG HỢP SAI:
-            // - Gửi attribute "error" trùng với biến ${error} ở login.jsp
-            request.setAttribute("error", "Email hoặc mật khẩu không chính xác!");
-
-            // - Dùng forward để giữ lại trang và hiện dòng chữ đỏ báo lỗi
-            request.getRequestDispatcher("login.jsp").forward(request, response);
+            // ĐĂNG NHẬP THẤT BẠI: Hiện lỗi
+            request.setAttribute("error", "Tài khoản hoặc mật khẩu không chính xác!");
+            request.getRequestDispatcher("/login.jsp").forward(request, response);
         }
     }
 }

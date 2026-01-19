@@ -1,14 +1,14 @@
 package vn.edu.nlu.fit.backend.dao;
 
 import vn.edu.nlu.fit.backend.model.Promotion;
-import vn.edu.nlu.fit.backend.util.DBContextT;
+import vn.edu.nlu.fit.backend.util.DBContext;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 
-public class PromotionDAO extends DBContextT {
+public class PromotionDAO extends DBContext {
 
     // Lấy khuyến mãi còn hiệu lực của sản phẩm
     public Promotion getActivePromotionByProductId(int productId) {

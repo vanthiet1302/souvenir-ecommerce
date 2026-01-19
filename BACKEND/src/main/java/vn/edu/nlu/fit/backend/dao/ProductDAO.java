@@ -2,7 +2,7 @@ package vn.edu.nlu.fit.backend.dao;
 
 import vn.edu.nlu.fit.backend.model.Product;
 import vn.edu.nlu.fit.backend.Enums.ProductSort;
-import vn.edu.nlu.fit.backend.util.DBContextT;
+import vn.edu.nlu.fit.backend.util.DBContext;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,7 +10,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProductDAO extends DBContextT {
+public class ProductDAO extends DBContext {
 
     /* ================= HOME PAGE ================= */
 

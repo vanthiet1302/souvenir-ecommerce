@@ -74,12 +74,24 @@ public class ProductDetailServlet extends HttpServlet {
         /* ================= 6. Gửi dữ liệu sang JSP ================= */
         request.setAttribute("product", product);
         request.setAttribute("promotion", promotion);
+        request.setAttribute("specs", specs);
         request.setAttribute("relatedProducts", relatedProducts);
         request.setAttribute("productId", productId); // ⭐ rất quan trọng cho ReviewServlet
 
         /* ================= 7. Forward ================= */
         request.getRequestDispatcher("/WEB-INF/views/productDetail.jsp")
                 .forward(request, response);
+    }
+    /* ================= HELPER ================= */
+
+    private int parseProductId(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+        try {
+            return Integer.parseInt(request.getParameter("id"));
+        } catch (Exception e) {
+            response.sendRedirect("home");
+            return -1;
+        }
     }
 }
 

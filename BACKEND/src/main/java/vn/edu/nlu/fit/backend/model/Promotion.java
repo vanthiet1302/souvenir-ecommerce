@@ -1,17 +1,20 @@
 package vn.edu.nlu.fit.backend.model;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 public class Promotion {
+
     private int id;
     private int productId;
     private int discountPercent;
-    private Timestamp startDate;
-    private Timestamp endDate;
+    private LocalDateTime startDate;
+    private LocalDateTime endDate;
 
-    public Promotion() {}
+    public Promotion() {
+    }
 
-    public Promotion(int id, int productId, int discountPercent, Timestamp startDate, Timestamp endDate) {
+    public Promotion(int id, int productId, int discountPercent,
+                     LocalDateTime startDate, LocalDateTime endDate) {
         this.id = id;
         this.productId = productId;
         this.discountPercent = discountPercent;
@@ -43,19 +46,25 @@ public class Promotion {
         this.discountPercent = discountPercent;
     }
 
-    public Timestamp getStartDate() {
+    public LocalDateTime getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(Timestamp startDate) {
+    public void setStartDate(LocalDateTime startDate) {
         this.startDate = startDate;
     }
 
-    public Timestamp getEndDate() {
+    public LocalDateTime getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(Timestamp endDate) {
+    public void setEndDate(LocalDateTime endDate) {
         this.endDate = endDate;
+    }
+
+    /* ===== Helper ===== */
+    public boolean isActive(LocalDateTime now) {
+        return (startDate == null || !now.isBefore(startDate))
+                && (endDate == null || !now.isAfter(endDate));
     }
 }

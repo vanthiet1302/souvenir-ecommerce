@@ -6,24 +6,22 @@ import vn.edu.nlu.fit.backend.util.DBContext;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Timestamp;
 
 public class PromotionDAO extends DBContext {
 
-    // Lấy khuyến mãi còn hiệu lực của sản phẩm
-    public Promotion getActivePromotionByProductId(int productId) {
-        String sql = """
-            SELECT *
-            FROM promotions
-            WHERE product_id = ?
-              AND (start_date IS NULL OR start_date <= NOW())
-              AND (end_date IS NULL OR end_date >= NOW())
-            ORDER BY discount_percent DESC
-            LIMIT 1
-        """;
+    private static final String SELECT_ACTIVE_PROMOTION = """
+        SELECT id, product_id, discount_percent, start_date, end_date
+        FROM promotions
+        WHERE product_id = ?
+          AND (start_date IS NULL OR start_date <= NOW())
+          AND (end_date IS NULL OR end_date >= NOW())
+        ORDER BY discount_percent DESC
+        LIMIT 1
+    """;
 
+    public Promotion getActivePromotionByProductId(int productId) {
         try (Connection conn = getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+             PreparedStatement ps = conn.prepareStatement(SELECT_ACTIVE_PROMOTION)) {
 
             ps.setInt(1, productId);
             ResultSet rs = ps.executeQuery();
@@ -31,20 +29,20 @@ public class PromotionDAO extends DBContext {
             if (rs.next()) {
                 return mapPromotion(rs);
             }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    // Mapping ResultSet -> Promotion
     private Promotion mapPromotion(ResultSet rs) throws Exception {
         return new Promotion(
                 rs.getInt("id"),
                 rs.getInt("product_id"),
                 rs.getInt("discount_percent"),
-                rs.getTimestamp("start_date") != null ? Timestamp.valueOf(rs.getTimestamp("start_date").toLocalDateTime()) : null,
-                rs.getTimestamp("end_date") != null ? Timestamp.valueOf(rs.getTimestamp("end_date").toLocalDateTime()) : null
+                rs.getTimestamp("start_date").toLocalDateTime(),
+                rs.getTimestamp("end_date").toLocalDateTime()
         );
     }
 }

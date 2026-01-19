@@ -6,28 +6,50 @@
 
         <!-- ================= USER BAR ================= -->
         <div class="user-bar">
-            <div class="right">
-                <a href="login" class="login">Đăng nhập</a>
-                <span>|</span>
-                <a href="register" class="register">Đăng ký</a>
+            <div class="right header-user">
+
+                <!-- ===== CHƯA ĐĂNG NHẬP ===== -->
+                <c:if test="${empty sessionScope.currentUser}">
+                    <a href="${pageContext.request.contextPath}/login">Đăng nhập</a>
+                    <span>|</span>
+                    <a href="${pageContext.request.contextPath}/register">Đăng ký</a>
+                </c:if>
+
+                <!-- ===== ĐÃ ĐĂNG NHẬP ===== -->
+                <c:if test="${not empty sessionScope.currentUser}">
+                    <div class="user-box" id="userToggle">
+                        <i class="fa fa-user-circle"></i>
+                        <span>${sessionScope.currentUser.fullName}</span>
+                        <i class="fa fa-caret-down"></i>
+                    </div>
+
+                    <div class="user-dropdown" id="userDropdown">
+                        <a href="${pageContext.request.contextPath}/profile">Hồ sơ chi tiết</a>
+                        <a href="${pageContext.request.contextPath}/orders">Đơn hàng</a>
+                        <a href="${pageContext.request.contextPath}/reviews">Đánh giá của bạn</a>
+                        <a href="${pageContext.request.contextPath}/change-password">Đổi mật khẩu</a>
+                        <hr>
+                        <a href="${pageContext.request.contextPath}/logout" class="logout">Thoát</a>
+                    </div>
+                </c:if>
+
             </div>
         </div>
 
         <!-- ================= MAIN HEADER ================= -->
         <div class="main-header">
 
-            <!-- ===== LEFT: MENU DROPDOWN + LOGO ===== -->
+            <!-- ===== LEFT ===== -->
             <div class="left">
 
-                <!-- Menu button -->
-                <button id="menuBtn" class="menu-toggle" aria-label="Mở menu">
+                <button id="menuBtn" class="menu-toggle">
                     <i class="fa fa-bars"></i>
                 </button>
 
-                <!-- Dropdown menu (ALL categories) -->
-                <div class="dropdown-menu" id="dropdownMenu" aria-hidden="true">
+                <!-- Dropdown category -->
+                <div class="dropdown-menu" id="dropdownMenu">
                     <c:forEach var="c" items="${categories}">
-                        <a href="product-type?id=${c.id}">
+                        <a href="${pageContext.request.contextPath}/product-type?id=${c.id}">
                                 ${c.name}
                         </a>
                     </c:forEach>
@@ -35,69 +57,55 @@
 
                 <!-- Logo -->
                 <div class="logo">
-                    <a href="../../../home">
-                        <img src="assets/images/logo.png" alt="INOLA Logo" height="36">
+                    <a href="${pageContext.request.contextPath}/home">
+                        <img src="${pageContext.request.contextPath}/assets/images/logo.png" height="36">
                     </a>
                 </div>
             </div>
 
-            <!-- ===== CENTER: SEARCH ===== -->
+            <!-- ===== SEARCH ===== -->
             <div class="center">
-                <div class="search-wrapper">
-                    <form action="search" method="get">
-                        <input type="text"
-                               name="keyword"
-                               placeholder="Tìm kiếm sản phẩm..."
-                               class="search-bar"
-                               autocomplete="off">
-                        <button class="search-btn" type="submit">
-                            <i class="fa fa-search"></i>
-                        </button>
-                    </form>
-
-                    <!-- search dropdown (giữ UI – xử lý JS sau) -->
-                    <div class="search-dropdown" id="searchDropdown">
-                        <div class="dropdown-top">
-                            <span class="history-title">Tìm kiếm gần đây</span>
-                            <span class="clear-all">Xóa tất cả</span>
-                        </div>
-
-                        <div class="empty-state">
-                            <img src="assets/images/empty-search.png" alt="Empty">
-                            <p>Không có từ khóa tìm kiếm gần đây</p>
-                        </div>
-                    </div>
-                </div>
+                <form action="${pageContext.request.contextPath}/search" method="get">
+                    <input type="text" name="keyword" placeholder="Tìm kiếm sản phẩm...">
+                    <button type="submit">
+                        <i class="fa fa-search"></i>
+                    </button>
+                </form>
             </div>
 
-            <!-- ===== RIGHT: CART ===== -->
+            <!-- ===== CART ===== -->
             <div class="right">
-                <div class="cart">
-                    <a href="cart" class="cart-link" aria-label="Giỏ hàng">
-                        <i class="fa fa-shopping-cart"></i>
-                        <span class="cart-count">0</span>
-                    </a>
-                </div>
+                <a href="${pageContext.request.contextPath}/cart">
+                    <i class="fa fa-shopping-cart"></i>
+                    <span class="cart-count">0</span>
+                </a>
             </div>
-
         </div>
 
-        <!-- ================= MENU BAR ================= -->
-        <!-- 5 CATEGORY BÁN CHẠY NHẤT -->
-        <nav class="menu-bar">
-            <c:forEach var="c" items="${topCategories}" varStatus="status">
-                <a href="#Loai${status.index + 1}" class="menu-link">
-                        ${c.name}
-                </a>
-            </c:forEach>
+        <!-- ================= MENU BAR / BREADCRUMB ================= -->
 
-            <a href="#extension" class="menu-link">
-                Mọi Người Đang Mua Gì
-            </a>
-        </nav>
+        <!-- HOME -->
+        <c:if test="${page == 'HOME'}">
+            <nav class="menu-bar">
+                <c:forEach var="c" items="${topCategories}" varStatus="st">
+                    <a href="#Loai${st.index + 1}">
+                            ${c.name}
+                    </a>
+                </c:forEach>
+                <a href="#extension">Mọi Người Đang Mua Gì</a>
+            </nav>
+        </c:if>
+
+        <!-- PRODUCT TYPE / DETAIL -->
+        <c:if test="${page != 'HOME'}">
+            <div class="breadcrumb">
+                <a href="${pageContext.request.contextPath}/home">Trang chủ</a>
+                <span>/</span>
+                <span>${breadcrumb}</span>
+            </div>
+        </c:if>
 
     </header>
 </div>
 
-<!-- overlay -->
 <div id="headerOverlay" class="overlay"></div>

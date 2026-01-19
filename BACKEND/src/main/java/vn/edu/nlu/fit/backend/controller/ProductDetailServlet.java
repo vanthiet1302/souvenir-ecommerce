@@ -2,10 +2,11 @@ package vn.edu.nlu.fit.backend.controller;
 
 import vn.edu.nlu.fit.backend.dao.ProductDAO;
 import vn.edu.nlu.fit.backend.dao.PromotionDAO;
-import vn.edu.nlu.fit.backend.dao.ReviewDAO;
+import vn.edu.nlu.fit.backend.dao.ProductSpecificationDAO;
 import vn.edu.nlu.fit.backend.model.Product;
+import vn.edu.nlu.fit.backend.model.ProductSpecification;
 import vn.edu.nlu.fit.backend.model.Promotion;
-import vn.edu.nlu.fit.backend.model.Review;
+
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -21,11 +22,13 @@ public class ProductDetailServlet extends HttpServlet {
 
     private ProductDAO productDAO;
     private PromotionDAO promotionDAO;
+    private ProductSpecificationDAO specDAO;
 
     @Override
     public void init() {
         productDAO = new ProductDAO();
         promotionDAO = new PromotionDAO();
+        specDAO = new ProductSpecificationDAO();
     }
 
     @Override
@@ -56,21 +59,25 @@ public class ProductDetailServlet extends HttpServlet {
 
         /* ================= 3. Promotion ================= */
         Promotion promotion = promotionDAO.getActivePromotionByProductId(productId);
+        /* ================= 4. Specification ================= */
+        List<ProductSpecification> specs = specDAO.getByProductId(productId);
 
-        /* ================= 4. Related Products ================= */
+        request.setAttribute("specs", specs);
+
+        /* ================= 5. Related Products ================= */
         List<Product> relatedProducts = null;
         if (product.getCategoryId() != null) {
             relatedProducts = productDAO.getRelatedProducts(
                     product.getCategoryId(), productId, 5);
         }
 
-        /* ================= 5. Gửi dữ liệu sang JSP ================= */
+        /* ================= 6. Gửi dữ liệu sang JSP ================= */
         request.setAttribute("product", product);
         request.setAttribute("promotion", promotion);
         request.setAttribute("relatedProducts", relatedProducts);
         request.setAttribute("productId", productId); // ⭐ rất quan trọng cho ReviewServlet
 
-        /* ================= 6. Forward ================= */
+        /* ================= 7. Forward ================= */
         request.getRequestDispatcher("/WEB-INF/views/productDetail.jsp")
                 .forward(request, response);
     }

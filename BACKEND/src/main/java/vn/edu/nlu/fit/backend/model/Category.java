@@ -6,6 +6,7 @@ import java.util.List;
 public class Category {
     private int id;
     private String name;
+    private String image;
     private List<Product> Products;
 
     public Category() {}
@@ -14,6 +15,11 @@ public class Category {
         this.id = id;
         this.name = name;
         this.Products = new ArrayList<>();
+    }
+    public Category(int id, String name, String image) {
+        this.id = id;
+        this.name = name;
+        this.image = image;
     }
     public int getId() {
         return id;
@@ -30,6 +36,15 @@ public class Category {
     public void setName(String name) {
         this.name = name;
     }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
     public List<Product> getProducts() {
         return Products;
     }

@@ -84,7 +84,8 @@
 <%-- Header đơn giản chứa Logo --%>
 <div class="page_login">
     <div class="container">
-        <img src="${pageContext.request.contextPath}/assets/image/Logo/Logo-removebg-preview.png" alt="Logo INOLA" style="height:36px; width:auto;">
+        <img src="${pageContext.request.contextPath}/assets/image/Logo/Logo-removebg-preview.png" alt="Logo INOLA"
+             style="height:36px; width:auto;">
         <a href="${pageContext.request.contextPath}/home.jsp" class="pix_button small_button purple_bg">
             <span>Trung tâm trợ giúp</span>
         </a>
@@ -99,9 +100,9 @@
                 <h2>Quên mật khẩu</h2>
                 <p style="color: #666; margin-bottom: 25px;">Nhập Email hoặc số điện thoại để nhận mã xác thực.</p>
 
-                <c:if test="${not empty error}"><div class="error-msg"><i class="fa fa-exclamation-circle"></i> ${error}</div></c:if>
-
-                <%-- Gửi dữ liệu về Controller để xử lý check account --%>
+                <c:if test="${not empty error}">
+                    <div class="error-msg"><i class="fa fa-exclamation-circle"></i> ${error}</div>
+                </c:if>
                 <form action="${pageContext.request.contextPath}/forgot-password" method="post">
                     <input type="hidden" name="action" value="send_code">
                     <div class="input_group">
@@ -115,28 +116,32 @@
             <%-- BƯỚC 2: NHẬP MÃ OTP 6 SỐ --%>
             <c:when test="${step == 2}">
                 <h2>Xác nhận mã</h2>
-                <p style="color: #666;">Mã xác minh đã được gửi đến: <br><strong>${sessionScope.resetAccount}</strong></p>
+                <p style="color: #666;">Mã xác minh đã được gửi đến: <br><strong>${sessionScope.resetAccount}</strong>
+                </p>
 
-                <c:if test="${not empty error}"><div class="error-msg">${error}</div></c:if>
+                <c:if test="${not empty error}">
+                    <div class="error-msg">${error}</div>
+                </c:if>
 
                 <form action="${pageContext.request.contextPath}/forgot-password" method="post">
                     <input type="hidden" name="action" value="verify_code">
                     <div class="code-input-group">
                             <%-- Tạo 6 ô input cho OTP --%>
                         <c:forEach var="i" begin="1" end="6">
-                            <input type="number" name="digit" maxlength="1" class="code-box" required oninput="moveNext(this)">
+                            <input type="number" name="digit" maxlength="1" class="code-box" required
+                                   oninput="moveNext(this)">
                         </c:forEach>
                     </div>
                     <button type="submit" class="btn_login" style="width: 100%;">TIẾP THEO</button>
                 </form>
             </c:when>
-
-            <%-- BƯỚC 3: ĐỔI MẬT KHẨU MỚI --%>
             <c:when test="${step == 3}">
                 <h2>Đặt lại mật khẩu</h2>
                 <p style="color: #666; margin-bottom: 25px;">Mật khẩu mới phải có ít nhất 8 ký tự.</p>
 
-                <c:if test="${not empty error}"><div class="error-msg">${error}</div></c:if>
+                <c:if test="${not empty error}">
+                    <div class="error-msg">${error}</div>
+                </c:if>
 
                 <form action="${pageContext.request.contextPath}/forgot-password" method="post">
                     <input type="hidden" name="action" value="update_password">
@@ -146,9 +151,11 @@
                     </div>
                     <div class="input_group" style="margin-top: 15px;">
                         <i class="fa fa-shield-alt"></i>
-                        <input type="password" name="confirm_password" placeholder="Xác nhận mật khẩu" required minlength="8">
+                        <input type="password" name="confirm_password" placeholder="Xác nhận mật khẩu" required
+                               minlength="8">
                     </div>
-                    <button type="submit" class="btn_login" style="width: 100%; margin-top: 20px;">ĐẶT LẠI MẬT KHẨU</button>
+                    <button type="submit" class="btn_login" style="width: 100%; margin-top: 20px;">ĐẶT LẠI MẬT KHẨU
+                    </button>
                 </form>
             </c:when>
         </c:choose>
@@ -160,7 +167,7 @@
 </div>
 
 <%-- Bao gồm footer cho trang --%>
-<jsp:include page="/views/common/footer.jsp" />
+<jsp:include page="/views/common/footer.jsp"/>
 
 <script>
     // Xử lý tự động chuyển ô tiếp theo khi nhập đủ 1 ký tự

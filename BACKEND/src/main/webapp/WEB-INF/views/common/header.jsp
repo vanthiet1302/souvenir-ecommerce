@@ -8,14 +8,14 @@
         <div class="user-bar">
             <div class="right header-user">
 
-                <!-- ===== CHƯA ĐĂNG NHẬP ===== -->
+                <!-- CHƯA LOGIN -->
                 <c:if test="${empty sessionScope.currentUser}">
                     <a href="${pageContext.request.contextPath}/login">Đăng nhập</a>
                     <span>|</span>
                     <a href="${pageContext.request.contextPath}/register">Đăng ký</a>
                 </c:if>
 
-                <!-- ===== ĐÃ ĐĂNG NHẬP ===== -->
+                <!-- ĐÃ LOGIN -->
                 <c:if test="${not empty sessionScope.currentUser}">
                     <div class="user-box" id="userToggle">
                         <i class="fa fa-user-circle"></i>
@@ -24,12 +24,12 @@
                     </div>
 
                     <div class="user-dropdown" id="userDropdown">
-                        <a href="${pageContext.request.contextPath}/profile">Hồ sơ chi tiết</a>
+                        <a href="${pageContext.request.contextPath}/profile">Hồ sơ</a>
                         <a href="${pageContext.request.contextPath}/orders">Đơn hàng</a>
-                        <a href="${pageContext.request.contextPath}/reviews">Đánh giá của bạn</a>
+                        <a href="${pageContext.request.contextPath}/reviews">Đánh giá</a>
                         <a href="${pageContext.request.contextPath}/change-password">Đổi mật khẩu</a>
                         <hr>
-                        <a href="${pageContext.request.contextPath}/logout" class="logout">Thoát</a>
+                        <a href="${pageContext.request.contextPath}/logout" class="logout">Đăng xuất</a>
                     </div>
                 </c:if>
 
@@ -39,15 +39,13 @@
         <!-- ================= MAIN HEADER ================= -->
         <div class="main-header">
 
-            <!-- ===== LEFT ===== -->
+            <!-- LEFT -->
             <div class="left">
-
-                <button id="menuBtn" class="menu-toggle">
+                <button id="menuBtn" class="menu-toggle" aria-label="Mở menu">
                     <i class="fa fa-bars"></i>
                 </button>
 
-                <!-- Dropdown category -->
-                <div class="dropdown-menu" id="dropdownMenu">
+                <div class="dropdown-menu" id="dropdownMenu" aria-hidden="true">
                     <c:forEach var="c" items="${categories}">
                         <a href="${pageContext.request.contextPath}/product-type?id=${c.id}">
                                 ${c.name}
@@ -55,7 +53,6 @@
                     </c:forEach>
                 </div>
 
-                <!-- Logo -->
                 <div class="logo">
                     <a href="${pageContext.request.contextPath}/home">
                         <img src="${pageContext.request.contextPath}/assets/images/logo.png" height="36">
@@ -63,17 +60,15 @@
                 </div>
             </div>
 
-            <!-- ===== SEARCH ===== -->
+            <!-- SEARCH -->
             <div class="center">
                 <form action="${pageContext.request.contextPath}/search" method="get">
                     <input type="text" name="keyword" placeholder="Tìm kiếm sản phẩm...">
-                    <button type="submit">
-                        <i class="fa fa-search"></i>
-                    </button>
+                    <button type="submit"><i class="fa fa-search"></i></button>
                 </form>
             </div>
 
-            <!-- ===== CART ===== -->
+            <!-- CART -->
             <div class="right">
                 <a href="${pageContext.request.contextPath}/cart">
                     <i class="fa fa-shopping-cart"></i>
@@ -84,26 +79,42 @@
 
         <!-- ================= MENU BAR / BREADCRUMB ================= -->
 
-        <!-- HOME -->
-        <c:if test="${page == 'HOME'}">
-            <nav class="menu-bar">
-                <c:forEach var="c" items="${topCategories}" varStatus="st">
-                    <a href="#Loai${st.index + 1}">
-                            ${c.name}
-                    </a>
-                </c:forEach>
-                <a href="#extension">Mọi Người Đang Mua Gì</a>
-            </nav>
-        </c:if>
+        <c:choose>
 
-        <!-- PRODUCT TYPE / DETAIL -->
-        <c:if test="${page != 'HOME'}">
-            <div class="breadcrumb">
-                <a href="${pageContext.request.contextPath}/home">Trang chủ</a>
-                <span>/</span>
-                <span>${breadcrumb}</span>
-            </div>
-        </c:if>
+            <!-- HOME -->
+            <c:when test="${page eq 'HOME'}">
+                <nav class="menu-bar">
+                    <c:forEach var="c" items="${topCategories}" varStatus="st">
+                        <a href="#Loai${st.index + 1}">${c.name}</a>
+                    </c:forEach>
+                    <a href="#extension">Mọi Người Đang Mua Gì</a>
+                </nav>
+            </c:when>
+
+            <!-- PRODUCT TYPE -->
+            <c:when test="${page eq 'PRODUCT_TYPE'}">
+                <div class="breadcrumb">
+                    <a href="${pageContext.request.contextPath}/home">Trang chủ</a>
+                    <span>/</span>
+                    <span>${breadcrumbCategory.name}</span>
+                </div>
+            </c:when>
+
+            <!-- PRODUCT DETAIL -->
+            <c:when test="${page eq 'PRODUCT_DETAIL'}">
+                <div class="breadcrumb">
+                    <a href="${pageContext.request.contextPath}/home">Trang chủ</a>
+                    <span>/</span>
+                    <a href="${pageContext.request.contextPath}/category?id=${breadcrumbCategory.id}">
+                            ${breadcrumbCategory.name}
+                    </a>
+                    <span>/</span>
+                    <span class="current">${breadcrumbProduct.name}</span>
+                </div>
+            </c:when>
+
+        </c:choose>
+
 
     </header>
 </div>

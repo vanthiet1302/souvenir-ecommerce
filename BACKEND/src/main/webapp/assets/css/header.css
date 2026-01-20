@@ -2,10 +2,12 @@
 .header-wrapper {
     background: var(--bg-white);
     border-bottom: 1px solid var(--border-normal);
+    position: sticky;
+    top: 0;
     z-index: 900;
 }
 
-/* Container dùng chung với base.css */
+/* Container dùng chung */
 .header-container {
     display: flex;
     flex-direction: column;
@@ -29,6 +31,43 @@
     color: var(--color-primary);
 }
 
+/* ===== USER DROPDOWN ===== */
+.user-box {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    color: var(--text-main);
+}
+
+.user-dropdown {
+    position: absolute;
+    top: 32px;
+    right: 40px;
+    background: var(--bg-white);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+    width: 200px;
+    display: none;
+    z-index: 1000;
+}
+
+.user-dropdown a {
+    display: block;
+    padding: 10px 14px;
+    font-size: 14px;
+    color: var(--text-main);
+}
+
+.user-dropdown a:hover {
+    background: var(--bg-light);
+    color: var(--color-primary);
+}
+
+.user-dropdown .logout {
+    color: var(--color-sale);
+}
+
 /* ================= MAIN HEADER ================= */
 .main-header {
     display: flex;
@@ -36,6 +75,7 @@
     justify-content: space-between;
     padding: 14px 40px;
     gap: 24px;
+    position: relative;
 }
 
 /* ===== LEFT ===== */
@@ -48,6 +88,9 @@
 .menu-toggle {
     font-size: 26px;
     color: var(--color-primary);
+    background: none;
+    border: none;
+    cursor: pointer;
 }
 
 .logo img {
@@ -57,7 +100,7 @@
 /* ===== DROPDOWN CATEGORY ===== */
 .dropdown-menu {
     position: absolute;
-    top: 80px;
+    top: 100%;
     left: 40px;
     width: 220px;
     background: var(--bg-white);
@@ -107,20 +150,11 @@
     top: 50%;
     right: 14px;
     transform: translateY(-50%);
+    background: none;
+    border: none;
     color: var(--color-primary);
     font-size: 16px;
-}
-
-/* ===== SEARCH DROPDOWN ===== */
-.search-dropdown {
-    position: absolute;
-    top: 100%;
-    width: 100%;
-    background: var(--bg-white);
-    box-shadow: var(--shadow-md);
-    border-radius: 0 0 var(--radius-md) var(--radius-md);
-    display: none;
-    z-index: 1000;
+    cursor: pointer;
 }
 
 /* ===== RIGHT CART ===== */
@@ -158,6 +192,22 @@
     color: var(--color-primary);
 }
 
+/* ================= BREADCRUMB ================= */
+.breadcrumb {
+    max-width: 1200px;
+    margin: 12px auto;
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+
+.breadcrumb a {
+    color: var(--text-secondary);
+}
+
+.breadcrumb span {
+    margin: 0 6px;
+}
+
 /* ================= OVERLAY ================= */
 .overlay {
     position: fixed;
@@ -169,15 +219,4 @@
 
 .overlay.active {
     display: block;
-}
-
-/* ================= RESPONSIVE ================= */
-@media (max-width: 768px) {
-    .center {
-        display: none;
-    }
-
-    .menu-bar {
-        display: none;
-    }
 }

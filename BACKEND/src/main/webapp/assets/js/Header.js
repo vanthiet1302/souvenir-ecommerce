@@ -11,20 +11,18 @@ document.addEventListener('DOMContentLoaded', () => {
     function closeAll() {
         dropdownMenu?.classList.remove('open');
         userDropdown?.classList.remove('open');
-        overlay?.classList.remove('show');
+        overlay?.classList.remove('active');
         dropdownMenu?.setAttribute('aria-hidden', 'true');
     }
 
-    /* ================= MENU TOGGLE ================= */
+    /* ================= CATEGORY MENU ================= */
     menuBtn?.addEventListener('click', (e) => {
         e.stopPropagation();
 
         const isOpen = dropdownMenu.classList.toggle('open');
         dropdownMenu.setAttribute('aria-hidden', String(!isOpen));
 
-        overlay.classList.toggle('show', isOpen);
-
-        // đóng user dropdown nếu đang mở
+        overlay.classList.toggle('active', isOpen);
         userDropdown?.classList.remove('open');
     });
 
@@ -32,11 +30,10 @@ document.addEventListener('DOMContentLoaded', () => {
     userToggle?.addEventListener('click', (e) => {
         e.stopPropagation();
 
-        userDropdown.classList.toggle('open');
+        const isOpen = userDropdown.classList.toggle('open');
 
-        // đóng menu category nếu đang mở
         dropdownMenu?.classList.remove('open');
-        overlay?.classList.remove('show');
+        overlay?.classList.toggle('active', isOpen);
     });
 
     /* ================= OVERLAY ================= */
@@ -54,9 +51,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    /* ================= DROPDOWN MENU LINK ================= */
+    /* ================= CATEGORY LINK ================= */
     document.querySelectorAll('.dropdown-menu a').forEach(link => {
-        link.addEventListener('click', () => closeAll());
+        link.addEventListener('click', closeAll);
     });
 
     /* ================= MENU BAR SCROLL ================= */

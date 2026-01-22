@@ -1,8 +1,5 @@
 $(document).ready(function () {
 
-    /* =====================================================
-     * GLOBAL VARIABLES
-     * ===================================================== */
     const productId = $("#productId").val();
     const contextPath = $("#contextPath").val();
 
@@ -11,10 +8,7 @@ $(document).ready(function () {
     let currentPage = 1;
     const pageSize = 5;
 
-
-    /* =====================================================
-     * ADD TO CART (AJAX)
-     * ===================================================== */
+    /* ================= ADD TO CART ================= */
     $('.btn-add-cart').on('click', function (e) {
         e.preventDefault();
 
@@ -24,127 +18,90 @@ $(document).ready(function () {
             url: form.attr('action'),
             method: 'POST',
             data: form.serialize(),
-            success: function () {
-                showToast('Đã thêm sản phẩm vào giỏ hàng 🛒');
-            },
-            error: function () {
-                showToast('Có lỗi xảy ra, vui lòng thử lại ❌');
-            }
+            success: () => showToast('Đã thêm sản phẩm vào giỏ hàng 🛒'),
+            error: () => showToast('Có lỗi xảy ra ❌')
         });
     });
 
-
-    /* =====================================================
-     * SCROLL TO REVIEW
-     * ===================================================== */
+    /* ================= SCROLL TO REVIEW ================= */
     $('.scroll-review').on('click', function (e) {
         e.preventDefault();
-
         $('html, body').animate({
             scrollTop: $('.product-reviews').offset().top - 80
         }, 500);
     });
 
-
-    /* =====================================================
-     * TOGGLE DESCRIPTION
-     * ===================================================== */
+    /* ================= TOGGLE DESCRIPTION ================= */
     const desc = $('.description-content');
-    const btnToggle = $('#toggleDescription');
+    const btnToggle = $('.btn-toggle-desc');
 
-    if (desc.height() > 200) {
-        desc.addClass('short');
+    if (desc.outerHeight() > 200) {
+        desc.addClass('collapsed');
         btnToggle.show();
     } else {
         btnToggle.hide();
     }
 
     btnToggle.on('click', function () {
-        desc.toggleClass('short');
-        $(this).text(desc.hasClass('short') ? 'Xem thêm' : 'Thu gọn');
+        desc.toggleClass('collapsed');
+        $(this).text(desc.hasClass('collapsed') ? 'Xem thêm' : 'Thu gọn');
     });
 
-
-    /* =====================================================
-     * LOAD REVIEWS (AJAX)
-     * ===================================================== */
+    /* ================= LOAD REVIEWS ================= */
     function loadReviews(reset = false) {
 
         if (reset) {
             currentPage = 1;
-            $("#reviewList").html("");
+            $("#reviewContainer").html("");
         }
 
         $.ajax({
             url: contextPath + "/reviews",
             method: "GET",
             data: {
-                productId: productId,
+                productId,
                 rating: currentRating,
                 sort: currentSort,
                 page: currentPage,
                 size: pageSize
             },
             success: function (html) {
-
                 if (reset) {
-                    $("#reviewList").html(html);
+                    $("#reviewContainer").html(html);
                 } else {
-                    $("#reviewList").append(html);
+                    $("#reviewContainer").append(html);
                 }
 
-                // nếu không còn review thì ẩn nút load more
-                if ($.trim(html) === "") {
-                    $("#loadMoreReview").hide();
-                } else {
-                    $("#loadMoreReview").show();
-                }
+                $("#loadMoreReview").toggle($.trim(html) !== "");
             },
-            error: function () {
-                showToast("Không thể tải đánh giá ❌");
-            }
+            error: () => showToast("Không thể tải đánh giá ❌")
         });
     }
 
-    // load lần đầu
     loadReviews(true);
 
-
-    /* =====================================================
-     * FILTER BY RATING
-     * ===================================================== */
+    /* ================= FILTER ================= */
     $('.filter-btn').on('click', function () {
         $('.filter-btn').removeClass('active');
         $(this).addClass('active');
 
         const rating = $(this).data('rating');
-        currentRating = (rating === "all") ? "" : rating;
+        currentRating = rating === "all" ? "" : rating;
 
         loadReviews(true);
     });
 
-
-    /* =====================================================
-     * SORT REVIEW
-     * ===================================================== */
     $('.review-sort').on('change', function () {
         currentSort = $(this).val();
         loadReviews(true);
     });
 
-
-    /* =====================================================
-     * LOAD MORE REVIEW
-     * ===================================================== */
     $('#loadMoreReview').on('click', function () {
         currentPage++;
         loadReviews(false);
     });
 
-
-    /* =====================================================
-     * IMAGE ZOOM (MODAL)
-     * ===================================================== */
+    /* ================= IMAGE ZOOM ================= */
     $('.btn-zoom').on('click', function () {
 
         const imgSrc = $('.product-image img').attr('src');
@@ -153,7 +110,7 @@ $(document).ready(function () {
             <div class="image-modal">
                 <div class="modal-overlay"></div>
                 <div class="modal-content">
-                    <img src="${imgSrc}" alt="Zoom image">
+                    <img src="${imgSrc}">
                     <button class="modal-close">×</button>
                 </div>
             </div>
@@ -162,29 +119,19 @@ $(document).ready(function () {
         $('body').append(modal);
         setTimeout(() => modal.addClass('show'), 10);
 
-        modal.on('click', '.modal-overlay, .modal-close', function () {
+        modal.on('click', '.modal-overlay, .modal-close', () => {
             modal.removeClass('show');
             setTimeout(() => modal.remove(), 300);
         });
     });
 
-
-    /* =====================================================
-     * TOAST MESSAGE
-     * ===================================================== */
+    /* ================= TOAST ================= */
     function showToast(message) {
-
-        const toast = $(`
-            <div class="toast-message">${message}</div>
-        `);
-
+        const toast = $(`<div class="toast-message">${message}</div>`);
         $('body').append(toast);
 
         setTimeout(() => toast.addClass('show'), 50);
-        setTimeout(() => {
-            toast.removeClass('show');
-            setTimeout(() => toast.remove(), 300);
-        }, 2500);
+        setTimeout(() => toast.removeClass('show').remove(), 2600);
     }
 
 });

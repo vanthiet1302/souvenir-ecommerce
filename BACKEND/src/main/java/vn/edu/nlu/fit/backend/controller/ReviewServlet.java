@@ -28,48 +28,45 @@ public class ReviewServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        String productIdRaw = request.getParameter("productId");
-        if (productIdRaw == null) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing productId");
+        int productId;
+        try {
+            productId = Integer.parseInt(request.getParameter("productId"));
+        } catch (Exception e) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
 
-        int productId = Integer.parseInt(productIdRaw);
-
-        String ratingRaw = request.getParameter("rating");
-        String sort = request.getParameter("sort");
-
+        /* ===== FILTER ===== */
         Integer rating = null;
-        if (ratingRaw != null && !ratingRaw.isEmpty()) {
+        String ratingRaw = request.getParameter("rating");
+        if (ratingRaw != null && !ratingRaw.isEmpty() && !"all".equals(ratingRaw)) {
             rating = Integer.parseInt(ratingRaw);
         }
 
+        String sort = request.getParameter("sort");
         if (sort == null || sort.isEmpty()) {
             sort = "newest";
         }
 
-        /* ================= DAO ================= */
+        /* ===== PAGINATION ===== */
+        int page = 1;
+        int size = 5;
 
-        List<Review> reviewList =
-                reviewDAO.getReviewsByProductWithFilter(productId, rating, sort);
+        try {
+            page = Integer.parseInt(request.getParameter("page"));
+            size = Integer.parseInt(request.getParameter("size"));
+        } catch (Exception ignored) {}
 
-        ReviewSummary reviewSummary =
-                reviewDAO.getReviewSummaryByProductId(productId);
+        int offset = (page - 1) * size;
 
-        Map<Integer, Integer> ratingMap =
-                reviewDAO.countReviewsByRating(productId);
+        /* ===== DAO ===== */
+        List<Review> reviews =
+                reviewDAO.getReviewsByProductWithFilter(
+                        productId, rating, sort, offset, size
+                );
 
-        /* ================= SET ATTRIBUTE ================= */
-
-        request.setAttribute("reviewList", reviewList);
-        request.setAttribute("reviewSummary", reviewSummary);
-        request.setAttribute("ratingMap", ratingMap);
-
-        request.setAttribute("selectedRating", rating);
-        request.setAttribute("selectedSort", sort);
-
-        /* ================= FORWARD ================= */
-
+        /* ===== VIEW ===== */
+        request.setAttribute("reviews", reviews);
         request.getRequestDispatcher("/WEB-INF/views/review-items.jsp")
                 .forward(request, response);
     }

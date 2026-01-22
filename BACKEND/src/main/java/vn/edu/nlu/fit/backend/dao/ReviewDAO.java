@@ -104,7 +104,9 @@ public class ReviewDAO extends DBContext {
     public List<Review> getReviewsByProductWithFilter(
             int productId,
             Integer rating,
-            String sort
+            String sort,
+            int offset,
+            int limit
     ) {
         List<Review> list = new ArrayList<>();
 
@@ -153,8 +155,7 @@ public class ReviewDAO extends DBContext {
                 rs.getInt("user_id"),
                 rs.getInt("rating"),
                 rs.getString("comment"),
-                Timestamp.valueOf(
-                        rs.getTimestamp("created_at").toLocalDateTime()
+                Timestamp.valueOf(rs.getTimestamp("created_at").toLocalDateTime()
                 )
         );
     }

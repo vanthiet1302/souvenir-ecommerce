@@ -12,7 +12,13 @@ public class DBContext {
     private final String userID = "root";
     private final String password = "";
 
-    public Connection getConnection() throws ClassNotFoundException, SQLException {
+    public static Connection getConnection() throws ClassNotFoundException, SQLException {
+        String serverName = "localhost";
+        String dbName = "inola_db";
+        String portNumber = "3306";
+        String userID = "root";
+        String password = "";
+
         String url = "jdbc:mysql://" + serverName + ":" + portNumber + "/" + dbName;
         Class.forName("com.mysql.cj.jdbc.Driver");
         return DriverManager.getConnection(url, userID, password);

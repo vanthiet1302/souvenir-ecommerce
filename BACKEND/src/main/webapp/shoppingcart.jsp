@@ -8,7 +8,6 @@
     <title>Giỏ hàng của bạn - INOLA</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
-
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/ShoppingCart.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/HomePageFooter.css">
 </head>
@@ -18,7 +17,7 @@
     <div class="cart-layout">
         <div class="cart-items-section">
             <div class="continue-shopping">
-                <a href="${pageContext.request.contextPath}/home/homepage.jsp"><i class="fa-solid fa-arrow-left"></i> Tiếp tục mua sắm</a>
+                <a href="${pageContext.request.contextPath}/home"><i class="fa-solid fa-arrow-left"></i> Tiếp tục mua sắm</a>
             </div>
 
             <div class="section-header">
@@ -31,7 +30,7 @@
             <c:if test="${empty sessionScope.cart || sessionScope.cart.totalQuantity() == 0}">
                 <div style="text-align: center; padding: 50px;">
                     <p>Giỏ hàng của bạn đang trống.</p>
-                    <a href="${pageContext.request.contextPath}/home/homepage.jsp" class="checkout-btn" style="text-decoration: none; display: inline-block; width: auto; padding: 10px 20px;">Mua sắm ngay</a>
+                    <a href="${pageContext.request.contextPath}/home" class="checkout-btn" style="text-decoration: none; display: inline-block; width: auto; padding: 10px 20px;">Mua sắm ngay</a>
                 </div>
             </c:if>
 
@@ -66,7 +65,6 @@
         <div class="order-summary-section">
             <div class="summary-card">
                 <h2 class="summary-card-title">Tóm tắt đơn hàng</h2>
-
                 <div class="voucher-input-group">
                     <input type="text" placeholder="Nhập mã giảm giá..." class="voucher-input">
                     <button class="apply-voucher-btn">Áp dụng</button>
@@ -88,7 +86,7 @@
                 </div>
 
                 <button class="checkout-btn">
-                    <a href="${pageContext.request.contextPath}/shoppingcart.jsp"
+                    <a href="${pageContext.request.contextPath}/checkout"
                        style="color: white; text-decoration: none; font-weight: bold;"
                        onclick="return confirm('Bạn xác nhận thanh toán đơn hàng này?')">
                         XÁC NHẬN THANH TOÁN
@@ -98,7 +96,7 @@
         </div>
     </div>
 
-    <jsp:include page="/WEB-INF/views/common/footer.jsp" />
+    <jsp:include page="/views/common/footer.jsp" />
 </div>
 
 </body>

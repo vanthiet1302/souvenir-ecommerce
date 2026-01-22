@@ -39,7 +39,7 @@ public class LoginController extends HttpServlet {
             session.setAttribute("userInSession", authUser);
 
             // Chuyển hướng về trang chủ
-            response.sendRedirect(request.getContextPath() + "/home/homepage.jsp");
+            response.sendRedirect(request.getContextPath() + "/home");
         } else {
             // ĐĂNG NHẬP THẤT BẠI: Hiện lỗi
             request.setAttribute("error", "Tài khoản hoặc mật khẩu không chính xác!");

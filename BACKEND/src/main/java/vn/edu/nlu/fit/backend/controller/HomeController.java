@@ -30,7 +30,7 @@ public class HomeController extends HttpServlet {
         request.setAttribute("topCategories", topCategories);
         request.setAttribute("extensionCategories", extensionCategories);
 
-        request.getRequestDispatcher("/views/home.jsp").forward(request, response);
+        request.getRequestDispatcher("/home/homepage.jsp").forward(request, response);
 
     }
 }

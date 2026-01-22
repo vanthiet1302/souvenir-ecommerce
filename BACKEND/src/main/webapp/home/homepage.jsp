@@ -38,9 +38,9 @@
                             </div>
                         </c:when>
                         <c:otherwise>
-                            <a href="${pageContext.request.contextPath}/login.jsp" class="login">Đăng nhập</a>
+                            <a href="${pageContext.request.contextPath}/login" class="login">Đăng nhập</a>
                             <span>|</span>
-                            <a href="${pageContext.request.contextPath}/signup.jsp" class="register">Đăng ký</a>
+                            <a href="${pageContext.request.contextPath}/signup" class="register">Đăng ký</a>
                         </c:otherwise>
                     </c:choose>
                 </div>

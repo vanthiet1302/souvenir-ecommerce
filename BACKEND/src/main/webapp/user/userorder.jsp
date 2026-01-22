@@ -27,7 +27,6 @@
                         <li><a href="${pageContext.request.contextPath}/user/userorder.jsp">Đơn hàng</a></li>
                         <li><a href="${pageContext.request.contextPath}/user/userfavourite.jsp">Sản phẩm yêu thích</a></li>
                         <li><a href="${pageContext.request.contextPath}/user/userpass.jsp">Đổi mật khẩu</a></li>
-                        <hr>
                         <li><a href="${pageContext.request.contextPath}/logout" class="logout">Đăng xuất</a></li>
                     </ul>
                 </div>

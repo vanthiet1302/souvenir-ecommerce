@@ -6,24 +6,36 @@
     <meta charset="UTF-8">
     <title>Trang chủ - INOLA</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/HomePage.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/HomePageFooter.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/HomePageMain.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/HomePageSlip.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/STT.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/HomePageAlter.css">
 </head>
 <body>
 <div class="page-container">
     <div class="header-wrapper">
         <header class="header-container page-container">
             <div class="user-bar">
-                <div class="right">
+                <div class="right user-header">
                     <c:choose>
                         <c:when test="${not empty sessionScope.userInSession}">
-                            <span style="font-weight: 600; color: #5a2d81;">Chào mừng, ${userInSession.fullName}</span>
-                            <span>|</span>
-                            <a href="${pageContext.request.contextPath}/logout" class="login">Đăng xuất</a>
+                            <div class="user-menu">
+                                <div class="user-trigger">
+                                    <i class="fa-regular fa-user"></i>
+                                    <span class="username">${sessionScope.userInSession.fullName}</span>
+                                </div>
+                                <ul class="user-dropdown">
+                                    <li><a href="${pageContext.request.contextPath}/user/userprofile.jsp">Hồ sơ của tôi</a></li>
+                                    <li><a href="${pageContext.request.contextPath}/user/userorder.jsp">Đơn hàng</a></li>
+                                    <li><a href="${pageContext.request.contextPath}/user/userfavourite.jsp">Sản phẩm yêu thích</a></li>
+                                    <li><a href="${pageContext.request.contextPath}/user/userreview.jsp">Đánh giá của tôi</a></li>
+                                    <li><a href="${pageContext.request.contextPath}/user/userpass.jsp">Đổi mật khẩu</a></li>
+                                    <hr>
+                                    <li><a href="${pageContext.request.contextPath}/logout" class="logout">Đăng xuất</a></li>
+                                </ul>
+                            </div>
                         </c:when>
                         <c:otherwise>
                             <a href="${pageContext.request.contextPath}/login.jsp" class="login">Đăng nhập</a>
@@ -38,7 +50,7 @@
                 <div class="left">
                     <button id="menuBtn" class="menu-toggle"><i class="fa fa-bars"></i></button>
                     <div class="logo">
-                        <a href="${pageContext.request.contextPath}/home">
+                        <a href="${pageContext.request.contextPath}/home/homepage.jsp">
                             <img src="${pageContext.request.contextPath}/assets/image/Logo/Logo-removebg-preview.png" alt="INOLA Logo" height="36">
                         </a>
                     </div>
@@ -48,7 +60,6 @@
                     <input type="text" id="search" placeholder="Tìm kiếm sản phẩm..." class="search-bar">
                     <button class="search-btn"><i class="fa fa-search"></i></button>
                 </div>
-
                 <div class="right">
                     <div class="cart">
                         <a href="${pageContext.request.contextPath}/shoppingcart.jsp" class="cart-link">
@@ -139,7 +150,7 @@
         </section>
     </main>
 
-    <jsp:include page="/footer.jsp" />
+    <jsp:include page="/views/common/footer.jsp" />
 
     <a href="#"><button id="scrollToTopBtn"><i class="fas fa-chevron-up"></i></button></a>
 </div>

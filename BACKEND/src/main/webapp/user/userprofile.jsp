@@ -94,6 +94,9 @@
                 <c:if test="${not empty message}">
                     <div style="color: green; margin-bottom: 15px;">${message}</div>
                 </c:if>
+                <c:if test="${not empty error}">
+                    <div style="color: red; margin-bottom: 15px;">${error}</div>
+                </c:if>
 
                 <form class="profile-form" action="${pageContext.request.contextPath}/user/update-profile" method="post">
                     <div class="form-group">
@@ -102,8 +105,7 @@
                     </div>
                     <div class="form-group">
                         <label for="email">Email</label>
-                        <input type="email" id="email" value="${sessionScope.userInSession.email}" disabled>
-                        <input type="hidden" name="email" value="${sessionScope.userInSession.email}">
+                        <input type="email" id="email" name="email" value="${sessionScope.userInSession.email}" required>
                     </div>
                     <div class="form-group">
                         <label for="phone">Số điện thoại</label>
@@ -125,23 +127,63 @@
             <div class="profile-card">
                 <div class="card-header">
                     <h2>Địa chỉ</h2>
-                    <button class="btn-add"><i class="fa-solid fa-plus"></i> Thêm địa chỉ mới</button>
+                    <button class="btn-add" onclick="document.getElementById('addAddressForm').style.display='block'">
+                        <i class="fa-solid fa-plus"></i> Thêm địa chỉ mới
+                    </button>
                 </div>
 
-                <div class="address-item">
-                    <div class="address-info">
-                        <div class="info-header">
-                            <strong>${sessionScope.userInSession.fullName}</strong>
-                            <span class="default-badge">Mặc định</span>
+                <div id="addAddressForm" style="display:none; margin: 20px 0; padding: 20px; border: 1px dashed #5a2d81; border-radius: 8px; background: #fdfbff;">
+                    <h3 style="margin-bottom: 15px; color: #5a2d81;">Nhập địa chỉ mới</h3>
+                    <form action="${pageContext.request.contextPath}/user/add-address" method="post" class="profile-form">
+                        <div class="form-group">
+                            <label>Địa chỉ chi tiết (Số nhà, tên đường...)</label>
+                            <input type="text" name="addressDetail" required placeholder="VD: 123 Đường ABC">
                         </div>
-                        <p class="phone-number">SĐT: ${sessionScope.userInSession.phone}</p>
-                        <p class="address-text">Kiên Ngãi, Bình An, Gia Lai</p>
-                    </div>
-                    <div class="address-actions">
-                        <button class="btn-link">Cập nhật</button>
-                        <button class="btn-link btn-delete">Xóa</button>
-                    </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px;">
+                            <div class="form-group">
+                                <label>Phường/Xã</label>
+                                <input type="text" name="ward" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Quận/Huyện</label>
+                                <input type="text" name="district" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Tỉnh/Thành phố</label>
+                                <input type="text" name="city" required>
+                            </div>
+                        </div>
+                        <div style="margin-top: 20px; display: flex; gap: 10px;">
+                            <button type="submit" class="btn-save" style="width: auto; padding: 10px 25px;">Thêm mới</button>
+                            <button type="button" class="btn-save" style="width: auto; padding: 10px 25px; background: #666;" onclick="document.getElementById('addAddressForm').style.display='none'">Hủy</button>
+                        </div>
+                    </form>
                 </div>
+
+                <c:forEach items="${listAddr}" var="addr">
+                    <div class="address-item">
+                        <div class="address-info">
+                            <div class="info-header">
+                                <strong>${sessionScope.userInSession.fullName}</strong>
+                                <c:if test="${addr.isDefault == 1}">
+                                    <span class="default-badge">Mặc định</span>
+                                </c:if>
+                            </div>
+                            <p class="phone-number">SĐT: ${sessionScope.userInSession.phone}</p>
+                            <p class="address-text">${addr.addressDetail}, ${addr.ward}, ${addr.district}, ${addr.city}</p>
+                        </div>
+                        <div class="address-actions">
+                            <button class="btn-link" onclick="location.href='${pageContext.request.contextPath}/user/edit-address?id=${addr.id}'">Cập nhật</button>
+                            <button class="btn-link btn-delete" onclick="if(confirm('Xóa địa chỉ này?')) location.href='${pageContext.request.contextPath}/user/delete-address?id=${addr.id}'">Xóa</button>
+                        </div>
+                    </div>
+                </c:forEach>
+
+                <c:if test="${empty listAddr}">
+                    <div style="text-align: center; padding: 20px; color: #999;">
+                        Bạn chưa có địa chỉ nào.
+                    </div>
+                </c:if>
             </div>
         </main>
     </div>

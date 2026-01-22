@@ -35,7 +35,7 @@
 
                 <!-- Logo -->
                 <div class="logo">
-                    <a href="../../../home">
+                    <a href="../../home">
                         <img src="assets/images/logo.png" alt="INOLA Logo" height="36">
                     </a>
                 </div>

@@ -1,8 +1,8 @@
 package vn.edu.nlu.fit.backend.dao;
 
 
-import vn.edu.nlu.fit.backend.util.DBContextT;
 import vn.edu.nlu.fit.backend.model.Category;
+import vn.edu.nlu.fit.backend.util.DBContext;
 
 
 import java.sql.Connection;
@@ -11,7 +11,9 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CategoryDAO extends DBContextT {
+import static vn.edu.nlu.fit.backend.util.DBContext.getConnection;
+
+public class CategoryDAO extends DBContext {
 
     public List<Category> getAllCategories() {
         List<Category> list = new ArrayList<>();

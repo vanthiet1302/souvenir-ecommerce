@@ -26,7 +26,7 @@ public class Cart implements Serializable {
         if (get(product.getId()) != null)
         data.get(product.getId()).upQuantity(quantity);
         else
-            data.put(product.getId(), new CartItem(product, product.getPrice(), quantity));
+            data.put(product.getId(), new CartItem(product, product.getOriginalPrice(), quantity));
 
         }
 

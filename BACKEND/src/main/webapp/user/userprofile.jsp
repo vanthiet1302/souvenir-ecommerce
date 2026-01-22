@@ -22,11 +22,11 @@
                         <span class="username">${sessionScope.userInSession.fullName}</span>
                     </div>
                     <ul class="user-dropdown">
-                        <li><a href="${pageContext.request.contextPath}/user/userprofile.jsp">Hồ sơ của tôi</a></li>
-                        <li><a href="${pageContext.request.contextPath}/user/userorder.jsp">Đơn hàng</a></li>
-                        <li><a href="${pageContext.request.contextPath}/user/userfavourite.jsp">Sản phẩm yêu thích</a></li>
-                        <li><a href="${pageContext.request.contextPath}/user/userreview.jsp">Đánh giá của tôi</a></li>
-                        <li><a href="${pageContext.request.contextPath}/user/userpass.jsp">Đổi mật khẩu</a></li>
+                        <li><a href="${pageContext.request.contextPath}/user/profile">Hồ sơ của tôi</a></li>
+                        <li><a href="${pageContext.request.contextPath}/user/order">Đơn hàng</a></li>
+                        <li><a href="${pageContext.request.contextPath}/user/favourite">Sản phẩm yêu thích</a></li>
+                        <li><a href="${pageContext.request.contextPath}/user/review">Đánh giá của tôi</a></li>
+                        <li><a href="${pageContext.request.contextPath}/forgot-password">Đổi mật khẩu</a></li>
                         <hr>
                         <li><a href="${pageContext.request.contextPath}/logout" class="logout">Đăng xuất</a></li>
                     </ul>
@@ -37,7 +37,7 @@
                 <div class="left">
                     <button id="menuBtn" class="menu-toggle"><i class="fa fa-bars"></i></button>
                     <div class="logo">
-                        <a href="${pageContext.request.contextPath}/home/homepage.jsp">
+                        <a href="${pageContext.request.contextPath}/home">
                             <img src="${pageContext.request.contextPath}/assets/image/Logo/Logo-removebg-preview.png" alt="INOLA Logo" height="36">
                         </a>
                     </div>
@@ -48,7 +48,7 @@
                 </div>
                 <div class="right">
                     <div class="cart">
-                        <a href="${pageContext.request.contextPath}/shoppingcart.jsp" class="cart-link">
+                        <a href="${pageContext.request.contextPath}/shoppingcart" class="cart-link">
                             <i class="fa fa-shopping-cart"></i>
                             <span class="cart-count">0</span>
                         </a>
@@ -79,11 +79,11 @@
             <hr class="sidebar-divider">
 
             <ul class="account-menu">
-                <li class="active"><a href="userprofile.jsp" ><i class="fa-solid fa-user-circle"></i> Hồ Sơ Của Tôi</a></li>
-                <li><a href="userorder.jsp"><i class="fa-solid fa-receipt"></i> Đơn Hàng</a></li>
-                <li><a href="userfavourite.jsp"><i class="fa-solid fa-heart"></i> Sản Phẩm Yêu Thích</a></li>
-                <li><a href="userreview.jsp"><i class="fa-solid fa-star"></i> Đánh Giá Của Tôi</a></li>
-                <li><a href="userpass.jsp"><i class="fa-solid fa-key"></i> Đổi Mật Khẩu</a></li>
+                <li class="active"><a href="${pageContext.request.contextPath}/user/profile" ><i class="fa-solid fa-user-circle"></i> Hồ Sơ Của Tôi</a></li>
+                <li><a href="${pageContext.request.contextPath}/user/order"><i class="fa-solid fa-receipt"></i> Đơn Hàng</a></li>
+                <li><a href="${pageContext.request.contextPath}/user/favourite"><i class="fa-solid fa-heart"></i> Sản Phẩm Yêu Thích</a></li>
+                <li><a href="${pageContext.request.contextPath}/user/review"><i class="fa-solid fa-star"></i> Đánh Giá Của Tôi</a></li>
+                <li><a href="${pageContext.request.contextPath}/forgot-password"><i class="fa-solid fa-key"></i> Đổi Mật Khẩu</a></li>
             </ul>
         </aside>
 

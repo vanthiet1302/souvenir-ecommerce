@@ -23,10 +23,11 @@
                         <span class="username">${sessionScope.userInSession.fullName}</span>
                     </div>
                     <ul class="user-dropdown">
-                        <li><a href="${pageContext.request.contextPath}/user/userprofile.jsp">Hồ sơ của tôi</a></li>
-                        <li><a href="${pageContext.request.contextPath}/user/userorder.jsp">Đơn hàng</a></li>
-                        <li><a href="${pageContext.request.contextPath}/user/userfavourite.jsp">Sản phẩm yêu thích</a></li>
-                        <li><a href="${pageContext.request.contextPath}/user/userpass.jsp">Đổi mật khẩu</a></li>
+
+                        <li><a href="${pageContext.request.contextPath}/user/profile">Hồ sơ của tôi</a></li>
+                        <li><a href="${pageContext.request.contextPath}/user/order">Đơn hàng</a></li>
+                        <li><a href="${pageContext.request.contextPath}/user/favourite">Sản phẩm yêu thích</a></li>
+                        <li><a href="${pageContext.request.contextPath}/forgot-password">Đổi mật khẩu</a></li>
                         <li><a href="${pageContext.request.contextPath}/logout" class="logout">Đăng xuất</a></li>
                     </ul>
                 </div>
@@ -35,7 +36,8 @@
             <div class="main-header">
                 <div class="left">
                     <div class="logo">
-                        <a href="${pageContext.request.contextPath}/home/homepage.jsp">
+                        <%-- Chuyển link Logo về Servlet Home [cite: 24, 25] --%>
+                        <a href="${pageContext.request.contextPath}/home">
                             <img src="${pageContext.request.contextPath}/assets/image/Logo/Logo-removebg-preview.png" alt="INOLA Logo" height="36">
                         </a>
                     </div>
@@ -50,7 +52,7 @@
 
                 <div class="right">
                     <div class="cart">
-                        <a href="${pageContext.request.contextPath}/shoppingcart.jsp" class="cart-link">
+                        <a href="${pageContext.request.contextPath}/shoppingcart" class="cart-link">
                             <i class="fa fa-shopping-cart"></i>
                             <span class="cart-count">0</span>
                         </a>
@@ -81,21 +83,23 @@
             <hr class="sidebar-divider">
 
             <ul class="account-menu">
-                <li><a href="${pageContext.request.contextPath}/user/userprofile.jsp"><i class="fa-solid fa-user-circle"></i> Hồ Sơ Của Tôi</a></li>
-                <li class="active"><a href="${pageContext.request.contextPath}/user/userorder.jsp"><i class="fa-solid fa-receipt"></i> Đơn Hàng</a></li>
-                <li><a href="${pageContext.request.contextPath}/user/userfavourite.jsp"><i class="fa-solid fa-heart"></i> Sản Phẩm Yêu Thích</a></li>
-                <li><a href="${pageContext.request.contextPath}/user/userreview.jsp"><i class="fa-solid fa-star"></i> Đánh Giá Của Tôi</a></li>
-                <li><a href="${pageContext.request.contextPath}/user/userpass.jsp"><i class="fa-solid fa-key"></i> Đổi Mật Khẩu</a></li>
+                <%-- Đồng bộ Sidebar với các Servlet URL [cite: 34, 35] --%>
+                <li><a href="${pageContext.request.contextPath}/user/profile"><i class="fa-solid fa-user-circle"></i> Hồ Sơ Của Tôi</a></li>
+                <li class="active"><a href="${pageContext.request.contextPath}/user/order"><i class="fa-solid fa-receipt"></i> Đơn Hàng</a></li>
+                <li><a href="${pageContext.request.contextPath}/user/favourite"><i class="fa-solid fa-heart"></i> Sản Phẩm Yêu Thích</a></li>
+                <li><a href="${pageContext.request.contextPath}/user/review"><i class="fa-solid fa-star"></i> Đánh Giá Của Tôi</a></li>
+                <li><a href="${pageContext.request.contextPath}/forgot-password"><i class="fa-solid fa-key"></i> Đổi Mật Khẩu</a></li>
             </ul>
         </aside>
 
         <main class="account-content">
             <nav class="order-tabs">
-                <a href="${pageContext.request.contextPath}/user/userorder.jsp?status=all" class="tab-item ${param.status == 'all' || empty param.status ? 'active' : ''}">Tất cả</a>
-                <a href="${pageContext.request.contextPath}/user/userorder.jsp?status=pending" class="tab-item ${param.status == 'pending' ? 'active' : ''}">Chờ xác nhận</a>
-                <a href="${pageContext.request.contextPath}/user/userorder.jsp?status=shipping" class="tab-item ${param.status == 'shipping' ? 'active' : ''}">Đang giao</a>
-                <a href="${pageContext.request.contextPath}/user/userorder.jsp?status=delivered" class="tab-item ${param.status == 'delivered' ? 'active' : ''}">Đã giao</a>
-                <a href="${pageContext.request.contextPath}/user/userorder.jsp?status=cancelled" class="tab-item ${param.status == 'cancelled' ? 'active' : ''}">Đã Hủy</a>
+                <%-- Loại bỏ .jsp trong các tab lọc trạng thái [cite: 36, 37, 38] --%>
+                <a href="${pageContext.request.contextPath}/user/order?status=all" class="tab-item ${param.status == 'all' || empty param.status ? 'active' : ''}">Tất cả</a>
+                <a href="${pageContext.request.contextPath}/user/order?status=pending" class="tab-item ${param.status == 'pending' ? 'active' : ''}">Chờ xác nhận</a>
+                <a href="${pageContext.request.contextPath}/user/order?status=shipping" class="tab-item ${param.status == 'shipping' ? 'active' : ''}">Đang giao</a>
+                <a href="${pageContext.request.contextPath}/user/order?status=delivered" class="tab-item ${param.status == 'delivered' ? 'active' : ''}">Đã giao</a>
+                <a href="${pageContext.request.contextPath}/user/order?status=cancelled" class="tab-item ${param.status == 'cancelled' ? 'active' : ''}">Đã Hủy</a>
             </nav>
 
             <div class="order-content">

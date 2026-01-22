@@ -6,12 +6,10 @@
     <meta charset="UTF-8">
     <title>Khôi phục mật khẩu - INOLA</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <%-- Load các file CSS cần thiết --%>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/login.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/forgot_password.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/HomePageFooter.css">
     <style>
-        /* CSS cho khung auth card */
         .auth-card {
             max-width: 500px;
             margin: 50px auto;
@@ -21,16 +19,12 @@
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
             text-align: center;
         }
-
-        /* Định dạng tiêu đề */
         .auth-card h2 {
             color: #800080;
             margin-bottom: 15px;
             font-weight: 700;
             text-transform: uppercase;
         }
-
-        /* Style cho thông báo lỗi */
         .error-msg {
             color: #ff4d4d;
             background: #fff1f0;
@@ -40,15 +34,12 @@
             margin-bottom: 20px;
             font-size: 14px;
         }
-
-        /* Chia đều 6 ô nhập mã OTP */
         .code-input-group {
             display: flex;
             justify-content: center;
             gap: 10px;
             margin: 25px 0;
         }
-
         .code-box {
             width: 45px;
             height: 50px;
@@ -59,13 +50,11 @@
             border-radius: 8px;
             transition: all 0.3s ease;
         }
-
         .code-box:focus {
             border-color: #800080;
             box-shadow: 0 0 8px rgba(128, 0, 128, 0.2);
             outline: none;
         }
-
         .back-link {
             display: inline-block;
             margin-top: 20px;
@@ -73,7 +62,6 @@
             text-decoration: none;
             font-size: 14px;
         }
-
         .back-link:hover {
             color: #800080;
         }
@@ -81,12 +69,11 @@
 </head>
 <body>
 
-<%-- Header đơn giản chứa Logo --%>
 <div class="page_login">
     <div class="container">
         <img src="${pageContext.request.contextPath}/assets/image/Logo/Logo-removebg-preview.png" alt="Logo INOLA"
              style="height:36px; width:auto;">
-        <a href="${pageContext.request.contextPath}/home.jsp" class="pix_button small_button purple_bg">
+        <a href="${pageContext.request.contextPath}/home" class="pix_button small_button purple_bg">
             <span>Trung tâm trợ giúp</span>
         </a>
     </div>
@@ -103,6 +90,7 @@
                 <c:if test="${not empty error}">
                     <div class="error-msg"><i class="fa fa-exclamation-circle"></i> ${error}</div>
                 </c:if>
+                <%-- Action trỏ về Servlet /forgot-password --%>
                 <form action="${pageContext.request.contextPath}/forgot-password" method="post">
                     <input type="hidden" name="action" value="send_code">
                     <div class="input_group">
@@ -126,7 +114,6 @@
                 <form action="${pageContext.request.contextPath}/forgot-password" method="post">
                     <input type="hidden" name="action" value="verify_code">
                     <div class="code-input-group">
-                            <%-- Tạo 6 ô input cho OTP --%>
                         <c:forEach var="i" begin="1" end="6">
                             <input type="number" name="digit" maxlength="1" class="code-box" required
                                    oninput="moveNext(this)">
@@ -135,6 +122,8 @@
                     <button type="submit" class="btn_login" style="width: 100%;">TIẾP THEO</button>
                 </form>
             </c:when>
+
+            <%-- BƯỚC 3: ĐẶT LẠI MẬT KHẨU --%>
             <c:when test="${step == 3}">
                 <h2>Đặt lại mật khẩu</h2>
                 <p style="color: #666; margin-bottom: 25px;">Mật khẩu mới phải có ít nhất 8 ký tự.</p>
@@ -160,24 +149,21 @@
             </c:when>
         </c:choose>
 
-        <a href="${pageContext.request.contextPath}/login.jsp" class="back-link">
+        <%-- Sửa link quay lại Đăng nhập --%>
+        <a href="${pageContext.request.contextPath}/login" class="back-link">
             <i class="fa fa-arrow-left"></i> Quay lại Đăng nhập
         </a>
     </div>
 </div>
 
-<%-- Bao gồm footer cho trang --%>
 <jsp:include page="/views/common/footer.jsp"/>
 
 <script>
-    // Xử lý tự động chuyển ô tiếp theo khi nhập đủ 1 ký tự
     function moveNext(el) {
         if (el.value.length === 1 && el.nextElementSibling) {
             el.nextElementSibling.focus();
         }
     }
-
-    // Xử lý nút Backspace để xóa và quay lại ô trước
     document.querySelectorAll('.code-box').forEach((box, idx, all) => {
         box.addEventListener('keydown', (e) => {
             if (e.key === 'Backspace' && !box.value && idx > 0) {

@@ -1,8 +1,8 @@
 package vn.edu.nlu.fit.backend.controller;
 
-import vn.edu.nlu.fit.backend.dao.CategoryDAO;
 import vn.edu.nlu.fit.backend.model.Category;
 import vn.edu.nlu.fit.backend.model.User;
+import vn.edu.nlu.fit.backend.service.HeaderService;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -14,32 +14,27 @@ import java.util.List;
 @WebServlet("/header")
 public class HeaderController extends HttpServlet {
 
-    private CategoryDAO categoryDAO;
+    private HeaderService headerService;
 
     @Override
-    public void init() throws ServletException {
-        categoryDAO = new CategoryDAO();
+    public void init() {
+        headerService = new HeaderService();
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        // ========== ALL CATEGORIES (dropdown menu) ==========
-        List<Category> categories = categoryDAO.getAll();
-        request.setAttribute("categories", categories);
+        List<Category> categories = headerService.getAllCategories();
+        List<Category> topCategories = headerService.getTopCategories(5);
 
-        // ========== TOP 5 CATEGORIES (menu bar – home) ==========
-        List<Category> topCategories = categoryDAO.getTopSellingCategories(5);
+        request.setAttribute("categories", categories);
         request.setAttribute("topCategories", topCategories);
 
-        // ========== USER LOGIN ==========
         HttpSession session = request.getSession(false);
         if (session != null) {
-            User user = (User) session.getAttribute("authUser");
-            request.setAttribute("authUser", user);
+            request.setAttribute("authUser",
+                    (User) session.getAttribute("authUser"));
         }
-
-        // Không forward view
     }
 }

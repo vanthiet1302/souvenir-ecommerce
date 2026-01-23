@@ -10,13 +10,18 @@ public class ProductDetailDTO {
     private Product product;
     private Category category;
     private Promotion promotion;
+
+    private Double discountedPrice;
+
     private List<ProductSpecification> specifications;
-    private List<Product> relatedProducts;
 
     private double avgRating;
     private int totalReviews;
     private Map<Integer, Integer> ratingCount;
-    private Map<Integer, Integer> ratingPercent;
+
+    private List<Product> relatedProducts;
+
+    /* ===== Getter / Setter ===== */
 
     public Product getProduct() {
         return product;
@@ -42,20 +47,20 @@ public class ProductDetailDTO {
         this.promotion = promotion;
     }
 
+    public Double getDiscountedPrice() {
+        return discountedPrice;
+    }
+
+    public void setDiscountedPrice(Double discountedPrice) {
+        this.discountedPrice = discountedPrice;
+    }
+
     public List<ProductSpecification> getSpecifications() {
         return specifications;
     }
 
     public void setSpecifications(List<ProductSpecification> specifications) {
         this.specifications = specifications;
-    }
-
-    public List<Product> getRelatedProducts() {
-        return relatedProducts;
-    }
-
-    public void setRelatedProducts(List<Product> relatedProducts) {
-        this.relatedProducts = relatedProducts;
     }
 
     public double getAvgRating() {
@@ -82,11 +87,11 @@ public class ProductDetailDTO {
         this.ratingCount = ratingCount;
     }
 
-    public Map<Integer, Integer> getRatingPercent() {
-        return ratingPercent;
+    public List<Product> getRelatedProducts() {
+        return relatedProducts;
     }
 
-    public void setRatingPercent(Map<Integer, Integer> ratingPercent) {
-        this.ratingPercent = ratingPercent;
+    public void setRelatedProducts(List<Product> relatedProducts) {
+        this.relatedProducts = relatedProducts;
     }
 }

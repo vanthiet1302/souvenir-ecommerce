@@ -2,9 +2,9 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <div class="header-wrapper">
-    <header class="header-container page-container">
+    <header class="header-container">
 
-        <!-- USER BAR -->
+        <!-- ===== USER BAR ===== -->
         <div class="user-bar">
             <div class="right">
                 <c:choose>
@@ -21,15 +21,13 @@
             </div>
         </div>
 
-        <!-- MAIN HEADER -->
+        <!-- ===== MAIN HEADER ===== -->
         <div class="main-header">
-
             <div class="left">
                 <button id="menuBtn" class="menu-toggle">
                     <i class="fa fa-bars"></i>
                 </button>
 
-                <!-- ALL CATEGORIES -->
                 <div class="dropdown-menu" id="dropdownMenu">
                     <c:forEach var="c" items="${categories}">
                         <a href="${pageContext.request.contextPath}/product-type?id=${c.id}">
@@ -38,7 +36,6 @@
                     </c:forEach>
                 </div>
 
-                <!-- LOGO -->
                 <div class="logo">
                     <a href="${pageContext.request.contextPath}/home">
                         <img src="${pageContext.request.contextPath}/assets/images/logo.png"
@@ -47,33 +44,42 @@
                 </div>
             </div>
 
-            <!-- SEARCH -->
             <div class="center">
                 <form action="${pageContext.request.contextPath}/search" method="get">
                     <input type="text" name="keyword" placeholder="Tìm kiếm sản phẩm...">
-                    <button type="submit">
-                        <i class="fa fa-search"></i>
-                    </button>
                 </form>
             </div>
 
-            <!-- CART -->
             <div class="right">
                 <a href="${pageContext.request.contextPath}/cart">
                     <i class="fa fa-shopping-cart"></i>
-                    <span class="cart-count">0</span>
                 </a>
             </div>
         </div>
 
-        <!-- TOP CATEGORY BAR -->
-        <nav class="menu-bar">
-            <c:forEach var="c" items="${topCategories}">
-                <a href="${pageContext.request.contextPath}/product-type?id=${c.id}">
-                        ${c.name}
-                </a>
-            </c:forEach>
-        </nav>
+        <!-- ===== DYNAMIC SECTION ===== -->
+        <c:if test="${headerMode == null || headerMode == 'MENU'}">
+            <nav class="menu-bar">
+                <c:forEach var="c" items="${topCategories}">
+                    <a href="${pageContext.request.contextPath}/product-type?id=${c.id}">
+                            ${c.name}
+                    </a>
+                </c:forEach>
+            </nav>
+        </c:if>
+
+        <!-- BREADCRUMB (DETAIL / PRODUCT TYPE) -->
+        <c:if test="${headerMode == 'BREADCRUMB'}">
+            <div class="breadcrumb">
+                <a href="${pageContext.request.contextPath}/home">Trang chủ</a>
+                <span>›</span>
+                <span>${breadcrumbCategory.name}</span>
+                <span>›</span>
+                <span>${breadcrumbProduct.name}</span>
+            </div>
+        </c:if>
 
     </header>
 </div>
+
+<div id="headerOverlay" class="overlay"></div>

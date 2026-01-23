@@ -57,7 +57,7 @@ public class ProductTypeController extends HttpServlet {
         int totalPages = (int) Math.ceil((double) totalProducts / PAGE_SIZE);
 
         Category category = categoryDAO.getCategoryById(categoryId);
-        List<Product> randomRelated = productDAO.getRandomRelated(8);
+//        List<Product> randomRelated = productDAO.getRandomRelated(8);
 
         /* ===== HEADER DATA ===== */
         request.setAttribute("page", "PRODUCT_TYPE");
@@ -66,7 +66,7 @@ public class ProductTypeController extends HttpServlet {
         /* ===== PAGE DATA ===== */
         request.setAttribute("category", category);
         request.setAttribute("products", products);
-        request.setAttribute("randomRelated", randomRelated);
+//        request.setAttribute("randomRelated", randomRelated);
         request.setAttribute("currentPage", page);
         request.setAttribute("totalPages", totalPages);
         request.setAttribute("sort", sort);

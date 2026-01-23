@@ -9,12 +9,12 @@
 <c:forEach items="${reviews}" var="r">
     <div class="review-item">
         <div class="review-header">
-            <strong>${r.userName}</strong>
-            <span>⭐ ${r.rating}/5</span>
-            <span>
+            <strong>Người dùng</strong>
+            <span class="rating">⭐ ${r.rating}/5</span>
+            <span class="review-date">
                 <fmt:formatDate value="${r.createdAt}" pattern="dd/MM/yyyy"/>
             </span>
         </div>
-        <p>${r.comment}</p>
+        <p class="review-content">${r.comment}</p>
     </div>
 </c:forEach>

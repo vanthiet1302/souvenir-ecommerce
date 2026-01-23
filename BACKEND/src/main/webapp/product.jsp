@@ -7,83 +7,100 @@
 <head>
     <meta charset="UTF-8">
     <title>${data.product.name}</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/ProductDetail.css">
+
+    <link rel="stylesheet"
+          href="${pageContext.request.contextPath}/assets/css/ProductDetail.css">
+
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="${pageContext.request.contextPath}/assets/js/ProductDetail.js"></script>
 </head>
 <body>
 
 <jsp:include page="/views/common/header.jsp"/>
 
-<input type="hidden" id="productId" value="${data.product.id}"/>
-
-<!-- BREADCRUMB -->
-<div class="breadcrumb">
-    <a href="${pageContext.request.contextPath}/home">Trang chủ</a>
-    <span>›</span>
-    <span>${data.category.name}</span>
-    <span>›</span>
-    <span>${data.product.name}</span>
-</div>
+<input type="hidden" id="productId" value="${data.product.id}">
+<input type="hidden" id="contextPath"
+       value="${pageContext.request.contextPath}">
 
 <!-- PRODUCT TOP -->
 <section class="product-top">
-    <img src="${pageContext.request.contextPath}/assets/images/products/${data.product.image}"
-         alt="${data.product.name}">
 
-    <h1>${data.product.name}</h1>
+    <div class="product-image">
+        <img src="${pageContext.request.contextPath}/assets/images/products/${data.product.image}">
+        <button class="btn-zoom">🔍</button>
+    </div>
 
-    <c:choose>
-        <c:when test="${data.promotion != null}">
-            <span class="old-price">
-                <fmt:formatNumber value="${data.product.price}" type="number"/>₫
-            </span>
-            <span class="sale-price">
-                <fmt:formatNumber
-                        value="${data.product.price * (100 - data.promotion.discountPercent) / 100}"
-                        type="number"/>₫
-            </span>
-        </c:when>
-        <c:otherwise>
-            <span class="price">
-                <fmt:formatNumber value="${data.product.price}" type="number"/>₫
-            </span>
-        </c:otherwise>
-    </c:choose>
+    <div class="product-info">
+        <h1>${data.product.name}</h1>
+
+        <div class="product-price">
+            <c:choose>
+                <c:when test="${data.promotion != null}">
+                    <span class="old-price">
+                        <fmt:formatNumber value="${data.product.price}"/>₫
+                    </span>
+                    <span class="sale-price">
+                        <fmt:formatNumber value="${data.discountedPrice}"/>₫
+                    </span>
+                </c:when>
+                <c:otherwise>
+                    <span class="normal-price">
+                        <fmt:formatNumber value="${data.product.price}"/>₫
+                    </span>
+                </c:otherwise>
+            </c:choose>
+        </div>
+
+        <p>${data.product.shortDescription}</p>
+    </div>
 </section>
 
-<!-- SPECIFICATIONS -->
-<section>
-    <h2>Thông số kỹ thuật</h2>
-    <c:forEach var="s" items="${data.specifications}">
-        <p>${s.specName}: ${s.specValue}</p>
-    </c:forEach>
-</section>
+<!-- REVIEW SUMMARY -->
+<section class="product-reviews">
+    <h2>Đánh giá sản phẩm</h2>
 
-<!-- REVIEWS -->
-<section id="reviews">
-    <h2>Đánh giá (${data.totalReviews})</h2>
+    <div class="review-summary">
+        <div>${data.avgRating} ⭐</div>
+        <div>${data.totalReviews} đánh giá</div>
+
+        <c:forEach begin="5" end="1" step="-1" var="star">
+            <div>${star} ⭐ : ${data.ratingCount[star]}</div>
+        </c:forEach>
+    </div>
+
+    <!-- FILTER -->
+    <div class="review-filter">
+        <button class="filter-btn" data-rating="">Tất cả</button>
+        <button class="filter-btn" data-rating="5">5 ⭐</button>
+        <button class="filter-btn" data-rating="4">4 ⭐</button>
+        <button class="filter-btn" data-rating="3">3 ⭐</button>
+        <button class="filter-btn" data-rating="2">2 ⭐</button>
+        <button class="filter-btn" data-rating="1">1 ⭐</button>
+
+        <select class="review-sort">
+            <option value="newest">Mới nhất</option>
+            <option value="oldest">Cũ nhất</option>
+        </select>
+    </div>
+
     <div id="reviewContainer"></div>
+
+    <button id="loadMoreReview">Xem thêm</button>
 </section>
 
 <!-- RELATED -->
-<section>
+<section class="related-products">
     <h2>Sản phẩm liên quan</h2>
-    <c:forEach var="p" items="${data.relatedProducts}">
-        <a href="${pageContext.request.contextPath}/product?id=${p.id}">
-                ${p.name}
-        </a>
-    </c:forEach>
+    <div class="product-list">
+        <c:forEach var="p" items="${data.relatedProducts}">
+            <a href="${pageContext.request.contextPath}/product?id=${p.id}">
+                    ${p.name}
+            </a>
+        </c:forEach>
+    </div>
 </section>
 
 <jsp:include page="/views/common/footer.jsp"/>
-
-<script>
-    $(function () {
-        $("#reviewContainer").load(
-            "${pageContext.request.contextPath}/reviews?productId=${data.product.id}"
-        );
-    });
-</script>
 
 </body>
 </html>

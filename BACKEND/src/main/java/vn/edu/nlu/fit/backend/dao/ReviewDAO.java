@@ -2,22 +2,14 @@ package vn.edu.nlu.fit.backend.dao;
 
 import vn.edu.nlu.fit.backend.model.Review;
 import vn.edu.nlu.fit.backend.model.ReviewSummary;
-import vn.edu.nlu.fit.backend.util.DBContextT;
+import vn.edu.nlu.fit.backend.util.DBContext;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Timestamp;
+import java.sql.*;
 import java.util.*;
 
-public class ReviewDAO extends DBContextT {
+public class ReviewDAO {
 
-    /**
-     * Lấy danh sách review theo product với:
-     * - rating: nếu null -> tất cả
-     * - sort: "newest" (default) or "oldest"
-     * - paging: offset, limit
-     */
+    // Get reviews with filter + sort + paging
     public List<Review> getReviewsByProductWithFilter(
             int productId,
             Integer rating,
@@ -27,24 +19,32 @@ public class ReviewDAO extends DBContextT {
     ) {
         List<Review> list = new ArrayList<>();
 
-        StringBuilder sql = new StringBuilder();
-        sql.append("SELECT r.id, r.product_id, r.user_id, r.user_name, r.rating, r.comment, r.created_at ")
-                .append("FROM reviews r ")
-                .append("WHERE r.product_id = ? ");
+        StringBuilder sql = new StringBuilder("""
+            SELECT r.id,
+                   r.product_id,
+                   r.user_id,
+                   u.full_name AS user_name,
+                   r.rating,
+                   r.comment,
+                   r.created_at
+            FROM reviews r
+            JOIN users u ON r.user_id = u.id
+            WHERE r.product_id = ?
+        """);
 
         if (rating != null) {
-            sql.append("AND r.rating = ? ");
+            sql.append(" AND r.rating = ? ");
         }
 
         if ("oldest".equalsIgnoreCase(sort)) {
-            sql.append("ORDER BY r.created_at ASC ");
+            sql.append(" ORDER BY r.created_at ASC ");
         } else {
-            sql.append("ORDER BY r.created_at DESC ");
+            sql.append(" ORDER BY r.created_at DESC ");
         }
 
-        sql.append("LIMIT ? OFFSET ?");
+        sql.append(" LIMIT ? OFFSET ? ");
 
-        try (Connection conn = getConnection();
+        try (Connection conn = DBContext.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql.toString())) {
 
             int idx = 1;
@@ -67,51 +67,58 @@ public class ReviewDAO extends DBContextT {
 
         return list;
     }
-    // Summary
 
+    // Review summary
     public ReviewSummary getReviewSummaryByProductId(int productId) {
-        String sql = "SELECT AVG(rating) AS avg_rating, COUNT(*) AS total_reviews " +
-                "FROM reviews WHERE product_id = ?";
+        String sql = """
+            SELECT COUNT(*) AS total_reviews,
+                   AVG(rating) AS avg_rating
+            FROM reviews
+            WHERE product_id = ?
+        """;
 
-        try (Connection conn = getConnection();
+        try (Connection conn = DBContext.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, productId);
             ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                double avg = rs.getDouble("avg_rating");
-                int total = rs.getInt("total_reviews");
 
-                ReviewSummary s = new ReviewSummary();
-                s.setProductId(productId);
-                s.setAvgRating(Math.round(avg * 10.0) / 10.0); // 1 decimal
-                s.setTotalReviews(total);
-                return s;
+            if (rs.next()) {
+                int total = rs.getInt("total_reviews");
+                double avg = rs.getDouble("avg_rating");
+
+                return new ReviewSummary(
+                        total,
+                        Math.round(avg * 10.0) / 10.0
+                );
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return new ReviewSummary(); // mặc định 0
-    }
-    // count raiting
 
+        return new ReviewSummary(0, 0.0);
+    }
+
+    // Count reviews by rating
     public Map<Integer, Integer> countReviewsByRating(int productId) {
         Map<Integer, Integer> map = new HashMap<>();
-        // init 1..5 = 0
         for (int i = 1; i <= 5; i++) map.put(i, 0);
 
-        String sql = "SELECT rating, COUNT(*) AS cnt FROM reviews " +
-                "WHERE product_id = ? GROUP BY rating";
+        String sql = """
+            SELECT rating, COUNT(*) AS cnt
+            FROM reviews
+            WHERE product_id = ?
+            GROUP BY rating
+        """;
 
-        try (Connection conn = getConnection();
+        try (Connection conn = DBContext.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, productId);
             ResultSet rs = ps.executeQuery();
+
             while (rs.next()) {
-                int rating = rs.getInt("rating");
-                int cnt = rs.getInt("cnt");
-                map.put(rating, cnt);
+                map.put(rs.getInt("rating"), rs.getInt("cnt"));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -119,30 +126,30 @@ public class ReviewDAO extends DBContextT {
 
         return map;
     }
-    // thêm review
-    public boolean addReview(Review r) {
-        String sql = "INSERT INTO reviews (product_id, user_id, user_name, rating, comment, created_at) " +
-                "VALUES (?, ?, ?, ?, ?, ?)";
 
-        try (Connection conn = getConnection();
+    // Add review
+    public boolean addReview(Review r) {
+        String sql = """
+            INSERT INTO reviews (product_id, user_id, rating, comment, created_at)
+            VALUES (?, ?, ?, ?, NOW())
+        """;
+
+        try (Connection conn = DBContext.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, r.getProductId());
             ps.setInt(2, r.getUserId());
-            ps.setString(3, r.getUserName());
-            ps.setInt(4, r.getRating());
-            ps.setString(5, r.getComment());
-            ps.setTimestamp(6, new Timestamp(System.currentTimeMillis()));
+            ps.setInt(3, r.getRating());
+            ps.setString(4, r.getComment());
 
-            int rows = ps.executeUpdate();
-            return rows > 0;
+            return ps.executeUpdate() > 0;
         } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
     }
 
-    /* ----------------- Helpers ----------------- */
+    // Mapping ResultSet → Review
     private Review mapReview(ResultSet rs) throws Exception {
         Review r = new Review();
         r.setId(rs.getInt("id"));
@@ -151,8 +158,7 @@ public class ReviewDAO extends DBContextT {
         r.setUserName(rs.getString("user_name"));
         r.setRating(rs.getInt("rating"));
         r.setComment(rs.getString("comment"));
-        Timestamp t = rs.getTimestamp("created_at");
-        r.setCreatedAt(t != null ? new Date(t.getTime()) : null);
+        r.setCreatedAt(rs.getTimestamp("created_at"));
         return r;
     }
 }

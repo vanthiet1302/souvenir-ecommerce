@@ -2,19 +2,15 @@ package vn.edu.nlu.fit.backend.controller;
 
 import vn.edu.nlu.fit.backend.dao.ReviewDAO;
 import vn.edu.nlu.fit.backend.model.Review;
-import vn.edu.nlu.fit.backend.model.ReviewSummary;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.*;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
-@WebServlet("/reviews")
+@WebServlet(name = "ReviewServlet", urlPatterns = {"/reviews"})
 public class ReviewServlet extends HttpServlet {
 
     private ReviewDAO reviewDAO;
@@ -28,46 +24,56 @@ public class ReviewServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+        /* ================= 1. PARAMS ================= */
         int productId;
         try {
             productId = Integer.parseInt(request.getParameter("productId"));
         } catch (Exception e) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
 
-        /* ===== FILTER ===== */
+        // filter rating ("" hoặc null = all)
         Integer rating = null;
-        String ratingRaw = request.getParameter("rating");
-        if (ratingRaw != null && !ratingRaw.isEmpty() && !"all".equals(ratingRaw)) {
-            rating = Integer.parseInt(ratingRaw);
+        String ratingParam = request.getParameter("rating");
+        if (ratingParam != null && !ratingParam.isEmpty()) {
+            try {
+                rating = Integer.parseInt(ratingParam);
+            } catch (Exception ignored) {}
         }
 
+        // sort
         String sort = request.getParameter("sort");
-        if (sort == null || sort.isEmpty()) {
-            sort = "newest";
-        }
+        if (sort == null) sort = "newest"; // default
 
-        /* ===== PAGINATION ===== */
-        int page = 1;
-        int size = 5;
-
-        try {
-            page = Integer.parseInt(request.getParameter("page"));
-            size = Integer.parseInt(request.getParameter("size"));
-        } catch (Exception ignored) {}
-
+        // pagination
+        int page = parseInt(request.getParameter("page"), 1);
+        int size = parseInt(request.getParameter("size"), 5);
         int offset = (page - 1) * size;
 
-        /* ===== DAO ===== */
-        List<Review> reviews =
-                reviewDAO.getReviewsByProductWithFilter(
-                        productId, rating, sort, offset, size
-                );
+        /* ================= 2. DAO ================= */
+        List<Review> reviews = reviewDAO.getReviews(
+                productId,
+                rating,
+                sort,
+                offset,
+                size
+        );
 
-        /* ===== VIEW ===== */
+        /* ================= 3. SEND TO JSP ================= */
         request.setAttribute("reviews", reviews);
+
+        // fragment JSP (AJAX load)
         request.getRequestDispatcher("/WEB-INF/views/review-items.jsp")
                 .forward(request, response);
+    }
+
+    /* ================= UTIL ================= */
+    private int parseInt(String value, int defaultVal) {
+        try {
+            return value != null ? Integer.parseInt(value) : defaultVal;
+        } catch (Exception e) {
+            return defaultVal;
+        }
     }
 }

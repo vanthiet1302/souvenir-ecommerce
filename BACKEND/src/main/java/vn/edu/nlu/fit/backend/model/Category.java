@@ -5,20 +5,20 @@ import java.util.List;
 
 public class Category {
     private int id;
-    private String name;
+    private String category_name;
     private String image;
-    private List<Product> Products;
+    private List<Product> products;
 
     public Category() {}
 
     public Category(int id, String name) {
         this.id = id;
-        this.name = name;
-        this.Products = new ArrayList<>();
+        this.category_name = name;
+        this.products = new ArrayList<>();
     }
     public Category(int id, String name, String image) {
         this.id = id;
-        this.name = name;
+        this.category_name = name;
         this.image = image;
     }
     public int getId() {
@@ -30,11 +30,11 @@ public class Category {
     }
 
     public String getName() {
-        return name;
+        return category_name;
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.category_name = name;
     }
 
     public String getImage() {
@@ -46,10 +46,10 @@ public class Category {
     }
 
     public List<Product> getProducts() {
-        return Products;
+        return products;
     }
     public void setProducts(List<Product> products) {
-        Products = products;
+        products = products;
     }
 }
 

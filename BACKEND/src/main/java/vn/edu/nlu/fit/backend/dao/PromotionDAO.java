@@ -8,7 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 
-public class PromotionDAO extends DBContext {
+public class PromotionDAO {
 
     private static final String SELECT_ACTIVE_PROMOTION = """
         SELECT id, product_id, discount_percent, start_date, end_date
@@ -21,7 +21,7 @@ public class PromotionDAO extends DBContext {
     """;
 
     public Promotion getActivePromotionByProductId(int productId) {
-        try (Connection conn = getConnection();
+        try (Connection conn = DBContext.getConnection();
              PreparedStatement ps = conn.prepareStatement(SELECT_ACTIVE_PROMOTION)) {
 
             ps.setInt(1, productId);
@@ -30,22 +30,23 @@ public class PromotionDAO extends DBContext {
             if (rs.next()) {
                 return mapPromotion(rs);
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         return null;
     }
 
     private Promotion mapPromotion(ResultSet rs) throws Exception {
         Timestamp start = rs.getTimestamp("start_date");
         Timestamp end   = rs.getTimestamp("end_date");
+
         return new Promotion(
                 rs.getInt("id"),
                 rs.getInt("product_id"),
                 rs.getInt("discount_percent"),
                 start != null ? start.toLocalDateTime() : null,
-                end   != null ? end.toLocalDateTime()   : null
+                end != null ? end.toLocalDateTime() : null
         );
     }
 }

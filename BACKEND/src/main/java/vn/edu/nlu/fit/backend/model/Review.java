@@ -6,6 +6,7 @@ public class Review {
     private int id;
     private int productId;
     private int userId;
+    private String userName;
     private int rating;
     private String comment;
     private Timestamp createdAt;
@@ -63,6 +64,14 @@ public class Review {
 
     public Timestamp getCreatedAt() {
         return createdAt;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public void setCreatedAt(Timestamp createdAt) {

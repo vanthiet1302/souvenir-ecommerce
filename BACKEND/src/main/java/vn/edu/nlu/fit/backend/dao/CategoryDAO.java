@@ -9,21 +9,22 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CategoryDAO extends DBContext {
+public class CategoryDAO {
 
-    // Get all
+    // Get all categories
     public List<Category> getAllCategories() {
         List<Category> list = new ArrayList<>();
-        String sql = "SELECT id, name FROM categories";
+        String sql = "SELECT id, category_name, image FROM categories";
 
-        try (Connection conn = getConnection();
+        try (Connection conn = DBContext.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
                 list.add(new Category(
                         rs.getInt("id"),
-                        rs.getString("name")
+                        rs.getString("category_name"),
+                        rs.getString("image")
                 ));
             }
         } catch (Exception e) {
@@ -32,11 +33,11 @@ public class CategoryDAO extends DBContext {
         return list;
     }
 
-    // get by id
+    // Get category by id
     public Category getCategoryById(int id) {
-        String sql = "SELECT id, name, image FROM categories WHERE id = ?";
+        String sql = "SELECT id, category_name, image FROM categories WHERE id = ?";
 
-        try (Connection conn = getConnection();
+        try (Connection conn = DBContext.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, id);
@@ -45,7 +46,7 @@ public class CategoryDAO extends DBContext {
             if (rs.next()) {
                 return new Category(
                         rs.getInt("id"),
-                        rs.getString("name"),
+                        rs.getString("category_name"),
                         rs.getString("image")
                 );
             }
@@ -55,20 +56,20 @@ public class CategoryDAO extends DBContext {
         return null;
     }
 
-    // top selling
+    // Top selling categories
     public List<Category> getTopSellingCategories(int limit) {
         String sql = """
-            SELECT c.id, c.name
+            SELECT c.id, c.category_name, c.image
             FROM categories c
             JOIN products p ON c.id = p.category_id
-            GROUP BY c.id, c.name
+            GROUP BY c.id, c.category_name, c.image
             ORDER BY SUM(p.total_sold) DESC
             LIMIT ?
         """;
 
         List<Category> list = new ArrayList<>();
 
-        try (Connection conn = getConnection();
+        try (Connection conn = DBContext.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, limit);
@@ -77,7 +78,8 @@ public class CategoryDAO extends DBContext {
             while (rs.next()) {
                 list.add(new Category(
                         rs.getInt("id"),
-                        rs.getString("name")
+                        rs.getString("category_name"),
+                        rs.getString("image")
                 ));
             }
         } catch (Exception e) {
@@ -86,7 +88,7 @@ public class CategoryDAO extends DBContext {
         return list;
     }
 
-    // top selling id
+    // Get top selling category ids
     public List<Integer> getTopSellingCategoryIds(int limit) {
         String sql = """
             SELECT category_id
@@ -98,7 +100,7 @@ public class CategoryDAO extends DBContext {
 
         List<Integer> ids = new ArrayList<>();
 
-        try (Connection conn = getConnection();
+        try (Connection conn = DBContext.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, limit);
@@ -113,7 +115,7 @@ public class CategoryDAO extends DBContext {
         return ids;
     }
 
-    // not in top sell
+    // Categories not in top selling
     public List<Category> getCategoriesNotIn(List<Integer> usedIds) {
 
         if (usedIds == null || usedIds.isEmpty()) {
@@ -121,7 +123,7 @@ public class CategoryDAO extends DBContext {
         }
 
         StringBuilder sql = new StringBuilder(
-                "SELECT id, name FROM categories WHERE id NOT IN ("
+                "SELECT id, category_name, image FROM categories WHERE id NOT IN ("
         );
 
         for (int i = 0; i < usedIds.size(); i++) {
@@ -132,7 +134,7 @@ public class CategoryDAO extends DBContext {
 
         List<Category> list = new ArrayList<>();
 
-        try (Connection conn = getConnection();
+        try (Connection conn = DBContext.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql.toString())) {
 
             for (int i = 0; i < usedIds.size(); i++) {
@@ -143,7 +145,8 @@ public class CategoryDAO extends DBContext {
             while (rs.next()) {
                 list.add(new Category(
                         rs.getInt("id"),
-                        rs.getString("name")
+                        rs.getString("category_name"),
+                        rs.getString("image")
                 ));
             }
         } catch (Exception e) {

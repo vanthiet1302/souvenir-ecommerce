@@ -1,33 +1,39 @@
 package vn.edu.nlu.fit.backend.model;
 
 public class Product {
+
     private int id;
     private Integer categoryId;
+    private String categoryName;      // JOIN categories
     private String name;
     private String description;
+    private String shortDescription;  // dùng cho top section
     private double originalPrice;
-    private String imageUrl;
+    private String image;             // dùng trực tiếp cho JSP
     private int stockQuantity;
     private int totalSold;
     private double avgRating;
     private int reviewCount;
 
-    public Product() {}
+    public Product() {
+    }
 
     public Product(int id, Integer categoryId, String name, String description,
-                   double originalPrice, String imageUrl, int stockQuantity,
+                   double originalPrice, String image, int stockQuantity,
                    int totalSold, double avgRating, int reviewCount) {
         this.id = id;
         this.categoryId = categoryId;
         this.name = name;
         this.description = description;
         this.originalPrice = originalPrice;
-        this.imageUrl = imageUrl;
+        this.image = image;
         this.stockQuantity = stockQuantity;
         this.totalSold = totalSold;
         this.avgRating = avgRating;
         this.reviewCount = reviewCount;
     }
+
+    /* ===== Getter / Setter ===== */
 
     public int getId() {
         return id;
@@ -43,6 +49,14 @@ public class Product {
 
     public void setCategoryId(Integer categoryId) {
         this.categoryId = categoryId;
+    }
+
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
     }
 
     public String getName() {
@@ -61,6 +75,14 @@ public class Product {
         this.description = description;
     }
 
+    public String getShortDescription() {
+        return shortDescription;
+    }
+
+    public void setShortDescription(String shortDescription) {
+        this.shortDescription = shortDescription;
+    }
+
     public double getOriginalPrice() {
         return originalPrice;
     }
@@ -69,12 +91,17 @@ public class Product {
         this.originalPrice = originalPrice;
     }
 
-    public String getImageUrl() {
-        return imageUrl;
+    /* ===== JSP COMPAT ===== */
+    public double getPrice() {
+        return originalPrice;
     }
 
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public int getStockQuantity() {

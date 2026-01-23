@@ -6,6 +6,7 @@ import vn.edu.nlu.fit.backend.util.DBContext;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Timestamp;
 
 public class PromotionDAO extends DBContext {
 
@@ -37,12 +38,14 @@ public class PromotionDAO extends DBContext {
     }
 
     private Promotion mapPromotion(ResultSet rs) throws Exception {
+        Timestamp start = rs.getTimestamp("start_date");
+        Timestamp end   = rs.getTimestamp("end_date");
         return new Promotion(
                 rs.getInt("id"),
                 rs.getInt("product_id"),
                 rs.getInt("discount_percent"),
-                rs.getTimestamp("start_date").toLocalDateTime(),
-                rs.getTimestamp("end_date").toLocalDateTime()
+                start != null ? start.toLocalDateTime() : null,
+                end   != null ? end.toLocalDateTime()   : null
         );
     }
 }

@@ -1,103 +1,79 @@
-<%@ page contentType="text/html;charset=UTF-8" %>
+<%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <div class="header-wrapper">
     <header class="header-container page-container">
 
-        <!-- ================= USER BAR ================= -->
+        <!-- USER BAR -->
         <div class="user-bar">
             <div class="right">
-                <a href="login" class="login">Đăng nhập</a>
-                <span>|</span>
-                <a href="register" class="register">Đăng ký</a>
+                <c:choose>
+                    <c:when test="${not empty authUser}">
+                        <span>Xin chào, ${authUser.fullName}</span>
+                        <a href="${pageContext.request.contextPath}/logout">Đăng xuất</a>
+                    </c:when>
+                    <c:otherwise>
+                        <a href="${pageContext.request.contextPath}/login">Đăng nhập</a>
+                        <span>|</span>
+                        <a href="${pageContext.request.contextPath}/register">Đăng ký</a>
+                    </c:otherwise>
+                </c:choose>
             </div>
         </div>
 
-        <!-- ================= MAIN HEADER ================= -->
+        <!-- MAIN HEADER -->
         <div class="main-header">
 
-            <!-- ===== LEFT: MENU DROPDOWN + LOGO ===== -->
             <div class="left">
-
-                <!-- Menu button -->
-                <button id="menuBtn" class="menu-toggle" aria-label="Mở menu">
+                <button id="menuBtn" class="menu-toggle">
                     <i class="fa fa-bars"></i>
                 </button>
 
-                <!-- Dropdown menu (ALL categories) -->
-                <div class="dropdown-menu" id="dropdownMenu" aria-hidden="true">
+                <!-- ALL CATEGORIES -->
+                <div class="dropdown-menu" id="dropdownMenu">
                     <c:forEach var="c" items="${categories}">
-                        <a href="product-type?id=${c.id}">
+                        <a href="${pageContext.request.contextPath}/product-type?id=${c.id}">
                                 ${c.name}
                         </a>
                     </c:forEach>
                 </div>
 
-                <!-- Logo -->
+                <!-- LOGO -->
                 <div class="logo">
-                    <a href="../../home">
-                        <img src="assets/images/logo.png" alt="INOLA Logo" height="36">
+                    <a href="${pageContext.request.contextPath}/home">
+                        <img src="${pageContext.request.contextPath}/assets/images/logo.png"
+                             alt="INOLA" height="36">
                     </a>
                 </div>
             </div>
 
-            <!-- ===== CENTER: SEARCH ===== -->
+            <!-- SEARCH -->
             <div class="center">
-                <div class="search-wrapper">
-                    <form action="search" method="get">
-                        <input type="text"
-                               name="keyword"
-                               placeholder="Tìm kiếm sản phẩm..."
-                               class="search-bar"
-                               autocomplete="off">
-                        <button class="search-btn" type="submit">
-                            <i class="fa fa-search"></i>
-                        </button>
-                    </form>
-
-                    <!-- search dropdown (giữ UI – xử lý JS sau) -->
-                    <div class="search-dropdown" id="searchDropdown">
-                        <div class="dropdown-top">
-                            <span class="history-title">Tìm kiếm gần đây</span>
-                            <span class="clear-all">Xóa tất cả</span>
-                        </div>
-
-                        <div class="empty-state">
-                            <img src="assets/images/empty-search.png" alt="Empty">
-                            <p>Không có từ khóa tìm kiếm gần đây</p>
-                        </div>
-                    </div>
-                </div>
+                <form action="${pageContext.request.contextPath}/search" method="get">
+                    <input type="text" name="keyword" placeholder="Tìm kiếm sản phẩm...">
+                    <button type="submit">
+                        <i class="fa fa-search"></i>
+                    </button>
+                </form>
             </div>
 
-            <!-- ===== RIGHT: CART ===== -->
+            <!-- CART -->
             <div class="right">
-                <div class="cart">
-                    <a href="cart" class="cart-link" aria-label="Giỏ hàng">
-                        <i class="fa fa-shopping-cart"></i>
-                        <span class="cart-count">0</span>
-                    </a>
-                </div>
+                <a href="${pageContext.request.contextPath}/cart">
+                    <i class="fa fa-shopping-cart"></i>
+                    <span class="cart-count">0</span>
+                </a>
             </div>
-
         </div>
 
-        <!-- ================= MENU BAR ================= -->
-        <!-- 5 CATEGORY BÁN CHẠY NHẤT -->
+        <!-- TOP CATEGORY BAR -->
         <nav class="menu-bar">
-            <c:forEach var="c" items="${topCategories}" varStatus="status">
-                <a href="#Loai${status.index + 1}" class="menu-link">
+            <c:forEach var="c" items="${topCategories}">
+                <a href="${pageContext.request.contextPath}/product-type?id=${c.id}">
                         ${c.name}
                 </a>
             </c:forEach>
-
-            <a href="#extension" class="menu-link">
-                Mọi Người Đang Mua Gì
-            </a>
         </nav>
 
     </header>
 </div>
-
-<!-- overlay -->
-<div id="headerOverlay" class="overlay"></div>

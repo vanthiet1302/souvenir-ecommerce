@@ -10,7 +10,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProductDAO extends DBContext {
+public class ProductDAO {
 
     /* ================= SQL BASE ================= */
     private static final String BASE_SELECT = """
@@ -21,25 +21,21 @@ public class ProductDAO extends DBContext {
 
     /* ================= HOME PAGE ================= */
 
-    // Sản phẩm bán chạy
     public List<Product> getBestSellingProducts(int limit) {
         String sql = BASE_SELECT + " ORDER BY total_sold DESC LIMIT ?";
         return getProductsByLimit(sql, limit);
     }
 
-    // Sản phẩm mới
     public List<Product> getNewestProducts(int limit) {
         String sql = BASE_SELECT + " ORDER BY id DESC LIMIT ?";
         return getProductsByLimit(sql, limit);
     }
 
-    // Sản phẩm đánh giá cao
     public List<Product> getTopRatedProducts(int limit) {
         String sql = BASE_SELECT + " ORDER BY avg_rating DESC, review_count DESC LIMIT ?";
         return getProductsByLimit(sql, limit);
     }
 
-    // Bán chạy theo Category (Home)
     public List<Product> getTopSellingByCategory(int categoryId, int limit) {
         String sql = BASE_SELECT + """
             WHERE category_id = ?
@@ -49,7 +45,7 @@ public class ProductDAO extends DBContext {
 
         List<Product> list = new ArrayList<>();
 
-        try (Connection conn = getConnection();
+        try (Connection conn = DBContext.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, categoryId);
@@ -59,16 +55,15 @@ public class ProductDAO extends DBContext {
             while (rs.next()) {
                 list.add(mapProduct(rs));
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         return list;
     }
 
     /* ================= PRODUCT TYPE ================= */
 
-    // Danh sách sản phẩm theo Category
     public List<Product> getProductsByCategory(int categoryId) {
         String sql = BASE_SELECT + """
             WHERE category_id = ?
@@ -77,7 +72,7 @@ public class ProductDAO extends DBContext {
 
         List<Product> list = new ArrayList<>();
 
-        try (Connection conn = getConnection();
+        try (Connection conn = DBContext.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, categoryId);
@@ -86,14 +81,12 @@ public class ProductDAO extends DBContext {
             while (rs.next()) {
                 list.add(mapProduct(rs));
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         return list;
     }
-
-    /* ================= FILTER + SORT ================= */
 
     public List<Product> getProductsByCategoryWithFilter(
             int categoryId,
@@ -123,28 +116,27 @@ public class ProductDAO extends DBContext {
 
         sql.append(" LIMIT ? OFFSET ?");
 
-        try (Connection conn = getConnection();
+        try (Connection conn = DBContext.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql.toString())) {
 
-            int index = 1;
-            ps.setInt(index++, categoryId);
-            if (minPrice != null) ps.setInt(index++, minPrice);
-            if (maxPrice != null) ps.setInt(index++, maxPrice);
-            ps.setInt(index++, limit);
-            ps.setInt(index, offset);
+            int idx = 1;
+            ps.setInt(idx++, categoryId);
+            if (minPrice != null) ps.setInt(idx++, minPrice);
+            if (maxPrice != null) ps.setInt(idx++, maxPrice);
+            ps.setInt(idx++, limit);
+            ps.setInt(idx, offset);
 
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 list.add(mapProduct(rs));
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         return list;
     }
 
-    // Đếm tổng sản phẩm (phục vụ phân trang)
     public int countProductsByCategoryWithFilter(int categoryId, Integer minPrice, Integer maxPrice) {
         StringBuilder sql = new StringBuilder("""
             SELECT COUNT(*)
@@ -155,13 +147,13 @@ public class ProductDAO extends DBContext {
         if (minPrice != null) sql.append(" AND original_price >= ?");
         if (maxPrice != null) sql.append(" AND original_price <= ?");
 
-        try (Connection conn = getConnection();
+        try (Connection conn = DBContext.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql.toString())) {
 
-            int index = 1;
-            ps.setInt(index++, categoryId);
-            if (minPrice != null) ps.setInt(index++, minPrice);
-            if (maxPrice != null) ps.setInt(index, maxPrice);
+            int idx = 1;
+            ps.setInt(idx++, categoryId);
+            if (minPrice != null) ps.setInt(idx++, minPrice);
+            if (maxPrice != null) ps.setInt(idx, maxPrice);
 
             ResultSet rs = ps.executeQuery();
             if (rs.next()) return rs.getInt(1);
@@ -169,16 +161,16 @@ public class ProductDAO extends DBContext {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         return 0;
     }
 
     /* ================= PRODUCT DETAIL ================= */
 
-    // Chi tiết sản phẩm
     public Product getProductById(int id) {
         String sql = BASE_SELECT + " WHERE id = ?";
 
-        try (Connection conn = getConnection();
+        try (Connection conn = DBContext.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, id);
@@ -189,10 +181,10 @@ public class ProductDAO extends DBContext {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         return null;
     }
 
-    // Sản phẩm liên quan
     public List<Product> getRelatedProducts(int categoryId, int excludeId, int limit) {
         String sql = BASE_SELECT + """
             WHERE category_id = ?
@@ -203,7 +195,7 @@ public class ProductDAO extends DBContext {
 
         List<Product> list = new ArrayList<>();
 
-        try (Connection conn = getConnection();
+        try (Connection conn = DBContext.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, categoryId);
@@ -214,17 +206,11 @@ public class ProductDAO extends DBContext {
             while (rs.next()) {
                 list.add(mapProduct(rs));
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return list;
-    }
 
-    // Random liên quan
-    public List<Product> getRandomRelated(int limit) {
-        String sql = BASE_SELECT + " ORDER BY RAND() LIMIT ?";
-        return getProductsByLimit(sql, limit);
+        return list;
     }
 
     /* ================= COMMON ================= */
@@ -232,7 +218,7 @@ public class ProductDAO extends DBContext {
     private List<Product> getProductsByLimit(String sql, int limit) {
         List<Product> list = new ArrayList<>();
 
-        try (Connection conn = getConnection();
+        try (Connection conn = DBContext.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, limit);
@@ -241,10 +227,10 @@ public class ProductDAO extends DBContext {
             while (rs.next()) {
                 list.add(mapProduct(rs));
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         return list;
     }
 

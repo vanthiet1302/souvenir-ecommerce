@@ -6,24 +6,26 @@ import java.sql.SQLException;
 
 public class DBContext {
 
-    private final String serverName = "localhost";
-    private final String dbName = "inola_db";
-    private final String portNumber = "3306";
-    private final String userID = "root";
-    private final String password = "";
+    private static final String SERVER_NAME = "localhost";
+    private static final String DB_NAME = "inola_db";
+    private static final String PORT_NUMBER = "3306";
+    private static final String USERNAME = "root";
+    private static final String PASSWORD = "";
 
-    public static Connection getConnection() throws ClassNotFoundException, SQLException {
-        String serverName = "localhost";
-        String dbName = "inola_db";
-        String portNumber = "3306";
-        String userID = "root";
-        String password = "";
+    private static final String URL =
+            "jdbc:mysql://" + SERVER_NAME + ":" + PORT_NUMBER + "/" + DB_NAME +
+                    "?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC";
 
-        String url = "jdbc:mysql://" + serverName + ":" + portNumber + "/" + dbName;
-        Class.forName("com.mysql.cj.jdbc.Driver");
-        return DriverManager.getConnection(url, userID, password);
+    public static Connection getConnection() throws SQLException {
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException("Không tìm thấy MySQL Driver", e);
+        }
+        return DriverManager.getConnection(URL, USERNAME, PASSWORD);
     }
-    public static void main(String[] args) {
+
+public static void main(String[] args) {
         try {
             System.out.println(new DBContext().getConnection());
             System.out.println("Kết nối CSDL thành công!");

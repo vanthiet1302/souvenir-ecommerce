@@ -9,7 +9,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProductSpecificationDAO extends DBContext {
+public class ProductSpecificationDAO {
 
     private static final String SELECT_BY_PRODUCT_ID = """
         SELECT id, product_id, spec_name, spec_value
@@ -20,7 +20,7 @@ public class ProductSpecificationDAO extends DBContext {
     public List<ProductSpecification> getByProductId(int productId) {
         List<ProductSpecification> list = new ArrayList<>();
 
-        try (Connection conn = getConnection();
+        try (Connection conn = DBContext.getConnection();
              PreparedStatement ps = conn.prepareStatement(SELECT_BY_PRODUCT_ID)) {
 
             ps.setInt(1, productId);
@@ -29,10 +29,10 @@ public class ProductSpecificationDAO extends DBContext {
             while (rs.next()) {
                 list.add(mapSpecification(rs));
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         return list;
     }
 

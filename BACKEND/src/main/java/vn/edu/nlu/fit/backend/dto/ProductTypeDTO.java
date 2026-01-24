@@ -17,7 +17,9 @@ public class ProductTypeDTO {
 
     private Integer minPrice;
     private Integer maxPrice;
+
     private ProductSort sort;
+    private String sortParam;
 
     /* ===== Getter / Setter ===== */
 
@@ -44,4 +46,7 @@ public class ProductTypeDTO {
 
     public ProductSort getSort() { return sort; }
     public void setSort(ProductSort sort) { this.sort = sort; }
+
+    public String getSortParam() { return sortParam; }
+    public void setSortParam(String sortParam) { this.sortParam = sortParam; }
 }

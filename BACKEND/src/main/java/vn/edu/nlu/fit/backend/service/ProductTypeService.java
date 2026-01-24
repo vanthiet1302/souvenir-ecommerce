@@ -51,6 +51,11 @@ public class ProductTypeService {
         dto.setMaxPrice(maxPrice);
         dto.setSort(sort);
 
+
+        dto.setSortParam(
+                sort != null ? sort.name().toLowerCase() : "popular"
+        );
+
         return dto;
     }
 }

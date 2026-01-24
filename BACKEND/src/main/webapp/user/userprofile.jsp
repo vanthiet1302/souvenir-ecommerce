@@ -1,5 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -38,7 +40,8 @@
                     <button id="menuBtn" class="menu-toggle"><i class="fa fa-bars"></i></button>
                     <div class="logo">
                         <a href="${pageContext.request.contextPath}/home">
-                            <img src="${pageContext.request.contextPath}/assets/image/Logo/Logo-removebg-preview.png" alt="INOLA Logo" height="36">
+                            <img src="${pageContext.request.contextPath}/assets/image/Logo/Logo-removebg-preview.png"
+                                 alt="INOLA Logo" height="36">
                         </a>
                     </div>
                 </div>
@@ -64,7 +67,9 @@
                 <div class="avatar-container">
                     <c:choose>
                         <c:when test="${not empty sessionScope.userInSession.avatar}">
-                            <img src="${pageContext.request.contextPath}/assets/image/Avatar/${sessionScope.userInSession.avatar}" alt="Avatar" class="avatar-img" style="width:80px; height:80px; border-radius:50%; object-fit: cover;">
+                            <img src="${pageContext.request.contextPath}/assets/image/Avatar/${sessionScope.userInSession.avatar}"
+                                 class="avatar-img"
+                                 style="width:80px;height:80px;border-radius:50%;object-fit:cover;">
                         </c:when>
                         <c:otherwise>
                             <i class="fa-solid fa-user-circle avatar-placeholder"></i>
@@ -79,7 +84,7 @@
             <hr class="sidebar-divider">
 
             <ul class="account-menu">
-                <li class="active"><a href="${pageContext.request.contextPath}/user/profile" ><i class="fa-solid fa-user-circle"></i> Hồ Sơ Của Tôi</a></li>
+                <li class="active"><a href="${pageContext.request.contextPath}/user/profile"><i class="fa-solid fa-user-circle"></i> Hồ Sơ Của Tôi</a></li>
                 <li><a href="${pageContext.request.contextPath}/user/order"><i class="fa-solid fa-receipt"></i> Đơn Hàng</a></li>
                 <li><a href="${pageContext.request.contextPath}/user/favourite"><i class="fa-solid fa-heart"></i> Sản Phẩm Yêu Thích</a></li>
                 <li><a href="${pageContext.request.contextPath}/user/review"><i class="fa-solid fa-star"></i> Đánh Giá Của Tôi</a></li>
@@ -88,107 +93,108 @@
         </aside>
 
         <main class="account-content">
+            <!-- PROFILE -->
             <div class="profile-card">
                 <h2>Thông tin cá nhân</h2>
 
-                <c:if test="${not empty message}">
-                    <div style="color: green; margin-bottom: 15px;">${message}</div>
-                </c:if>
-                <c:if test="${not empty error}">
-                    <div style="color: red; margin-bottom: 15px;">${error}</div>
-                </c:if>
+                <form class="profile-form" action="${pageContext.request.contextPath}/user/profile" method="post">
+                    <input type="hidden" name="action" value="update_profile">
 
-                <form class="profile-form" action="${pageContext.request.contextPath}/user/update-profile" method="post">
                     <div class="form-group">
-                        <label for="fullname">Họ và tên</label>
-                        <input type="text" id="fullname" name="fullname" value="${sessionScope.userInSession.fullName}">
+                        <label>Họ và tên</label>
+                        <input type="text" name="fullName" value="${sessionScope.userInSession.fullName}">
                     </div>
+
                     <div class="form-group">
-                        <label for="email">Email</label>
-                        <input type="email" id="email" name="email" value="${sessionScope.userInSession.email}" required>
+                        <label>Email</label>
+                        <input type="email" value="${sessionScope.userInSession.email}" disabled>
                     </div>
+
                     <div class="form-group">
-                        <label for="phone">Số điện thoại</label>
-                        <input type="tel" id="phone" name="phone" value="${sessionScope.userInSession.phone}">
+                        <label>Số điện thoại</label>
+                        <input type="tel" name="phone" value="${sessionScope.userInSession.phone}">
                     </div>
+
                     <div class="form-group radio-group">
                         <label>Giới tính</label>
-                        <input type="radio" id="male" name="gender" value="Nam" ${sessionScope.userInSession.gender == 'Nam' ? 'checked' : ''}> <label for="male">Nam</label>
-                        <input type="radio" id="female" name="gender" value="Nữ" ${sessionScope.userInSession.gender == 'Nữ' ? 'checked' : ''}> <label for="female">Nữ</label>
+                        <input type="radio" name="gender" value="Nam"
+                               <c:if test="${sessionScope.userInSession.gender == 'Nam'}">checked</c:if>> Nam
+                        <input type="radio" name="gender" value="Nữ"
+                               <c:if test="${sessionScope.userInSession.gender == 'Nữ'}">checked</c:if>> Nữ
                     </div>
+
                     <div class="form-group">
-                        <label for="dob">Ngày sinh</label>
-                        <input type="date" id="dob" name="dob" value="${sessionScope.userInSession.dob}">
+                        <label>Ngày sinh</label>
+                        <input type="date" name="dob" value="${sessionScope.userInSession.dob}">
                     </div>
+
                     <button type="submit" class="btn-save">Lưu thay đổi</button>
                 </form>
             </div>
 
+            <!-- ADDRESS -->
             <div class="profile-card">
                 <div class="card-header">
                     <h2>Địa chỉ</h2>
-                    <button class="btn-add" onclick="document.getElementById('addAddressForm').style.display='block'">
+                    <button class="btn-add"
+                            onclick="document.getElementById('addAddressForm').style.display='block'">
                         <i class="fa-solid fa-plus"></i> Thêm địa chỉ mới
                     </button>
                 </div>
 
-                <div id="addAddressForm" style="display:none; margin: 20px 0; padding: 20px; border: 1px dashed #5a2d81; border-radius: 8px; background: #fdfbff;">
-                    <h3 style="margin-bottom: 15px; color: #5a2d81;">Nhập địa chỉ mới</h3>
-                    <form action="${pageContext.request.contextPath}/user/add-address" method="post" class="profile-form">
+                <div id="addAddressForm"
+                     style="display:none;margin:20px 0;padding:20px;border:1px dashed #5a2d81;border-radius:8px;background:#fdfbff;">
+                    <form action="${pageContext.request.contextPath}/user/profile" method="post" class="profile-form">
+                        <input type="hidden" name="action" value="add_address">
+
                         <div class="form-group">
-                            <label>Địa chỉ chi tiết (Số nhà, tên đường...)</label>
-                            <input type="text" name="addressDetail" required placeholder="VD: 123 Đường ABC">
+                            <label>Địa chỉ chi tiết</label>
+                            <input type="text" name="addressDetail" required>
                         </div>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px;">
-                            <div class="form-group">
-                                <label>Phường/Xã</label>
-                                <input type="text" name="ward" required>
-                            </div>
-                            <div class="form-group">
-                                <label>Quận/Huyện</label>
-                                <input type="text" name="district" required>
-                            </div>
-                            <div class="form-group">
-                                <label>Tỉnh/Thành phố</label>
-                                <input type="text" name="city" required>
-                            </div>
+
+                        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:15px;">
+                            <input type="text" name="ward" placeholder="Phường/Xã" required>
+                            <input type="text" name="district" placeholder="Quận/Huyện" required>
+                            <input type="text" name="city" placeholder="Tỉnh/Thành phố" required>
                         </div>
-                        <div style="margin-top: 20px; display: flex; gap: 10px;">
-                            <button type="submit" class="btn-save" style="width: auto; padding: 10px 25px;">Thêm mới</button>
-                            <button type="button" class="btn-save" style="width: auto; padding: 10px 25px; background: #666;" onclick="document.getElementById('addAddressForm').style.display='none'">Hủy</button>
+
+                        <div style="margin-top:20px;display:flex;gap:10px;">
+                            <button type="submit" class="btn-save">Thêm mới</button>
+                            <button type="button" class="btn-save" style="background:#666"
+                                    onclick="document.getElementById('addAddressForm').style.display='none'">
+                                Hủy
+                            </button>
                         </div>
                     </form>
                 </div>
 
-                <c:forEach items="${listAddr}" var="addr">
-                    <div class="address-item">
-                        <div class="address-info">
-                            <div class="info-header">
-                                <strong>${sessionScope.userInSession.fullName}</strong>
-                                <c:if test="${addr.isDefault == 1}">
-                                    <span class="default-badge">Mặc định</span>
-                                </c:if>
+                <c:choose>
+                    <c:when test="${not empty listAddr}">
+                        <c:forEach items="${listAddr}" var="addr">
+                            <div class="address-item">
+                                <div class="address-info">
+                                    <strong>${sessionScope.userInSession.fullName}</strong>
+                                    <c:if test="${addr.isDefault == 1}">
+                                        <span style="color:#5a2d81;font-weight:600;"> (Mặc định)</span>
+                                    </c:if>
+                                    <p class="address-text">
+                                            ${addr.addressDetail}, ${addr.ward}, ${addr.district}, ${addr.city}
+                                    </p>
+                                </div>
                             </div>
-                            <p class="phone-number">SĐT: ${sessionScope.userInSession.phone}</p>
-                            <p class="address-text">${addr.addressDetail}, ${addr.ward}, ${addr.district}, ${addr.city}</p>
+                        </c:forEach>
+                    </c:when>
+                    <c:otherwise>
+                        <div style="text-align:center;padding:20px;color:#999;">
+                            Bạn chưa có địa chỉ nào.
                         </div>
-                        <div class="address-actions">
-                            <button class="btn-link" onclick="location.href='${pageContext.request.contextPath}/user/edit-address?id=${addr.id}'">Cập nhật</button>
-                            <button class="btn-link btn-delete" onclick="if(confirm('Xóa địa chỉ này?')) location.href='${pageContext.request.contextPath}/user/delete-address?id=${addr.id}'">Xóa</button>
-                        </div>
-                    </div>
-                </c:forEach>
-
-                <c:if test="${empty listAddr}">
-                    <div style="text-align: center; padding: 20px; color: #999;">
-                        Bạn chưa có địa chỉ nào.
-                    </div>
-                </c:if>
+                    </c:otherwise>
+                </c:choose>
             </div>
         </main>
     </div>
 </div>
 
-<jsp:include page="/views/common/footer.jsp" />
+<jsp:include page="/views/common/footer.jsp"/>
 </body>
 </html>

@@ -6,7 +6,26 @@
     padding: 0 40px;
     box-sizing: border-box;
 }
+.user-bar {
+    display: flex;
+    justify-content: flex-start; /* Đẩy sang trái hoàn toàn */
+    padding: 10px 5%;
+    background: #fdfbff;
+}
 
+.user-header-left .user-trigger {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 500;
+}
+
+/* Dropdown cũng phải căn theo lề trái của trigger */
+.user-dropdown {
+    left: 0;
+    right: auto;
+    text-align: left;
+}
 /* Tràn nền header ra toàn màn hình */
 .header-wrapper {
     width: 100vw;

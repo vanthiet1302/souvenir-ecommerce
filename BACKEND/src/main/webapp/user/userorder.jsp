@@ -38,7 +38,7 @@
                     <div class="logo">
                         <%-- Chuyển link Logo về Servlet Home [cite: 24, 25] --%>
                         <a href="${pageContext.request.contextPath}/home">
-                            <img src="${pageContext.request.contextPath}/assets/image/Logo/Logo-removebg-preview.png" alt="INOLA Logo" height="36">
+                            <img src="${pageContext.request.contextPath}/assets/images/Logo/Logo-removebg-preview.png" alt="INOLA Logo" height="36">
                         </a>
                     </div>
                 </div>

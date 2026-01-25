@@ -38,7 +38,7 @@
                     <button id="menuBtn" class="menu-toggle"><i class="fa fa-bars"></i></button>
                     <div class="logo">
                         <a href="${pageContext.request.contextPath}/home">
-                            <img src="${pageContext.request.contextPath}/assets/image/Logo/Logo-removebg-preview.png" alt="INOLA Logo" height="36">
+                            <img src="${pageContext.request.contextPath}/assets/images/Logo/Logo-removebg-preview.png" alt="INOLA Logo" height="36">
                         </a>
                     </div>
                 </div>

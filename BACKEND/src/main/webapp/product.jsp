@@ -3,6 +3,12 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <!DOCTYPE html>
+<link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/HomePage.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/HomePageFooter.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/HomePageMain.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/HomePageSlip.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/STT.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/HomePageAlter.css">
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
@@ -19,14 +25,14 @@
 <jsp:include page="/views/common/header.jsp"/>
 
 <input type="hidden" id="productId" value="${data.product.id}">
-<input type="hidden" id="contextPath"
-       value="${pageContext.request.contextPath}">
+<input type="hidden" id="contextPath" value="${pageContext.request.contextPath}">
 
 <!-- PRODUCT TOP -->
 <section class="product-top">
 
     <div class="product-image">
-        <img src="${pageContext.request.contextPath}/assets/images/products/${data.product.image}">
+        <img src="${pageContext.request.contextPath}/assets/images/products/${data.product.image}"
+             alt="${data.product.name}">
         <button class="btn-zoom">🔍</button>
     </div>
 
@@ -37,15 +43,15 @@
             <c:choose>
                 <c:when test="${data.promotion != null}">
                     <span class="old-price">
-                        <fmt:formatNumber value="${data.product.price}"/>₫
+                        <fmt:formatNumber value="${data.product.originalPrice}"/> ₫
                     </span>
                     <span class="sale-price">
-                        <fmt:formatNumber value="${data.discountedPrice}"/>₫
+                        <fmt:formatNumber value="${data.discountedPrice}"/> ₫
                     </span>
                 </c:when>
                 <c:otherwise>
                     <span class="normal-price">
-                        <fmt:formatNumber value="${data.product.price}"/>₫
+                        <fmt:formatNumber value="${data.product.originalPrice}"/> ₫
                     </span>
                 </c:otherwise>
             </c:choose>
@@ -63,7 +69,8 @@
         <div>${data.avgRating} ⭐</div>
         <div>${data.totalReviews} đánh giá</div>
 
-        <c:forEach begin="5" end="1" step="-1" var="star">
+        <!-- FIX JSTL: KHÔNG DÙNG step ÂM -->
+        <c:forEach var="star" items="${[5,4,3,2,1]}">
             <div>${star} ⭐ : ${data.ratingCount[star]}</div>
         </c:forEach>
     </div>
@@ -88,14 +95,22 @@
     <button id="loadMoreReview">Xem thêm</button>
 </section>
 
-<!-- RELATED -->
+<!-- RELATED PRODUCTS -->
 <section class="related-products">
     <h2>Sản phẩm liên quan</h2>
+
     <div class="product-list">
         <c:forEach var="p" items="${data.relatedProducts}">
-            <a href="${pageContext.request.contextPath}/product?id=${p.id}">
-                    ${p.name}
-            </a>
+            <div class="product-card">
+                <a href="${pageContext.request.contextPath}/product?id=${p.id}">
+                    <img src="${pageContext.request.contextPath}/assets/images/products/${p.image}"
+                         alt="${p.name}">
+                    <p class="product-name">${p.name}</p>
+                    <span class="current-price">
+                        <fmt:formatNumber value="${p.originalPrice}"/> ₫
+                    </span>
+                </a>
+            </div>
         </c:forEach>
     </div>
 </section>

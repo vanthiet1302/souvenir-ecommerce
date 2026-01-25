@@ -6,31 +6,31 @@ import vn.edu.nlu.fit.backend.model.Category;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
+
 import java.io.IOException;
 import java.util.List;
 
 @WebServlet(name = "HomeController", urlPatterns = {"/home"})
 public class HomeController extends HttpServlet {
-    private HomeDAO HomeDAO;
+
+    private HomeDAO homeDAO;
 
     @Override
-    public void init() throws ServletException {
-        HomeDAO = new HomeDAO();
+    public void init() {
+        homeDAO = new HomeDAO();
     }
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        // Section chính: 5 category bán chạy
-        List<Category> topCategories = HomeDAO.getTopCategoriesForHome();
-
-        // Extension section
-        List<Category> extensionCategories = HomeDAO.getExtensionSections();
+        List<Category> topCategories = homeDAO.getTopCategoriesForHome();
+        List<Category> extensionCategories = homeDAO.getExtensionSections();
 
         request.setAttribute("topCategories", topCategories);
         request.setAttribute("extensionCategories", extensionCategories);
 
-        request.getRequestDispatcher("/home/homepage.jsp").forward(request, response);
-
+        request.getRequestDispatcher("/home/homepage.jsp")
+                .forward(request, response);
     }
 }

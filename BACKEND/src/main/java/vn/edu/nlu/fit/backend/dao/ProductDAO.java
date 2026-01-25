@@ -87,6 +87,40 @@ public class ProductDAO {
 
         return list;
     }
+    public int countProductsByCategoryWithFilter(
+            int categoryId,
+            Integer minPrice,
+            Integer maxPrice,
+            Integer rating
+    ) {
+        StringBuilder sql = new StringBuilder("""
+        SELECT COUNT(*)
+        FROM products
+        WHERE category_id = ?
+    """);
+
+        if (minPrice != null) sql.append(" AND original_price >= ?");
+        if (maxPrice != null) sql.append(" AND original_price <= ?");
+        if (rating != null)   sql.append(" AND avg_rating >= ?");
+
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+
+            int idx = 1;
+            ps.setInt(idx++, categoryId);
+            if (minPrice != null) ps.setInt(idx++, minPrice);
+            if (maxPrice != null) ps.setInt(idx++, maxPrice);
+            if (rating != null)   ps.setInt(idx, rating);
+
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) return rs.getInt(1);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return 0;
+    }
 
     public List<Product> getProductsByCategoryWithFilter(
             int categoryId,

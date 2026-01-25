@@ -139,12 +139,18 @@
         <!-- ===== PAGINATION ===== -->
         <div class="pagination">
             <c:forEach begin="1" end="${data.totalPages}" var="i">
-                <a href="${pageContext.request.contextPath}/category?id=${data.category.id}&page=${i}&minPrice=${data.minPrice}&maxPrice=${data.maxPrice}&sort=${data.sort.name().toLowerCase()}"
+                <a href="${pageContext.request.contextPath}/category?id=${data.category.id}
+            &page=${i}
+            &minPrice=${data.minPrice}
+            &maxPrice=${data.maxPrice}
+            &rating=${data.rating}
+            &sort=${data.sort.name().toLowerCase()}"
                    class="${i == data.currentPage ? 'active' : ''}">
                         ${i}
                 </a>
             </c:forEach>
         </div>
+
 
     </main>
 </div>

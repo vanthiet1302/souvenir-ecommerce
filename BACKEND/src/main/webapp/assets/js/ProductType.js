@@ -3,11 +3,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const filterForm = document.querySelector(".filter-sidebar form");
     if (!filterForm) return;
 
-    const sortSelect = filterForm.querySelector("select[name='sort']");
-    const minPriceInput = filterForm.querySelector("input[name='minPrice']");
-    const maxPriceInput = filterForm.querySelector("input[name='maxPrice']");
-
-    /* ================= UTIL ================= */
+    const sortSelect   = filterForm.querySelector("select[name='sort']");
+    const ratingSelect = filterForm.querySelector("select[name='rating']");
 
     function ensurePageReset() {
         let pageInput = filterForm.querySelector("input[name='page']");
@@ -20,8 +17,6 @@ document.addEventListener("DOMContentLoaded", function () {
         pageInput.value = "1";
     }
 
-    /* ================= SORT CHANGE ================= */
-
     if (sortSelect) {
         sortSelect.addEventListener("change", function () {
             ensurePageReset();
@@ -29,10 +24,14 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    /* ================= FILTER SUBMIT ================= */
+    if (ratingSelect) {
+        ratingSelect.addEventListener("change", function () {
+            ensurePageReset();
+            filterForm.submit();
+        });
+    }
 
     filterForm.addEventListener("submit", function () {
         ensurePageReset();
     });
-
 });

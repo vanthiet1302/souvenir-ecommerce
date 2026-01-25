@@ -42,7 +42,10 @@ public class ProductTypeService {
 
         int totalProducts =
                 productDAO.countProductsByCategoryWithFilter(
-                        categoryId, minPrice, maxPrice
+                        categoryId,
+                        minPrice,
+                        maxPrice,
+                        rating
                 );
 
         int totalPages =

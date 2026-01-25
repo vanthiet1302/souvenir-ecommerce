@@ -92,9 +92,11 @@ public class ProductDAO {
             int categoryId,
             Integer minPrice,
             Integer maxPrice,
+            Integer rating,
             ProductSort sort,
             int offset,
-            int limit) {
+            int limit
+    ) {
 
         List<Product> list = new ArrayList<>();
         StringBuilder sql = new StringBuilder(BASE_SELECT);
@@ -102,6 +104,7 @@ public class ProductDAO {
 
         if (minPrice != null) sql.append(" AND original_price >= ?");
         if (maxPrice != null) sql.append(" AND original_price <= ?");
+        if (rating != null)   sql.append(" AND avg_rating >= ?");
 
         if (sort != null) {
             switch (sort) {
@@ -123,6 +126,7 @@ public class ProductDAO {
             ps.setInt(idx++, categoryId);
             if (minPrice != null) ps.setInt(idx++, minPrice);
             if (maxPrice != null) ps.setInt(idx++, maxPrice);
+            if (rating != null)   ps.setInt(idx++, rating);
             ps.setInt(idx++, limit);
             ps.setInt(idx, offset);
 
@@ -136,6 +140,7 @@ public class ProductDAO {
 
         return list;
     }
+
 
     public int countProductsByCategoryWithFilter(int categoryId, Integer minPrice, Integer maxPrice) {
         StringBuilder sql = new StringBuilder("""

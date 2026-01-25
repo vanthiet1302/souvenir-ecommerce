@@ -9,7 +9,7 @@
     <title>${data.category.name}</title>
 
     <link rel="stylesheet"
-          href="${pageContext.request.contextPath}/assets/css/ProductType.css">
+          href="${pageContext.request.contextPath}/assets/css/PTypeMain.css">
 
     <script src="${pageContext.request.contextPath}/assets/js/ProductType.js"
             defer></script>

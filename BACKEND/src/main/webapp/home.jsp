@@ -10,7 +10,7 @@
 
     <!-- CSS -->
     <link rel="stylesheet"
-          href="${pageContext.request.contextPath}/assets/css/HomePage.css">
+          href="${pageContext.request.contextPath}/assets/css/HomePageMain.css">
 </head>
 <body>
 

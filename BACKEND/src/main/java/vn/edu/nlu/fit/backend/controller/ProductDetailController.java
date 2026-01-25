@@ -45,7 +45,6 @@ public class ProductDetailController extends HttpServlet {
         /* ===== PAGE DATA ===== */
         request.setAttribute("data", dto);
 
-        request.getRequestDispatcher("/WEB-INF/views/productDetail.jsp")
-                .forward(request, response);
+        request.getRequestDispatcher("product.jsp").forward(request, response);
     }
 }

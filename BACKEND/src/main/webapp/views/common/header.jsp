@@ -1,10 +1,10 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <div class="header-wrapper">
     <header class="header-container">
 
-        <!-- ===== USER BAR ===== -->
+        <!-- USER BAR -->
         <div class="user-bar">
             <div class="right">
                 <c:choose>
@@ -15,13 +15,13 @@
                     <c:otherwise>
                         <a href="${pageContext.request.contextPath}/login">Đăng nhập</a>
                         <span>|</span>
-                        <a href="${pageContext.request.contextPath}/register">Đăng ký</a>
+                        <a href="${pageContext.request.contextPath}/signup">Đăng ký</a>
                     </c:otherwise>
                 </c:choose>
             </div>
         </div>
 
-        <!-- ===== MAIN HEADER ===== -->
+        <!-- MAIN HEADER -->
         <div class="main-header">
             <div class="left">
                 <button id="menuBtn" class="menu-toggle">
@@ -38,8 +38,7 @@
 
                 <div class="logo">
                     <a href="${pageContext.request.contextPath}/home">
-                        <img src="${pageContext.request.contextPath}/assets/images/logo.png"
-                             alt="INOLA" height="36">
+                        <img src="${pageContext.request.contextPath}/assets/images/logo.png" alt="INOLA">
                     </a>
                 </div>
             </div>
@@ -57,7 +56,7 @@
             </div>
         </div>
 
-        <!-- ===== DYNAMIC SECTION ===== -->
+        <!-- MENU / BREADCRUMB -->
         <c:if test="${headerMode == null || headerMode == 'MENU'}">
             <nav class="menu-bar">
                 <c:forEach var="c" items="${topCategories}">
@@ -68,7 +67,6 @@
             </nav>
         </c:if>
 
-        <!-- BREADCRUMB (DETAIL / PRODUCT TYPE) -->
         <c:if test="${headerMode == 'BREADCRUMB'}">
             <div class="breadcrumb">
                 <a href="${pageContext.request.contextPath}/home">Trang chủ</a>

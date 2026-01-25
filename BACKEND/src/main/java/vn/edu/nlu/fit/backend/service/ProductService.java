@@ -23,6 +23,7 @@ public class ProductService {
         Promotion promotion = promotionDAO.getActivePromotionByProductId(productId);
 
         ReviewSummary summary = reviewDAO.getReviewSummaryByProductId(productId);
+
         Map<Integer, Integer> ratingCount = reviewDAO.countReviewsByRating(productId);
         for (int i = 1; i <= 5; i++) ratingCount.putIfAbsent(i, 0);
 
@@ -31,7 +32,13 @@ public class ProductService {
         dto.setCategory(category);
         dto.setPromotion(promotion);
         dto.setSpecifications(specificationDAO.getByProductId(productId));
-
+        if (summary != null) {
+            dto.setAvgRating(summary.getAvgRating());
+            dto.setTotalReviews(summary.getTotalReviews());
+        } else {
+            dto.setAvgRating(0);
+            dto.setTotalReviews(0);
+        }
         dto.setAvgRating(summary.getAvgRating());
         dto.setTotalReviews(summary.getTotalReviews());
         dto.setRatingCount(ratingCount);

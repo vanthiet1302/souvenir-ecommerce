@@ -22,6 +22,7 @@
 
         <form method="get" action="${pageContext.request.contextPath}/category">
             <input type="hidden" name="id" value="${data.category.id}"/>
+            <input type="hidden" name="page" value="1"/>
 
             <div class="filter-group">
                 <label>Giá từ</label>
@@ -37,19 +38,19 @@
                 <label>Sắp xếp</label>
                 <select name="sort">
                     <option value="popular"
-                    ${data.sort == 'POPULAR' ? 'selected' : ''}>
+                    ${data.sort.name() == 'POPULAR' ? 'selected' : ''}>
                         Bán chạy
                     </option>
                     <option value="newest"
-                    ${data.sort == 'NEWEST' ? 'selected' : ''}>
+                    ${data.sort.name() == 'NEWEST' ? 'selected' : ''}>
                         Mới nhất
                     </option>
                     <option value="price_asc"
-                    ${data.sort == 'PRICE_ASC' ? 'selected' : ''}>
+                    ${data.sort.name() == 'PRICE_ASC' ? 'selected' : ''}>
                         Giá tăng
                     </option>
                     <option value="price_desc"
-                    ${data.sort == 'PRICE_DESC' ? 'selected' : ''}>
+                    ${data.sort.name() == 'PRICE_DESC' ? 'selected' : ''}>
                         Giá giảm
                     </option>
                 </select>
@@ -84,17 +85,14 @@
 
                             <div class="img-box">
                                 <img src="${pageContext.request.contextPath}/assets/images/products/${p.image}"
-                                     alt="${p.name}"
-                                     class="product-img"/>
+                                     alt="${p.name}">
                             </div>
 
                             <p class="product-name">${p.name}</p>
 
                             <div class="price-container">
                                 <span class="product-price">
-                                    <fmt:formatNumber value="${p.price}"
-                                                      type="number"
-                                                      groupingUsed="true"/> ₫
+                                    <fmt:formatNumber value="${p.price}" type="number"/> ₫
                                 </span>
                             </div>
 
@@ -118,7 +116,11 @@
         <!-- ===== PAGINATION ===== -->
         <div class="pagination">
             <c:forEach begin="1" end="${data.totalPages}" var="i">
-                <a href="${pageContext.request.contextPath}/category?id=${data.category.id}&page=${i}&minPrice=${data.minPrice}&maxPrice=${data.maxPrice}&sort=${data.sortParam}"
+                <a href="${pageContext.request.contextPath}/category?id=${data.category.id}
+                    &page=${i}
+                    &minPrice=${data.minPrice}
+                    &maxPrice=${data.maxPrice}
+                    &sort=${data.sort.name().toLowerCase()}"
                    class="${i == data.currentPage ? 'active' : ''}">
                         ${i}
                 </a>

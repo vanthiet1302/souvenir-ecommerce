@@ -1,36 +1,33 @@
 package vn.edu.nlu.fit.backend.controller;
 
-import vn.edu.nlu.fit.backend.dao.HomeDAO;
-import vn.edu.nlu.fit.backend.model.Category;
+import vn.edu.nlu.fit.backend.dto.HomePageDTO;
+import vn.edu.nlu.fit.backend.service.HomeService;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
-import java.io.IOException;
-import java.util.List;
 
-@WebServlet(name = "HomeController", urlPatterns = {"/home"})
+import java.io.IOException;
+
+@WebServlet("/home")
 public class HomeController extends HttpServlet {
-    private HomeDAO HomeDAO;
+
+    private HomeService homeService;
 
     @Override
-    public void init() throws ServletException {
-        HomeDAO = new HomeDAO();
+    public void init() {
+        homeService = new HomeService();
     }
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        // Section chính: 5 category bán chạy
-        List<Category> topCategories = HomeDAO.getTopCategoriesForHome();
+        HomePageDTO dto = homeService.getHomePageData();
 
-        // Extension section
-        List<Category> extensionCategories = HomeDAO.getExtensionSections();
+        request.setAttribute("data", dto);
 
-        request.setAttribute("topCategories", topCategories);
-        request.setAttribute("extensionCategories", extensionCategories);
-
-        request.getRequestDispatcher("/home/homepage.jsp").forward(request, response);
-
+        request.getRequestDispatcher("/WEB-INF/views/home/homepage.jsp")
+                .forward(request, response);
     }
 }

@@ -11,24 +11,30 @@
 <jsp:include page="views/common/header.jsp"/>
 <div class="page-container">
 <!-- Banner slideshow  -->
-<div class="slideshow-container" id="headerSlideshow">
-    <c:forEach var="i" begin="1" end="4">
-        <div class="slide">
-            <a href="productType">
-                <img src="${pageContext.request.contextPath}/assets/img/banner/img${i}.jpg"/>
-            </a>
-        </div>
-    </c:forEach>
+    <div class="slideshow-container" id="headerSlideshow">
 
-    <button class="prev">&#10094;</button>
-    <button class="next">&#10095;</button>
-
-    <div class="dots">
-        <c:forEach var="i" begin="1" end="4">
-            <span class="dot" data-slide="${i}"></span>
+        <!-- SLIDES -->
+        <c:forEach var="item" items="${data.bannerCategories}" varStatus="status">
+            <div class="slide">
+                <a href="${pageContext.request.contextPath}/category?id=${item.category.id}">
+                    <img src="${pageContext.request.contextPath}/assets/images/Banner/${item.category.image}"
+                         alt="${item.category.name}">
+                </a>
+            </div>
         </c:forEach>
+
+        <!-- NAV BUTTON -->
+        <button class="prev">&#10094;</button>
+        <button class="next">&#10095;</button>
+
+        <!-- DOTS -->
+        <div class="dots">
+            <c:forEach var="item" items="${data.bannerCategories}" varStatus="status">
+                <span class="dot" data-slide="${status.index}"></span>
+            </c:forEach>
+        </div>
+
     </div>
-</div>
 <!-- Caterory top section   -->
 <c:forEach var="cat" items="${topCategories}">
     <section id="Loai${cat.id}" class="product-section">
@@ -70,45 +76,63 @@
     </section>
 </c:forEach>
 <!-- Extension section -->
-<section id="extension" class="product-section horizontal-section">
+    <section id="extension" class="product-section horizontal-section">
 
-    <div class="left-content">
-        <h2>DANH MỤC KHÁC</h2>
-        <a class="see-more-btn" href="productType">Xem thêm</a>
-    </div>
+        <!-- LEFT -->
+        <div class="left-content">
+            <h2>DANH MỤC KHÁC</h2>
+            <a class="see-more-btn"
+               href="${pageContext.request.contextPath}/category">
+                Xem thêm
+            </a>
+        </div>
 
-    <div class="right-content">
-        <div class="product-slider">
+        <!-- RIGHT -->
+        <div class="right-content">
 
-            <!-- 3 category còn lại -->
-            <c:forEach var="cat" items="${extraCategories}">
-                <div class="product-card category-card">
-                    <a href="productType?cid=${cat.id}">
-                        <img src="${cat.thumbnailUrl}">
-                        <p>${cat.name}</p>
-                    </a>
+            <!-- PREV -->
+            <button class="slider-btn prev" id="extPrev">‹</button>
+
+            <!-- WRAPPER (che overflow) -->
+            <div class="product-slider-wrapper">
+
+                <!-- SLIDER -->
+                <div class="product-slider" id="extSlider">
+
+                    <!-- CATEGORY BÌNH THƯỜNG -->
+                    <c:forEach var="cat" items="${extraCategories}">
+                        <div class="product-card category-card">
+                            <a href="${pageContext.request.contextPath}/category?id=${cat.id}">
+                                <img src="${pageContext.request.contextPath}/assets/images/banner/${cat.image}">
+                                <p>${cat.name}</p>
+                            </a>
+                        </div>
+                    </c:forEach>
+
+                    <!-- LOGIC CATEGORY: TOP RATED -->
+                    <div class="product-card category-card">
+                        <a href="${pageContext.request.contextPath}/category?type=topRated">
+                            <img src="${pageContext.request.contextPath}/assets/images/banner/top-rated.jpg">
+                            <p>Sản phẩm đánh giá tốt</p>
+                        </a>
+                    </div>
+
+                    <!-- LOGIC CATEGORY: NEW -->
+                    <div class="product-card category-card">
+                        <a href="${pageContext.request.contextPath}/category?type=new">
+                            <img src="${pageContext.request.contextPath}/assets/images/banner/new.jpg">
+                            <p>Sản phẩm mới</p>
+                        </a>
+                    </div>
+
                 </div>
-            </c:forEach>
-
-            <!-- Category logic: Đánh giá tốt -->
-            <div class="product-card category-card">
-                <a href="productType?type=topRated">
-                    <img src="${pageContext.request.contextPath}/assets/img/category/top-rated.jpg">
-                    <p>Sản phẩm đánh giá tốt</p>
-                </a>
             </div>
 
-            <!-- Category logic: Sản phẩm mới -->
-            <div class="product-card category-card">
-                <a href="productType?type=new">
-                    <img src="${pageContext.request.contextPath}/assets/img/category/new.jpg">
-                    <p>Sản phẩm mới</p>
-                </a>
-            </div>
+            <!-- NEXT -->
+            <button class="slider-btn next" id="extNext">›</button>
 
         </div>
-    </div>
-</section>
+    </section>
 <!-- Top Selling  -->
 <section class="product-section top-selling">
     <h2>MỌI NGƯỜI ĐANG MUA GÌ</h2>

@@ -1,16 +1,24 @@
-
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
-<html>
+<!DOCTYPE html>
+<html lang="vi">
 <head>
-    <title>Title</title>
+    <meta charset="UTF-8">
+    <title>Trang chủ</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet"
+          href="${pageContext.request.contextPath}/assets/css/HomePage.css">
 </head>
 <body>
-<jsp:include page="views/common/header.jsp"/>
+
+<jsp:include page="/views/common/header.jsp"/>
+
 <div class="page-container">
-<!-- Banner slideshow  -->
+
+    <!-- ================= BANNER SLIDESHOW ================= -->
     <div class="slideshow-container" id="headerSlideshow">
 
         <!-- SLIDES -->
@@ -23,7 +31,7 @@
             </div>
         </c:forEach>
 
-        <!-- NAV BUTTON -->
+        <!-- NAV -->
         <button class="prev">&#10094;</button>
         <button class="next">&#10095;</button>
 
@@ -33,49 +41,55 @@
                 <span class="dot" data-slide="${status.index}"></span>
             </c:forEach>
         </div>
-
     </div>
-<!-- Caterory top section   -->
-<c:forEach var="cat" items="${topCategories}">
-    <section id="Loai${cat.id}" class="product-section">
 
-        <h2>
-            <a href="productType?cid=${cat.id}">
-                    ${cat.name}
+    <!-- ================= TOP CATEGORY SECTIONS ================= -->
+    <c:forEach var="section" items="${data.topCategorySections}">
+        <section id="Loai${section.category.id}" class="product-section">
+
+            <h2>
+                <a href="${pageContext.request.contextPath}/category?id=${section.category.id}">
+                        ${section.category.name}
+                </a>
+            </h2>
+
+            <div class="product-list">
+                <c:forEach var="p" items="${section.products}">
+                    <div class="product-card">
+                        <a href="${pageContext.request.contextPath}/product?id=${p.id}">
+
+                            <div class="img-box">
+                                <img src="${pageContext.request.contextPath}/assets/images/products/${p.image}"
+                                     alt="${p.name}">
+                            </div>
+
+                            <p class="product-name">${p.name}</p>
+
+                            <div class="price-container">
+                                <span class="product-price">
+                                    <fmt:formatNumber value="${p.price}"
+                                                      type="number"
+                                                      groupingUsed="true"/> ₫
+                                </span>
+                            </div>
+
+                            <p class="product-sold">
+                                Đã bán ${p.totalSold}
+                                <span class="rating">★ ${p.avgRating}</span>
+                            </p>
+                        </a>
+                    </div>
+                </c:forEach>
+            </div>
+
+            <a class="see-more-btn"
+               href="${pageContext.request.contextPath}/category?id=${section.category.id}">
+                Xem thêm
             </a>
-        </h2>
+        </section>
+    </c:forEach>
 
-        <div class="product-list">
-            <c:forEach var="p" items="${cat.products}">
-                <div class="product-card">
-                    <a href="productDetail?id=${p.id}">
-                        <div class="img-box">
-                            <img src="${p.imageUrl}" class="product-img"/>
-                        </div>
-
-                        <p class="product-name">${p.name}</p>
-
-                        <div class="price-container">
-                            <span class="product-price">
-                                <fmt:formatNumber value="${p.originalPrice}" type="number" groupingUsed="true"/> ₫
-                            </span>
-                        </div>
-
-                        <p class="product-sold">
-                            Đã bán ${p.totalSold}
-                            <span class="rating">★ ${p.avgRating}</span>
-                        </p>
-                    </a>
-                </div>
-            </c:forEach>
-        </div>
-
-        <a class="see-more-btn" href="productType?cid=${cat.id}">
-            Xem thêm
-        </a>
-    </section>
-</c:forEach>
-<!-- Extension section -->
+    <!-- ================= EXTENSION SECTION ================= -->
     <section id="extension" class="product-section horizontal-section">
 
         <!-- LEFT -->
@@ -93,34 +107,32 @@
             <!-- PREV -->
             <button class="slider-btn prev" id="extPrev">‹</button>
 
-            <!-- WRAPPER (che overflow) -->
+            <!-- WRAPPER -->
             <div class="product-slider-wrapper">
-
-                <!-- SLIDER -->
                 <div class="product-slider" id="extSlider">
 
-                    <!-- CATEGORY BÌNH THƯỜNG -->
-                    <c:forEach var="cat" items="${extraCategories}">
+                    <!-- CATEGORY FROM EXTENSION -->
+                    <c:forEach var="section" items="${data.extensionSections}">
                         <div class="product-card category-card">
-                            <a href="${pageContext.request.contextPath}/category?id=${cat.id}">
-                                <img src="${pageContext.request.contextPath}/assets/images/banner/${cat.image}">
-                                <p>${cat.name}</p>
+                            <a href="${pageContext.request.contextPath}/category?id=${section.category.id}">
+                                <img src="${pageContext.request.contextPath}/assets/images/Banner/${section.category.image}"
+                                     alt="${section.category.name}">
+                                <p>${section.category.name}</p>
                             </a>
                         </div>
                     </c:forEach>
 
-                    <!-- LOGIC CATEGORY: TOP RATED -->
+                    <!-- LOGIC CATEGORY -->
                     <div class="product-card category-card">
                         <a href="${pageContext.request.contextPath}/category?type=topRated">
-                            <img src="${pageContext.request.contextPath}/assets/images/banner/top-rated.jpg">
+                            <img src="${pageContext.request.contextPath}/assets/images/Banner/top-rated.jpg">
                             <p>Sản phẩm đánh giá tốt</p>
                         </a>
                     </div>
 
-                    <!-- LOGIC CATEGORY: NEW -->
                     <div class="product-card category-card">
                         <a href="${pageContext.request.contextPath}/category?type=new">
-                            <img src="${pageContext.request.contextPath}/assets/images/banner/new.jpg">
+                            <img src="${pageContext.request.contextPath}/assets/images/Banner/new.jpg">
                             <p>Sản phẩm mới</p>
                         </a>
                     </div>
@@ -130,39 +142,13 @@
 
             <!-- NEXT -->
             <button class="slider-btn next" id="extNext">›</button>
-
         </div>
     </section>
-<!-- Top Selling  -->
-<section class="product-section top-selling">
-    <h2>MỌI NGƯỜI ĐANG MUA GÌ</h2>
 
-    <div class="product-list">
-        <c:forEach var="p" items="${topSellingProducts}">
-            <div class="product-card">
-                <a href="productDetail?id=${p.id}">
-                    <div class="img-box">
-                        <img src="${p.imageUrl}" class="product-img"/>
-                    </div>
-
-                    <p class="product-name">${p.name}</p>
-
-                    <div class="price-container">
-                        <span class="product-price">
-                            <fmt:formatNumber value="${p.originalPrice}" type="number" groupingUsed="true"/> ₫
-                        </span>
-                    </div>
-
-                    <p class="product-sold">
-                        Đã bán ${p.totalSold}
-                        <span class="rating">★ ${p.avgRating}</span>
-                    </p>
-                </a>
-            </div>
-        </c:forEach>
-    </div>
-</section>
 </div>
+
 <jsp:include page="/views/common/footer.jsp"/>
+<!-- JS -->
+<script src="${pageContext.request.contextPath}/assets/js/HomePage.js"></script>
 </body>
 </html>

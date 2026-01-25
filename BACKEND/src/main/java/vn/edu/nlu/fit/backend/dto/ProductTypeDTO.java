@@ -17,7 +17,7 @@ public class ProductTypeDTO {
 
     private Integer minPrice;
     private Integer maxPrice;
-
+    private Integer rating;
     private ProductSort sort;
     private String sortParam;
 
@@ -46,6 +46,13 @@ public class ProductTypeDTO {
 
     public ProductSort getSort() { return sort; }
     public void setSort(ProductSort sort) { this.sort = sort; }
+
+    public Integer getRating() {
+        return rating;
+    }
+    public void setRating(Integer rating) {
+        this.rating = rating;
+    }
 
     public String getSortParam() { return sortParam; }
     public void setSortParam(String sortParam) { this.sortParam = sortParam; }

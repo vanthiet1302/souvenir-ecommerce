@@ -20,6 +20,7 @@ public class ProductTypeService {
             int categoryId,
             Integer minPrice,
             Integer maxPrice,
+            Integer rating,
             ProductSort sort,
             int page
     ) {
@@ -30,7 +31,13 @@ public class ProductTypeService {
 
         List<Product> products =
                 productDAO.getProductsByCategoryWithFilter(
-                        categoryId, minPrice, maxPrice, sort, offset, PAGE_SIZE
+                        categoryId,
+                        minPrice,
+                        maxPrice,
+                        rating,
+                        sort,
+                        offset,
+                        PAGE_SIZE
                 );
 
         int totalProducts =
@@ -49,12 +56,9 @@ public class ProductTypeService {
         dto.setTotalProducts(totalProducts);
         dto.setMinPrice(minPrice);
         dto.setMaxPrice(maxPrice);
+        dto.setRating(rating);
         dto.setSort(sort);
-
-
-        dto.setSortParam(
-                sort != null ? sort.name().toLowerCase() : "popular"
-        );
+        dto.setSortParam(sort != null ? sort.name().toLowerCase() : "popular");
 
         return dto;
     }

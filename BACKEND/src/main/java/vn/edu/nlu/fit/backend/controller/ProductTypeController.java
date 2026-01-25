@@ -39,12 +39,14 @@ public class ProductTypeController extends HttpServlet {
         ProductSort sort = parseSort(request.getParameter("sort"));
 
         int page = parseInteger(request.getParameter("page"), 1);
+        Integer rating = parseInteger(request.getParameter("rating"));
 
         /* ===== 3. SERVICE ===== */
         ProductTypeDTO dto = productTypeService.getProductType(
                 categoryId,
                 minPrice,
                 maxPrice,
+                rating,
                 sort,
                 page
         );

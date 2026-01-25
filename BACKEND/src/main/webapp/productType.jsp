@@ -7,8 +7,12 @@
 <head>
     <meta charset="UTF-8">
     <title>${data.category.name}</title>
+
     <link rel="stylesheet"
           href="${pageContext.request.contextPath}/assets/css/ProductType.css">
+
+    <script src="${pageContext.request.contextPath}/assets/js/ProductType.js"
+            defer></script>
 </head>
 <body>
 
@@ -24,6 +28,7 @@
             <input type="hidden" name="id" value="${data.category.id}"/>
             <input type="hidden" name="page" value="1"/>
 
+            <!-- ===== PRICE FILTER ===== -->
             <div class="filter-group">
                 <label>Giá từ</label>
                 <input type="number" name="minPrice" value="${data.minPrice}"/>
@@ -34,6 +39,24 @@
                 <input type="number" name="maxPrice" value="${data.maxPrice}"/>
             </div>
 
+            <!-- ===== RATING FILTER (NEW) ===== -->
+            <div class="filter-group">
+                <label>Đánh giá</label>
+                <select name="rating">
+                    <option value="">Tất cả</option>
+                    <option value="5" ${data.rating == 5 ? 'selected' : ''}>
+                        ⭐ 5 sao
+                    </option>
+                    <option value="4" ${data.rating == 4 ? 'selected' : ''}>
+                        ⭐ 4 sao trở lên
+                    </option>
+                    <option value="3" ${data.rating == 3 ? 'selected' : ''}>
+                        ⭐ 3 sao trở lên
+                    </option>
+                </select>
+            </div>
+
+            <!-- ===== SORT ===== -->
             <div class="filter-group">
                 <label>Sắp xếp</label>
                 <select name="sort">
@@ -116,11 +139,7 @@
         <!-- ===== PAGINATION ===== -->
         <div class="pagination">
             <c:forEach begin="1" end="${data.totalPages}" var="i">
-                <a href="${pageContext.request.contextPath}/category?id=${data.category.id}
-                    &page=${i}
-                    &minPrice=${data.minPrice}
-                    &maxPrice=${data.maxPrice}
-                    &sort=${data.sort.name().toLowerCase()}"
+                <a href="${pageContext.request.contextPath}/category?id=${data.category.id}&page=${i}&minPrice=${data.minPrice}&maxPrice=${data.maxPrice}&sort=${data.sort.name().toLowerCase()}"
                    class="${i == data.currentPage ? 'active' : ''}">
                         ${i}
                 </a>

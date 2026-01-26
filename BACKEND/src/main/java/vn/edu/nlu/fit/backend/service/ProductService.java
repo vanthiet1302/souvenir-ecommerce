@@ -47,7 +47,7 @@ public class ProductService {
                 productDAO.getRelatedProducts(
                         product.getCategoryId(),
                         productId,
-                        6
+                        5
                 )
         );
 

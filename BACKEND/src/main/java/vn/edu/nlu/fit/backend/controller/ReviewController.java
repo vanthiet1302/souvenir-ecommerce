@@ -52,7 +52,7 @@ public class ReviewController extends HttpServlet {
 
         request.setAttribute("reviews", reviews);
 
-        request.getRequestDispatcher("review-items.jsp")
+        request.getRequestDispatcher("ReviewItem.jsp")
                 .forward(request, response);
     }
 

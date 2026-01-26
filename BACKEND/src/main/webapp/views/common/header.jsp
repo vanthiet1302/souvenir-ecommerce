@@ -49,7 +49,7 @@
 
                 <div class="logo">
                     <a href="${pageContext.request.contextPath}/home">
-                        <img src="${pageContext.request.contextPath}/assets/images/logo/Logo-removebg-preview.png"
+                        <img src="${pageContext.request.contextPath}/assets/images/Logo/Logo-removebg-preview.png"
                              alt="INOLA Logo">
                     </a>
                 </div>

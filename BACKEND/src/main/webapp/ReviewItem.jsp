@@ -10,13 +10,16 @@
 <c:forEach var="r" items="${reviews}">
     <div class="review-item">
 
+        <!-- AVATAR -->
         <div class="review-avatar">
                 ${fn:substring(r.userName, 0, 1)}
         </div>
 
+        <!-- BODY -->
         <div class="review-body">
+
             <div class="review-header">
-                <strong>${r.userName}</strong>
+                <strong class="review-user">${r.userName}</strong>
                 <span class="review-date">
                     <fmt:formatDate value="${r.createdAt}" pattern="dd/MM/yyyy HH:mm"/>
                 </span>
@@ -26,16 +29,10 @@
                 <c:forEach begin="1" end="${r.rating}">⭐</c:forEach>
             </div>
 
-            <p class="review-text">${r.comment}</p>
+            <p class="review-text">
+                    ${r.comment}
+            </p>
 
-            <c:if test="${not empty r.images}">
-                <div class="review-images">
-                    <c:forEach var="img" items="${r.images}">
-                        <img src="${pageContext.request.contextPath}${img}">
-                    </c:forEach>
-                </div>
-            </c:if>
         </div>
-
     </div>
 </c:forEach>

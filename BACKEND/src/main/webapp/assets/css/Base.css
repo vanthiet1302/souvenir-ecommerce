@@ -49,8 +49,8 @@ ul, ol {
     list-style: none;
 }
 
-/* ============ 2 . Font và kiểu chữ ============== */
 
+/* ============ 2 . Font và kiểu chữ ============== */
 h1, h2, h3, h4, h5, h6 {
     margin: 0;
     font-weight: 700;
@@ -78,7 +78,6 @@ p {
 
 
 /* ============ 3 . Biến màu  ============== */
-
 :root {
     /* ===== Background ===== */
     --bg-main: #F3F3F3;
@@ -115,23 +114,26 @@ p {
 }
 
 
-/* ============ 4. Layout chung  ============== */
+/* ============ 4. LAYOUT CHUNG (CHUẨN HOÁ) ============== */
 
-/* Container chuẩn cho toàn site */
+/* SECTION: chịu trách nhiệm nền (CÓ THỂ TRÀN) */
+.section {
+    width: 100%;
+}
+
+/* Container chuẩn cho toàn site (KHÔNG BAO GIỜ TRÀN) */
 .main-container {
     max-width: 1400px;
     margin: 0 auto;
-    padding: 0 40px;
+    padding-left: 40px;
+    padding-right: 40px;
+    width: 100%;
 }
 
-/* Full width section (dùng cho banner / nền tràn) */
-.full-width {
-    width: 100vw;
-    position: relative;
-    left: 50%;
-    right: 50%;
-    margin-left: -50vw;
-    margin-right: -50vw;
+/* Section spacing */
+.section-spacing {
+    padding-top: 40px;
+    padding-bottom: 40px;
 }
 
 /* Divider dùng chung */
@@ -144,9 +146,9 @@ p {
 }
 
 
-/* ============ 5 . Component chung ============== */
-/* ================= PRODUCT CARD (HOME + PRODUCT TYPE) ================= */
+/* ============ 5 . COMPONENT DÙNG CHUNG ============== */
 
+/* ================= PRODUCT CARD (HOME + PRODUCT TYPE) ================= */
 .product-card {
     background: var(--bg-white);
     border-radius: var(--radius-md);
@@ -260,8 +262,7 @@ p {
 }
 
 
-/* ================= BUTTON CƠ BẢN ================= */
-
+/* ================= BUTTON ================= */
 .btn {
     display: inline-block;
     padding: 10px 28px;
@@ -292,11 +293,11 @@ p {
 }
 
 
-/* ============ 6 . Tương thích  ============== */
-
+/* ============ 6 . RESPONSIVE ============== */
 @media (max-width: 992px) {
     .main-container {
-        padding: 0 20px;
+        padding-left: 20px;
+        padding-right: 20px;
     }
 }
 

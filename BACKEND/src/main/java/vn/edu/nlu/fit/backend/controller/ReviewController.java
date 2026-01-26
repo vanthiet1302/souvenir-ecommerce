@@ -24,6 +24,8 @@ public class ReviewController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+        response.setContentType("text/html;charset=UTF-8");
+
         int productId = parseInt(request.getParameter("productId"), -1);
         if (productId == -1) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -32,12 +34,14 @@ public class ReviewController extends HttpServlet {
 
         Integer rating = null;
         String ratingParam = request.getParameter("rating");
-        if (ratingParam != null && !ratingParam.isEmpty()) {
+        if (ratingParam != null && !ratingParam.isBlank()) {
             rating = parseInt(ratingParam, null);
         }
 
         String sort = request.getParameter("sort");
-        if (sort == null) sort = "newest";
+        if (sort == null || sort.isBlank()) {
+            sort = "newest";
+        }
 
         int page = parseInt(request.getParameter("page"), 1);
         int size = parseInt(request.getParameter("size"), 5);
@@ -47,7 +51,8 @@ public class ReviewController extends HttpServlet {
                 reviewService.getReviews(productId, rating, sort, offset, size);
 
         request.setAttribute("reviews", reviews);
-        request.getRequestDispatcher("/WEB-INF/views/review-items.jsp")
+
+        request.getRequestDispatcher("ReviewItem.jsp")
                 .forward(request, response);
     }
 

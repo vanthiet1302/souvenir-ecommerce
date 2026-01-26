@@ -19,7 +19,7 @@ public class ProductDetailDTO {
     private int totalReviews;
     private Map<Integer, Integer> ratingCount;
 
-    private List<Product> relatedProducts;
+    private List<ProductCardDTO> relatedProductCards;
 
     /* ===== Getter / Setter ===== */
 
@@ -87,11 +87,11 @@ public class ProductDetailDTO {
         this.ratingCount = ratingCount;
     }
 
-    public List<Product> getRelatedProducts() {
-        return relatedProducts;
+    public List<ProductCardDTO> getRelatedProductCards() {
+        return relatedProductCards;
     }
 
-    public void setRelatedProducts(List<Product> relatedProducts) {
-        this.relatedProducts = relatedProducts;
+    public void setRelatedProductCards(List<ProductCardDTO> relatedProductCards) {
+        this.relatedProductCards = relatedProductCards;
     }
 }

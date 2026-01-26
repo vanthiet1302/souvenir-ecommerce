@@ -9,6 +9,8 @@ public class Product {
     private String description;
     private String shortDescription;  // dùng cho top section
     private double originalPrice;
+    private int discountPercent = 0;  // % giảm giá - mặc định 0
+    private Double salePrice;         // Giá sau giảm
     private String image;             // dùng trực tiếp cho JSP
     private int stockQuantity;
     private int totalSold;
@@ -100,6 +102,10 @@ public class Product {
         return image;
     }
 
+    public String getImageUrl() {
+        return image;
+    }
+
     public void setImage(String image) {
         this.image = image;
     }
@@ -134,5 +140,25 @@ public class Product {
 
     public void setReviewCount(int reviewCount) {
         this.reviewCount = reviewCount;
+    }
+
+    public int getDiscountPercent() {
+        return discountPercent;
+    }
+
+    public void setDiscountPercent(int discountPercent) {
+        this.discountPercent = discountPercent;
+    }
+
+    public Double getSalePrice() {
+        return salePrice;
+    }
+
+    public void setSalePrice(Double salePrice) {
+        this.salePrice = salePrice;
+    }
+
+    public boolean hasDiscount() {
+        return discountPercent > 0 && salePrice != null;
     }
 }

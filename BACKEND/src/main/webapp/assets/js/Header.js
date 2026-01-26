@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
 
+    /* ================= ELEMENTS ================= */
     const menuBtn = document.getElementById('menuBtn');
     const dropdownMenu = document.getElementById('dropdownMenu');
     const overlay = document.getElementById('headerOverlay');
@@ -12,17 +13,16 @@ document.addEventListener('DOMContentLoaded', () => {
         dropdownMenu?.classList.remove('open');
         userDropdown?.classList.remove('open');
         overlay?.classList.remove('active');
-        dropdownMenu?.setAttribute('aria-hidden', 'true');
     }
 
-    /* ================= CATEGORY MENU ================= */
+    /* ================= CATEGORY DROPDOWN ================= */
     menuBtn?.addEventListener('click', (e) => {
         e.stopPropagation();
 
         const isOpen = dropdownMenu.classList.toggle('open');
-        dropdownMenu.setAttribute('aria-hidden', String(!isOpen));
-
         overlay.classList.toggle('active', isOpen);
+
+        // Không cho user menu mở cùng lúc
         userDropdown?.classList.remove('open');
     });
 
@@ -31,9 +31,10 @@ document.addEventListener('DOMContentLoaded', () => {
         e.stopPropagation();
 
         const isOpen = userDropdown.classList.toggle('open');
+        overlay.classList.toggle('active', isOpen);
 
+        // Không cho category menu mở cùng lúc
         dropdownMenu?.classList.remove('open');
-        overlay?.classList.toggle('active', isOpen);
     });
 
     /* ================= OVERLAY ================= */
@@ -52,19 +53,28 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     /* ================= CATEGORY LINK ================= */
+    // Click category → sang page khác → chỉ cần đóng menu
     document.querySelectorAll('.dropdown-menu a').forEach(link => {
-        link.addEventListener('click', closeAll);
+        link.addEventListener('click', () => {
+            closeAll();
+        });
     });
 
-    /* ================= MENU BAR SCROLL ================= */
+    /* ================= MENU BAR (HOME PAGE ONLY) ================= */
+    // Menu-bar CHỈ scroll trong HomePage
     document.querySelectorAll('.menu-bar a').forEach(link => {
         link.addEventListener('click', (e) => {
             const targetId = link.getAttribute('href');
-            if (targetId?.startsWith('#')) {
+
+            if (targetId && targetId.startsWith('#')) {
                 const target = document.querySelector(targetId);
                 if (target) {
                     e.preventDefault();
-                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    closeAll();
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
                 }
             }
         });

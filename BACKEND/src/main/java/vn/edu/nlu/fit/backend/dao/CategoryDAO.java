@@ -14,7 +14,7 @@ public class CategoryDAO {
     // Get all categories
     public List<Category> getAllCategories() {
         List<Category> list = new ArrayList<>();
-        String sql = "SELECT id, category_name, image FROM categories";
+        String sql = "SELECT id, category_name, image FROM categories ORDER BY id DESC";
 
         try (Connection conn = DBContext.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
@@ -153,5 +153,69 @@ public class CategoryDAO {
             e.printStackTrace();
         }
         return list;
+    }
+
+    /* ================= ADMIN CRUD ================= */
+
+    public boolean insertCategory(Category category) {
+        String sql = "INSERT INTO categories (category_name, image) VALUES (?, ?)";
+
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, category.getName());
+            ps.setString(2, category.getImage());
+            return ps.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean updateCategory(Category category) {
+        String sql = "UPDATE categories SET category_name = ?, image = ? WHERE id = ?";
+
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, category.getName());
+            ps.setString(2, category.getImage());
+            ps.setInt(3, category.getId());
+            return ps.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean deleteCategory(int id) {
+        String sql = "DELETE FROM categories WHERE id = ?";
+
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, id);
+            return ps.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public int getProductCountByCategory(int categoryId) {
+        String sql = "SELECT COUNT(*) as total FROM products WHERE category_id = ?";
+
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, categoryId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("total");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 }

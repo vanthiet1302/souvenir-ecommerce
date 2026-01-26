@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -23,7 +24,7 @@
             <div class="section-header">
                 <h2 class="section-title">Giỏ hàng của bạn</h2>
                 <div class="select-all-items">
-                    <label>Tổng cộng: ${sessionScope.cart.totalQuantity()} sản phẩm</label>
+                    <label>Tổng cộng: ${not empty sessionScope.cart ? sessionScope.cart.totalQuantity() : 0} sản phẩm</label>
                 </div>
             </div>
 
@@ -38,15 +39,15 @@
                 <div class="cart-item-card">
                     <input type="checkbox" class="item-checkbox">
                     <div class="item-image">
-                        <img src="${pageContext.request.contextPath}/${item.product.image}" alt="${item.product.productName}">
+                        <img src="${pageContext.request.contextPath}${item.product.imageUrl}" alt="${item.product.name}">
                     </div>
                     <div class="item-details">
-                        <h3 class="item-title">${item.product.productName}</h3>
-                        <p class="item-variant">Đơn giá: ${item.price}₫</p>
+                        <h3 class="item-title">${item.product.name}</h3>
+                        <p class="item-variant">Đơn giá: <fmt:formatNumber value="${item.price}" type="number" groupingUsed="true"/>₫</p>
                         <span class="item-status status-available">Còn hàng</span>
                     </div>
                     <div class="item-price-quantity">
-                        <span class="item-price">${item.subTotal}₫</span>
+                        <span class="item-price"><fmt:formatNumber value="${item.subTotal}" type="number" groupingUsed="true"/>₫</span>
                         <div class="quantity-selector">
                             <button class="qty-btn minus-btn"><i class="fa-solid fa-minus"></i></button>
                             <input type="number" value="${item.quantity}" min="1" class="qty-input">
@@ -65,15 +66,11 @@
         <div class="order-summary-section">
             <div class="summary-card">
                 <h2 class="summary-card-title">Tóm tắt đơn hàng</h2>
-                <div class="voucher-input-group">
-                    <input type="text" placeholder="Nhập mã giảm giá..." class="voucher-input">
-                    <button class="apply-voucher-btn">Áp dụng</button>
-                </div>
 
                 <div class="summary-details">
                     <div class="summary-row">
                         <span>Tạm tính</span>
-                        <span>${sessionScope.cart.total()}₫</span>
+                        <span><fmt:formatNumber value="${not empty sessionScope.cart ? sessionScope.cart.total() : 0}" type="number" groupingUsed="true"/>₫</span>
                     </div>
                     <div class="summary-row">
                         <span>Phí vận chuyển</span>
@@ -81,7 +78,7 @@
                     </div>
                     <div class="summary-total-row">
                         <span>Tổng cộng</span>
-                        <span class="final-total">${sessionScope.cart.total()}₫</span>
+                        <span class="final-total"><fmt:formatNumber value="${not empty sessionScope.cart ? sessionScope.cart.total() : 0}" type="number" groupingUsed="true"/>₫</span>
                     </div>
                 </div>
 
@@ -99,5 +96,6 @@
     <jsp:include page="/views/common/footer.jsp" />
 </div>
 
+<script src="${pageContext.request.contextPath}/assets/js/ShoppingCart.js"></script>
 </body>
 </html>

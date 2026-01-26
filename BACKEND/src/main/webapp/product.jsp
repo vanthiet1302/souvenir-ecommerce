@@ -214,22 +214,11 @@
         <h2 class="related-title">Sản phẩm liên quan</h2>
 
         <div class="related-grid">
-            <c:forEach var="p" items="${data.relatedProducts}">
-                <div class="related-card">
-                    <a href="${pageContext.request.contextPath}/product?id=${p.id}">
-                        <img src="${pageContext.request.contextPath}${p.image}" alt="${p.name}">
-                        <p class="name">${p.name}</p>
-                        <p class="price">
-                            <fmt:formatNumber value="${p.price}"/> ₫
-                        </p>
-                        <p class="sold">
-                            Đã bán ${p.totalSold}
-                            <span class="rating">★${p.avgRating}</span>
-                        </p>
-                    </a>
-                </div>
+            <c:forEach var="p" items="${data.relatedProductCards}">
+                <%@ include file="product-card.jsp" %>
             </c:forEach>
         </div>
 
     </div>
 </section>
+

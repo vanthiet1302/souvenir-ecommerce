@@ -1,12 +1,16 @@
 package vn.edu.nlu.fit.backend.service;
 
-import vn.edu.nlu.fit.backend.dao.CategoryDAO;
+import vn.edu.nlu.fit.backend.dao.*;
 import vn.edu.nlu.fit.backend.dao.ProductDAO;
+import vn.edu.nlu.fit.backend.dto.ProductCardDTO;
 import vn.edu.nlu.fit.backend.dto.ProductTypeDTO;
 import vn.edu.nlu.fit.backend.Enums.ProductSort;
 import vn.edu.nlu.fit.backend.model.Category;
 import vn.edu.nlu.fit.backend.model.Product;
+import vn.edu.nlu.fit.backend.model.Promotion;
+import vn.edu.nlu.fit.backend.util.ProductCardMapper;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ProductTypeService {
@@ -15,6 +19,8 @@ public class ProductTypeService {
 
     private final ProductDAO productDAO = new ProductDAO();
     private final CategoryDAO categoryDAO = new CategoryDAO();
+    private final PromotionDAO promotionDAO = new PromotionDAO();
+
 
     public ProductTypeDTO getProductType(
             int categoryId,
@@ -50,10 +56,15 @@ public class ProductTypeService {
 
         int totalPages =
                 (int) Math.ceil((double) totalProducts / PAGE_SIZE);
-
+        List<ProductCardDTO> cards = new ArrayList<>();
         ProductTypeDTO dto = new ProductTypeDTO();
         dto.setCategory(category);
-        dto.setProducts(products);
+        for (Product p : products) {
+            Promotion promo = promotionDAO.getActivePromotionByProductId(p.getId());
+            cards.add(ProductCardMapper.from(p, promo));
+        }
+
+        dto.setProducts(cards);
         dto.setCurrentPage(page);
         dto.setTotalPages(totalPages);
         dto.setTotalProducts(totalProducts);

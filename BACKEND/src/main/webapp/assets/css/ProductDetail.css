@@ -362,24 +362,8 @@
 }
 
 /* ============================  RELATED PRODUCTS ============================= */
-/* RELATED */
-.related-products {
-    background: #f8f8f8;
-    padding: 48px 0;
-    padding-bottom: 64px;
-}
-
-.related-products .main-container {
-    background: transparent;
-}
-
-.related-grid {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 20px;
-}
-
-.related-card {
+/* Product card trong related-grid */
+.related-grid .product-card {
     background: #fff;
     border-radius: 12px;
     overflow: hidden;
@@ -387,34 +371,32 @@
     transition: 0.2s;
 }
 
-.related-card:hover {
+.related-grid .product-card:hover {
     box-shadow: 0 6px 18px rgba(0,0,0,0.08);
     transform: translateY(-4px);
 }
 
-.related-card img {
+/* Image */
+.related-grid .product-card .img-box {
     width: 100%;
-    aspect-ratio: 1/1;
+    height: auto;
+}
+
+.related-grid .product-card img {
+    width: 100%;
+    aspect-ratio: 1 / 1;
     object-fit: cover;
 }
-
-.related-card .name,
-.related-card .price,
-.related-card .sold {
-    padding: 0 12px;
+.related-products {
+    background: #f8f8f8;
+    padding: 48px 0 64px;
 }
 
-.related-card .name {
-    font-size: 15px;
-    margin: 10px 0 6px;
+.related-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 20px;
 }
-
-.related-card .price {
-    font-weight: 700;
-    color: #c00000;
-}
-
-
 /* =====================================================
    RESPONSIVE
 ===================================================== */

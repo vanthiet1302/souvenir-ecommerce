@@ -2,160 +2,98 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <title>${data.category.name}</title>
+<section class="section product-type-page">
+    <div class="main-container">
 
-    <link rel="stylesheet"
-          href="${pageContext.request.contextPath}/assets/css/PTypeMain.css">
+        <div class="product-type-layout">
 
-    <script src="${pageContext.request.contextPath}/assets/js/ProductType.js"
-            defer></script>
-</head>
-<body>
+            <!-- ================= LEFT FILTER ================= -->
+            <aside class="filter-sidebar">
+                <h3>Bộ lọc</h3>
 
-<jsp:include page="/views/common/header.jsp"/>
+                <form method="get" action="${pageContext.request.contextPath}/category">
+                    <input type="hidden" name="id" value="${data.category.id}"/>
+                    <input type="hidden" name="page" value="1"/>
 
-<div class="page-container product-type-layout">
-
-    <!-- ================= LEFT FILTER ================= -->
-    <aside class="filter-sidebar">
-        <h3>Bộ lọc</h3>
-
-        <form method="get" action="${pageContext.request.contextPath}/category">
-            <input type="hidden" name="id" value="${data.category.id}"/>
-            <input type="hidden" name="page" value="1"/>
-
-            <!-- ===== PRICE FILTER ===== -->
-            <div class="filter-group">
-                <label>Giá từ</label>
-                <input type="number" name="minPrice" value="${data.minPrice}"/>
-            </div>
-
-            <div class="filter-group">
-                <label>Đến</label>
-                <input type="number" name="maxPrice" value="${data.maxPrice}"/>
-            </div>
-
-            <!-- ===== RATING FILTER (NEW) ===== -->
-            <div class="filter-group">
-                <label>Đánh giá</label>
-                <select name="rating">
-                    <option value="">Tất cả</option>
-                    <option value="5" ${data.rating == 5 ? 'selected' : ''}>
-                        ⭐ 5 sao
-                    </option>
-                    <option value="4" ${data.rating == 4 ? 'selected' : ''}>
-                        ⭐ 4 sao trở lên
-                    </option>
-                    <option value="3" ${data.rating == 3 ? 'selected' : ''}>
-                        ⭐ 3 sao trở lên
-                    </option>
-                </select>
-            </div>
-
-            <!-- ===== SORT ===== -->
-            <div class="filter-group">
-                <label>Sắp xếp</label>
-                <select name="sort">
-                    <option value="popular"
-                    ${data.sort.name() == 'POPULAR' ? 'selected' : ''}>
-                        Bán chạy
-                    </option>
-                    <option value="newest"
-                    ${data.sort.name() == 'NEWEST' ? 'selected' : ''}>
-                        Mới nhất
-                    </option>
-                    <option value="price_asc"
-                    ${data.sort.name() == 'PRICE_ASC' ? 'selected' : ''}>
-                        Giá tăng
-                    </option>
-                    <option value="price_desc"
-                    ${data.sort.name() == 'PRICE_DESC' ? 'selected' : ''}>
-                        Giá giảm
-                    </option>
-                </select>
-            </div>
-
-            <button type="submit">Áp dụng</button>
-        </form>
-    </aside>
-
-    <!-- ================= RIGHT CONTENT ================= -->
-    <main class="product-type-content">
-
-        <!-- ===== CATEGORY BANNER ===== -->
-        <div class="category-banner">
-            <img src="${pageContext.request.contextPath}/assets/images/Banner/${data.category.image}"
-                 alt="${data.category.name}">
-        </div>
-
-        <!-- ===== CATEGORY HEADER ===== -->
-        <div class="category-header">
-            <h2>${data.category.name}</h2>
-            <span>${data.totalProducts} sản phẩm</span>
-        </div>
-
-        <!-- ===== PRODUCT LIST ===== -->
-        <section class="product-section">
-            <div class="product-list">
-
-                <c:forEach var="p" items="${data.products}">
-                    <div class="product-card">
-                        <a href="${pageContext.request.contextPath}/product?id=${p.id}">
-
-                            <div class="img-box">
-                                <img src="${pageContext.request.contextPath}/assets/images/products/${p.image}"
-                                     alt="${p.name}">
-                            </div>
-
-                            <p class="product-name">${p.name}</p>
-
-                            <div class="price-container">
-                                <span class="product-price">
-                                    <fmt:formatNumber value="${p.price}" type="number"/> ₫
-                                </span>
-                            </div>
-
-                            <p class="product-sold">
-                                Đã bán ${p.totalSold}
-                                <span class="rating">★ ${p.avgRating}</span>
-                            </p>
-                        </a>
+                    <div class="filter-group">
+                        <label>Giá từ</label>
+                        <input type="number" name="minPrice" value="${data.minPrice}"/>
                     </div>
-                </c:forEach>
 
-                <c:if test="${empty data.products}">
-                    <p class="empty-state">
-                        Không có sản phẩm phù hợp với bộ lọc.
-                    </p>
-                </c:if>
+                    <div class="filter-group">
+                        <label>Đến</label>
+                        <input type="number" name="maxPrice" value="${data.maxPrice}"/>
+                    </div>
 
-            </div>
-        </section>
+                    <div class="filter-group">
+                        <label>Đánh giá</label>
+                        <select name="rating">
+                            <option value="">Tất cả</option>
+                            <option value="5" ${data.rating == 5 ? 'selected' : ''}>⭐ 5 sao</option>
+                            <option value="4" ${data.rating == 4 ? 'selected' : ''}>⭐ 4 sao trở lên</option>
+                            <option value="3" ${data.rating == 3 ? 'selected' : ''}>⭐ 3 sao trở lên</option>
+                        </select>
+                    </div>
 
-        <!-- ===== PAGINATION ===== -->
-        <div class="pagination">
-            <c:forEach begin="1" end="${data.totalPages}" var="i">
-                <a href="${pageContext.request.contextPath}/category?id=${data.category.id}
-            &page=${i}
-            &minPrice=${data.minPrice}
-            &maxPrice=${data.maxPrice}
-            &rating=${data.rating}
-            &sort=${data.sort.name().toLowerCase()}"
-                   class="${i == data.currentPage ? 'active' : ''}">
-                        ${i}
-                </a>
-            </c:forEach>
+                    <div class="filter-group">
+                        <label>Sắp xếp</label>
+                        <select name="sort">
+                            <option value="popular" ${data.sort.name() == 'POPULAR' ? 'selected' : ''}>Bán chạy</option>
+                            <option value="newest" ${data.sort.name() == 'NEWEST' ? 'selected' : ''}>Mới nhất</option>
+                            <option value="price_asc" ${data.sort.name() == 'PRICE_ASC' ? 'selected' : ''}>Giá tăng</option>
+                            <option value="price_desc" ${data.sort.name() == 'PRICE_DESC' ? 'selected' : ''}>Giá giảm</option>
+                        </select>
+                    </div>
+
+                    <button type="submit">Áp dụng</button>
+                </form>
+            </aside>
+
+            <!-- ================= RIGHT CONTENT ================= -->
+            <main class="product-type-content">
+
+                <div class="category-banner">
+                    <img src="${pageContext.request.contextPath}/assets/images/Banner/${data.category.image}"
+                         alt="${data.category.name}">
+                </div>
+
+                <div class="category-header">
+                    <h2>${data.category.name}</h2>
+                    <span>${data.totalProducts} sản phẩm</span>
+                </div>
+
+                <!-- ================= PRODUCT LIST ================= -->
+                <section class="product-section">
+                    <div class="product-list">
+
+                        <c:forEach var="p" items="${data.products}">
+                            <c:set var="p" value="${p}" scope="request"/>
+                            <jsp:include page="product-card.jsp"/>
+                        </c:forEach>
+
+                        <c:if test="${empty data.products}">
+                            <p class="empty-state">Không có sản phẩm phù hợp với bộ lọc.</p>
+                        </c:if>
+
+                    </div>
+                </section>
+
+                <!-- ================= PAGINATION ================= -->
+                <div class="pagination">
+                    <c:forEach begin="1" end="${data.totalPages}" var="i">
+                        <a href="${pageContext.request.contextPath}/category?id=${data.category.id}
+                            &page=${i}
+                            &minPrice=${data.minPrice}
+                            &maxPrice=${data.maxPrice}
+                            &rating=${data.rating}
+                            &sort=${data.sortParam}"
+                           class="${i == data.currentPage ? 'active' : ''}">
+                                ${i}
+                        </a>
+                    </c:forEach>
+                </div>
+
+            </main>
         </div>
-
-
-    </main>
-</div>
-
-<jsp:include page="/views/common/footer.jsp"/>
-
-</body>
-</html>
+    </div>
+</section>

@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", () => {
 
     const filterForm = document.querySelector(".filter-sidebar form");
     if (!filterForm) return;
@@ -6,32 +6,41 @@ document.addEventListener("DOMContentLoaded", function () {
     const sortSelect   = filterForm.querySelector("select[name='sort']");
     const ratingSelect = filterForm.querySelector("select[name='rating']");
 
-    function ensurePageReset() {
+    /**
+     * Reset page về 1 khi filter thay đổi
+     */
+    function resetPageToFirst() {
         let pageInput = filterForm.querySelector("input[name='page']");
+
         if (!pageInput) {
             pageInput = document.createElement("input");
             pageInput.type = "hidden";
             pageInput.name = "page";
             filterForm.appendChild(pageInput);
         }
+
         pageInput.value = "1";
     }
 
-    if (sortSelect) {
-        sortSelect.addEventListener("change", function () {
-            ensurePageReset();
+    /**
+     * Bind change event cho select
+     */
+    function autoSubmitOnChange(selectElement) {
+        if (!selectElement) return;
+
+        selectElement.addEventListener("change", () => {
+            resetPageToFirst();
             filterForm.submit();
         });
     }
 
-    if (ratingSelect) {
-        ratingSelect.addEventListener("change", function () {
-            ensurePageReset();
-            filterForm.submit();
-        });
-    }
+    // Auto submit khi đổi sort / rating
+    autoSubmitOnChange(sortSelect);
+    autoSubmitOnChange(ratingSelect);
 
-    filterForm.addEventListener("submit", function () {
-        ensurePageReset();
+    // Khi submit thủ công (bấm nút Áp dụng)
+    filterForm.addEventListener("submit", () => {
+        resetPageToFirst();
     });
+
 });

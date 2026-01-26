@@ -9,11 +9,12 @@ import java.util.List;
 public class ProductTypeDTO {
 
     private Category category;
-    private List<Product> products;
+    private List<ProductCardDTO> products;
 
     private int currentPage;
     private int totalPages;
     private int totalProducts;
+    private int totalReviews;
 
     private Integer minPrice;
     private Integer maxPrice;
@@ -26,8 +27,16 @@ public class ProductTypeDTO {
     public Category getCategory() { return category; }
     public void setCategory(Category category) { this.category = category; }
 
-    public List<Product> getProducts() { return products; }
-    public void setProducts(List<Product> products) { this.products = products; }
+    public int getTotalReviews() {
+        return totalReviews;
+    }
+
+    public void setTotalReviews(int totalReviews) {
+        this.totalReviews = totalReviews;
+    }
+
+    public List<ProductCardDTO> getProducts() { return products; }
+    public void setProducts(List<ProductCardDTO> products) { this.products = products; }
 
     public int getCurrentPage() { return currentPage; }
     public void setCurrentPage(int currentPage) { this.currentPage = currentPage; }

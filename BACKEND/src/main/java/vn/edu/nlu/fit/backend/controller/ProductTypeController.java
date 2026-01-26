@@ -63,8 +63,16 @@ public class ProductTypeController extends HttpServlet {
         /* ===== 5. PAGE DATA ===== */
         request.setAttribute("data", dto);
 
-        request.getRequestDispatcher("/WEB-INF/views/productType.jsp")
+        /* ===== 6. LAYOUT CONFIG ===== */
+        request.setAttribute("pageTitle", dto.getCategory().getName());
+        request.setAttribute("contentPage", "productType.jsp");
+        request.setAttribute("pageCss", "PTypeMain.css");
+        request.setAttribute("pageJs", "ProductType.js");
+
+        /* ===== 7. FORWARD QUA LAYOUT ===== */
+        request.getRequestDispatcher("layoutMain.jsp")
                 .forward(request, response);
+
     }
 
     /* ================= UTIL ================= */

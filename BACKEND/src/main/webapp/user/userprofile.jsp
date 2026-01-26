@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/HomePageAlter.css">
 </head>
 <body>
+
 <div class="page-container">
     <div class="header-wrapper">
         <header class="header-container page-container">
@@ -40,7 +41,7 @@
                     <button id="menuBtn" class="menu-toggle"><i class="fa fa-bars"></i></button>
                     <div class="logo">
                         <a href="${pageContext.request.contextPath}/home">
-                            <img src="${pageContext.request.contextPath}/assets/image/Logo/Logo-removebg-preview.png"
+                            <img src="${pageContext.request.contextPath}/assets/images/Logo/Logo-removebg-preview.png"
                                  alt="INOLA Logo" height="36">
                         </a>
                     </div>
@@ -64,6 +65,7 @@
     <div class="account-container">
         <aside class="account-sidebar">
             <div class="sidebar-profile">
+
                 <div class="avatar-container">
                     <c:choose>
                         <c:when test="${not empty sessionScope.userInSession.avatar}">
@@ -76,9 +78,35 @@
                         </c:otherwise>
                     </c:choose>
                 </div>
+
                 <strong>${sessionScope.userInSession.fullName}</strong>
                 <span>${sessionScope.userInSession.email}</span>
-                <button class="btn-change-avatar">Thay đổi ảnh</button>
+
+                <!-- ===== FORM ĐỔI AVATAR (ĐÃ FIX) ===== -->
+                <form id="avatarForm"
+                      action="${pageContext.request.contextPath}/user/profile"
+                      method="post"
+                      enctype="multipart/form-data"
+                      style="margin-top:8px;">
+
+                    <input type="hidden" name="action" value="change_avatar">
+
+                    <!-- input file ẨN -->
+                    <input type="file"
+                           id="avatarInput"
+                           name="avatarFile"
+                           accept="image/*"
+                           style="display:none;">
+
+                    <!-- nút duy nhất -->
+                    <button type="button"
+                            class="btn-change-avatar"
+                            onclick="triggerAvatarUpload()">
+                        Thay đổi ảnh
+                    </button>
+                </form>
+                <!-- ===== END AVATAR ===== -->
+
             </div>
 
             <hr class="sidebar-divider">
@@ -196,5 +224,19 @@
 </div>
 
 <jsp:include page="/views/common/footer.jsp"/>
+
+<!-- ===== JS ĐỔI AVATAR ===== -->
+<script>
+    function triggerAvatarUpload() {
+        document.getElementById('avatarInput').click();
+    }
+
+    document.getElementById('avatarInput').addEventListener('change', function () {
+        if (this.files.length > 0) {
+            document.getElementById('avatarForm').submit();
+        }
+    });
+</script>
+
 </body>
 </html>

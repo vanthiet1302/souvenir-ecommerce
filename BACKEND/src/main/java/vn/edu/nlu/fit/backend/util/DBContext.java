@@ -25,7 +25,7 @@ public class DBContext {
         return DriverManager.getConnection(URL, USERNAME, PASSWORD);
     }
 
-public static void main(String[] args) {
+    public static void main(String[] args) {
         try {
             System.out.println(new DBContext().getConnection());
             System.out.println("Kết nối CSDL thành công!");

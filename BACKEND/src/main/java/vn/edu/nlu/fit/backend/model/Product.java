@@ -35,7 +35,7 @@ public class Product {
         this.reviewCount = reviewCount;
     }
 
-    /* ===== Getter / Setter ===== */
+
 
     public int getId() {
         return id;
@@ -93,7 +93,7 @@ public class Product {
         this.originalPrice = originalPrice;
     }
 
-    /* ===== JSP COMPAT ===== */
+
     public double getPrice() {
         return originalPrice;
     }

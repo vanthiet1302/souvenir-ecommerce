@@ -1,30 +1,31 @@
 
-// ---------------- Slideshow Banner ---------------- //
+/* ================= BANNER SLIDESHOW ================= */
 document.addEventListener("DOMContentLoaded", () => {
-    // 1. Tìm đúng các phần tử trong #headerSlideshow
     const container = document.getElementById("headerSlideshow");
-    if (!container) return; // Nếu không tìm thấy banner thì dừng ngay, tránh lỗi
+    if (!container) return;
 
-    // Tìm slide và nút bấm BÊN TRONG container đó để tránh nhầm lẫn
     const slides = container.querySelectorAll(".slide");
     const prevBtn = container.querySelector(".prev");
     const nextBtn = container.querySelector(".next");
+    const dots = container.querySelectorAll(".dot");
 
-    // Nếu chỉ có 0 hoặc 1 banner thì không cần chạy slide
-    if (slides.length < 2) {
-        if(slides.length === 1) slides[0].style.display = "block";
-        if(prevBtn) prevBtn.style.display = "none";
-        if(nextBtn) nextBtn.style.display = "none";
+    if (slides.length <= 1) {
+        slides.forEach(s => s.style.display = "block");
+        prevBtn && (prevBtn.style.display = "none");
+        nextBtn && (nextBtn.style.display = "none");
         return;
     }
 
     let currentIndex = 0;
-    let autoPlayInterval;
+    let autoTimer = null;
 
     function showSlide(index) {
         slides.forEach((slide, i) => {
-            // Dùng inline style để ghi đè CSS .slide:first-child
-            slide.style.display = (i === index) ? "block" : "none";
+            slide.style.display = i === index ? "block" : "none";
+        });
+
+        dots.forEach((dot, i) => {
+            dot.classList.toggle("active", i === index);
         });
     }
 
@@ -38,101 +39,98 @@ document.addEventListener("DOMContentLoaded", () => {
         showSlide(currentIndex);
     }
 
-    function startAutoPlay() {
-        // Xóa interval cũ nếu có để tránh chạy chồng chéo
-        clearInterval(autoPlayInterval);
-        autoPlayInterval = setInterval(nextSlide, 3000); // 3 giây chuyển 1 lần
+    function startAuto() {
+        stopAuto();
+        autoTimer = setInterval(nextSlide, 4000);
     }
 
-    function stopAutoPlay() {
-        clearInterval(autoPlayInterval);
+    function stopAuto() {
+        autoTimer && clearInterval(autoTimer);
     }
 
-    // Gắn sự kiện (Kiểm tra tồn tại trước khi gắn)
-    if(nextBtn) nextBtn.addEventListener("click", () => {
+    nextBtn?.addEventListener("click", () => {
         nextSlide();
-        startAutoPlay(); // Reset lại timer khi bấm thủ công
+        startAuto();
     });
 
-    if(prevBtn) prevBtn.addEventListener("click", () => {
+    prevBtn?.addEventListener("click", () => {
         prevSlide();
-        startAutoPlay();
+        startAuto();
     });
 
-    container.addEventListener("mouseenter", stopAutoPlay);
-    container.addEventListener("mouseleave", startAutoPlay);
-
-    // Bắt đầu
-    showSlide(currentIndex);
-    startAutoPlay();
-});
-// ---------------- Nút "Xem thêm" Chuyển Hướng ---------------- //
-document.addEventListener("DOMContentLoaded", () => {
-    const seeMoreBtns = document.querySelectorAll('.see-more-btn');
-    seeMoreBtns.forEach(button => {
-        button.addEventListener('click', function() {
-            window.location.href = 'ProductT.html';
+    dots.forEach((dot, index) => {
+        dot.addEventListener("click", () => {
+            currentIndex = index;
+            showSlide(currentIndex);
+            startAuto();
         });
     });
+
+    container.addEventListener("mouseenter", stopAuto);
+    container.addEventListener("mouseleave", startAuto);
+
+    showSlide(currentIndex);
+    startAuto();
 });
-/*Slip action*/
+
+/* ================= EXTENSION CATEGORY SLIDER ================= */
 document.addEventListener("DOMContentLoaded", () => {
-    const slider = document.querySelector("#slider");
+    const slider = document.getElementById("extSlider");
+    const prevBtn = document.getElementById("extPrev");
+    const nextBtn = document.getElementById("extNext");
+
+    if (!slider || !prevBtn || !nextBtn) return;
+
     const cards = slider.querySelectorAll(".product-card");
-    const nextBtn = document.getElementById("nextBtn");
-    const prevBtn = document.getElementById("prevBtn");
+    if (cards.length <= 1) return;
 
     let index = 0;
     let autoSlide;
 
-    // Tính kích thước 1 thẻ + khoảng cách
     function getStep() {
         const cardWidth = cards[0].offsetWidth;
-        const gap = parseFloat(getComputedStyle(slider).gap) || 16;
+        const gap = parseInt(getComputedStyle(slider).gap) || 16;
         return cardWidth + gap;
     }
 
-    function visibleCount() {
-        const wrapperWidth = document.querySelector(".product-slider-wrapper").offsetWidth;
-        const step = getStep();
-        return Math.max(1, Math.floor(wrapperWidth / step));
-    }
-
-    function maxIndex() {
-        return Math.max(0, cards.length - visibleCount());
-    }
-
-    function updateSlide() {
+    function update() {
         slider.style.transform = `translateX(-${index * getStep()}px)`;
     }
 
+    function next() {
+        index = (index + 1) % cards.length;
+        update();
+    }
+
+    function prev() {
+        index = (index - 1 + cards.length) % cards.length;
+        update();
+    }
+
+    function startAuto() {
+        stopAuto();
+        autoSlide = setInterval(next, 3500);
+    }
+
+    function stopAuto() {
+        autoSlide && clearInterval(autoSlide);
+    }
+
     nextBtn.addEventListener("click", () => {
-        index = (index + 1) % cards.length; // quay lại đầu nếu hết
-        updateSlide();
-        resetAutoSlide();
+        next();
+        startAuto();
     });
 
     prevBtn.addEventListener("click", () => {
-        index = (index - 1 + cards.length) % cards.length; // quay lại cuối nếu lùi quá
-        updateSlide();
-        resetAutoSlide();
+        prev();
+        startAuto();
     });
 
-    function startAutoSlide() {
-        autoSlide = setInterval(() => {
-            index = (index + 1) % cards.length;
-            updateSlide();
-        }, 3000);
-    }
+    slider.parentElement.addEventListener("mouseenter", stopAuto);
+    slider.parentElement.addEventListener("mouseleave", startAuto);
 
-    function resetAutoSlide() {
-        clearInterval(autoSlide);
-        startAutoSlide();
-    }
+    window.addEventListener("resize", update);
 
-    window.addEventListener("resize", updateSlide);
-
-    updateSlide();
-    startAutoSlide();
+    update();
+    startAuto();
 });
-

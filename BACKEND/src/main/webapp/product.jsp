@@ -2,120 +2,223 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
-<!DOCTYPE html>
-<link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/HomePage.css">
-<link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/HomePageFooter.css">
-<link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/HomePageMain.css">
-<link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/HomePageSlip.css">
-<link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/STT.css">
-<link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/HomePageAlter.css">
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <title>${data.product.name}</title>
-
-    <link rel="stylesheet"
-          href="${pageContext.request.contextPath}/assets/css/ProductDetail.css">
-
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="${pageContext.request.contextPath}/assets/js/ProductDetail.js"></script>
-</head>
-<body>
-
-<jsp:include page="/views/common/header.jsp"/>
-
 <input type="hidden" id="productId" value="${data.product.id}">
 <input type="hidden" id="contextPath" value="${pageContext.request.contextPath}">
 
-<!-- PRODUCT TOP -->
-<section class="product-top">
+<main class="product-page">
 
-    <div class="product-image">
-        <img src="${pageContext.request.contextPath}/assets/images/products/${data.product.image}"
-             alt="${data.product.name}">
-        <button class="btn-zoom">🔍</button>
-    </div>
+    <!-- ================= PRODUCT TOP ================= -->
+    <section class="section">
+        <div class="main-container">
 
-    <div class="product-info">
-        <h1>${data.product.name}</h1>
+            <div class="product-top">
 
-        <div class="product-price">
-            <c:choose>
-                <c:when test="${data.promotion != null}">
-                    <span class="old-price">
-                        <fmt:formatNumber value="${data.product.originalPrice}"/> ₫
-                    </span>
-                    <span class="sale-price">
-                        <fmt:formatNumber value="${data.discountedPrice}"/> ₫
-                    </span>
-                </c:when>
-                <c:otherwise>
-                    <span class="normal-price">
-                        <fmt:formatNumber value="${data.product.originalPrice}"/> ₫
-                    </span>
-                </c:otherwise>
-            </c:choose>
+                <!-- LEFT -->
+                <div class="product-left-wrapper">
+                    <div class="product-gallery">
+                        <img src="${pageContext.request.contextPath}${data.product.image}"
+                             alt="${data.product.name}">
+                        <button type="button" class="btn-zoom">🔍</button>
+                    </div>
+
+                    <div class="store-note-block-left">
+                        <p class="store-note-title">
+                            <i class="fa-solid fa-box"></i> Lưu ý từ cửa hàng
+                        </p>
+                        <p class="store-note-text">
+                            Với đơn hàng số lượng lớn (từ 20 sản phẩm trở lên),
+                            vui lòng liên hệ hotline hoặc Zalo INOLA để nhận báo giá ưu đãi.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- RIGHT -->
+                <div class="product-right">
+
+                    <h1 class="product-title">${data.product.name}</h1>
+
+                    <div class="product-meta">
+                        <span class="rating">⭐ ${data.avgRating}</span>
+                        <span class="sold">Đã bán ${data.product.totalSold}</span>
+                        <span class="stock">Còn ${data.product.stockQuantity} sản phẩm</span>
+                    </div>
+
+                    <div class="product-price">
+                        <c:choose>
+                            <c:when test="${data.promotion != null}">
+                                <span class="old-price">
+                                    <fmt:formatNumber value="${data.product.price}"/> ₫
+                                </span>
+                                <span class="sale-price">
+                                    <fmt:formatNumber value="${data.discountedPrice}"/> ₫
+                                </span>
+                                <span class="discount">
+                                    -${data.promotion.discountPercent}%
+                                </span>
+                            </c:when>
+                            <c:otherwise>
+                                <span class="normal-price">
+                                    <fmt:formatNumber value="${data.product.price}"/> ₫
+                                </span>
+                            </c:otherwise>
+                        </c:choose>
+                    </div>
+
+                    <p class="short-description">
+                        ${data.product.shortDescription}
+                    </p>
+
+                    <form action="${pageContext.request.contextPath}/cart/add"
+                          method="post"
+                          class="buy-form">
+
+                        <input type="hidden" name="productId" value="${data.product.id}">
+
+                        <div class="quantity-actions">
+                            <div class="quantity-control">
+                                <button type="button" class="qty-btn minus">-</button>
+                                <input type="number"
+                                       name="quantity"
+                                       class="qty-input"
+                                       value="1"
+                                       min="1"
+                                       max="${data.product.stockQuantity}">
+                                <button type="button" class="qty-btn plus">+</button>
+                            </div>
+
+                            <button type="submit" class="add-cart">
+                                <i class="fa-solid fa-cart-shopping"></i>
+                                Thêm vào giỏ hàng
+                            </button>
+                        </div>
+
+                        <button type="submit"
+                                formaction="${pageContext.request.contextPath}/checkout"
+                                class="buy-now-full">
+                            MUA NGAY
+                        </button>
+
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ================= PRODUCT INFO ================= -->
+    <section class="section product-info-section">
+        <div class="main-container">
+
+            <div class="info-header">
+                <h2 class="info-title">THÔNG TIN CHI TIẾT</h2>
+            </div>
+
+            <div class="description-content">
+                ${data.product.description}
+            </div>
+
+            <c:if test="${not empty data.specifications}">
+                <table class="spec-table">
+                    <c:forEach var="spec" items="${data.specifications}">
+                        <tr>
+                            <td class="spec-name">${spec.specName}</td>
+                            <td>${spec.specValue}</td>
+                        </tr>
+                    </c:forEach>
+                </table>
+            </c:if>
+
+            <c:if test="${empty data.specifications}">
+                <p class="text-muted text-center">Chưa có thông tin.</p>
+            </c:if>
+
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ================= REVIEWS ================= -->
+    <section class="section product-reviews">
+        <div class="main-container">
+
+            <h2 class="reviews-main-title">Đánh giá</h2>
+
+            <div class="review-content-wrap">
+
+                <!-- LEFT -->
+                <div class="review-mleft">
+                    <div class="review-summary-block">
+                        <p class="average-rating">${data.avgRating}</p>
+                        <p class="review-count">
+                            Dựa trên ${data.totalReviews} đánh giá
+                        </p>
+
+                        <div class="rating-breakdown">
+                            <c:forEach begin="1" end="5" var="i">
+                                <c:set var="star" value="${6 - i}"/>
+                                <c:set var="count" value="${data.ratingCount[star]}"/>
+                                <c:set var="percent"
+                                       value="${data.totalReviews > 0
+                                               ? (count * 100 / data.totalReviews)
+                                               : 0}"/>
+                                <div class="rating-row">
+                                    <span>${star}</span>
+                                    <i class="fa-solid fa-star"></i>
+                                    <div class="rating-bar">
+                                        <span style="width:${percent}%"></span>
+                                    </div>
+                                    <span>${percent}%</span>
+                                </div>
+                            </c:forEach>
+                        </div>
+                    </div>
+
+                    <button class="review-action-btn">Đánh giá sản phẩm</button>
+                </div>
+
+                <!-- RIGHT -->
+                <div class="review-mright">
+
+                    <div class="review-filter-bar">
+                        <button class="filter-btn active">Tất cả</button>
+                        <button class="filter-btn">5 ★</button>
+                        <button class="filter-btn">4 ★</button>
+                        <button class="filter-btn">3 ★</button>
+                        <button class="filter-btn">2 ★</button>
+                        <button class="filter-btn">1 ★</button>
+
+                        <select class="sort-select">
+                            <option>Mới nhất</option>
+                            <option>Cũ nhất</option>
+                        </select>
+                    </div>
+
+                    <div id="reviewContainer"></div>
+                    <button id="loadMoreReview" type="button">Xem thêm</button>
+
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+</main>
+
+<!-- ================= RELATED PRODUCTS ================= -->
+<section class="section related-products">
+    <div class="main-container">
+
+        <h2 class="related-title">Sản phẩm liên quan</h2>
+
+        <div class="related-grid">
+            <c:forEach var="p" items="${data.relatedProductCards}">
+                <%@ include file="product-card.jsp" %>
+            </c:forEach>
         </div>
 
-        <p>${data.product.shortDescription}</p>
     </div>
 </section>
 
-<!-- REVIEW SUMMARY -->
-<section class="product-reviews">
-    <h2>Đánh giá sản phẩm</h2>
-
-    <div class="review-summary">
-        <div>${data.avgRating} ⭐</div>
-        <div>${data.totalReviews} đánh giá</div>
-
-        <!-- FIX JSTL: KHÔNG DÙNG step ÂM -->
-        <c:forEach var="star" items="${[5,4,3,2,1]}">
-            <div>${star} ⭐ : ${data.ratingCount[star]}</div>
-        </c:forEach>
-    </div>
-
-    <!-- FILTER -->
-    <div class="review-filter">
-        <button class="filter-btn" data-rating="">Tất cả</button>
-        <button class="filter-btn" data-rating="5">5 ⭐</button>
-        <button class="filter-btn" data-rating="4">4 ⭐</button>
-        <button class="filter-btn" data-rating="3">3 ⭐</button>
-        <button class="filter-btn" data-rating="2">2 ⭐</button>
-        <button class="filter-btn" data-rating="1">1 ⭐</button>
-
-        <select class="review-sort">
-            <option value="newest">Mới nhất</option>
-            <option value="oldest">Cũ nhất</option>
-        </select>
-    </div>
-
-    <div id="reviewContainer"></div>
-
-    <button id="loadMoreReview">Xem thêm</button>
-</section>
-
-<!-- RELATED PRODUCTS -->
-<section class="related-products">
-    <h2>Sản phẩm liên quan</h2>
-
-    <div class="product-list">
-        <c:forEach var="p" items="${data.relatedProducts}">
-            <div class="product-card">
-                <a href="${pageContext.request.contextPath}/product?id=${p.id}">
-                    <img src="${pageContext.request.contextPath}/assets/images/products/${p.image}"
-                         alt="${p.name}">
-                    <p class="product-name">${p.name}</p>
-                    <span class="current-price">
-                        <fmt:formatNumber value="${p.originalPrice}"/> ₫
-                    </span>
-                </a>
-            </div>
-        </c:forEach>
-    </div>
-</section>
-
-<jsp:include page="/views/common/footer.jsp"/>
-
-</body>
-</html>

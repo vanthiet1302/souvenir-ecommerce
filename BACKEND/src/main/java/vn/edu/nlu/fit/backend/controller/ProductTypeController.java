@@ -39,12 +39,14 @@ public class ProductTypeController extends HttpServlet {
         ProductSort sort = parseSort(request.getParameter("sort"));
 
         int page = parseInteger(request.getParameter("page"), 1);
+        Integer rating = parseInteger(request.getParameter("rating"));
 
         /* ===== 3. SERVICE ===== */
         ProductTypeDTO dto = productTypeService.getProductType(
                 categoryId,
                 minPrice,
                 maxPrice,
+                rating,
                 sort,
                 page
         );
@@ -61,8 +63,16 @@ public class ProductTypeController extends HttpServlet {
         /* ===== 5. PAGE DATA ===== */
         request.setAttribute("data", dto);
 
-        request.getRequestDispatcher("/WEB-INF/views/productType.jsp")
+        /* ===== 6. LAYOUT CONFIG ===== */
+        request.setAttribute("pageTitle", dto.getCategory().getName());
+        request.setAttribute("contentPage", "productType.jsp");
+        request.setAttribute("pageCss", "PTypeMain.css");
+        request.setAttribute("pageJs", "ProductType.js");
+
+        /* ===== 7. FORWARD QUA LAYOUT ===== */
+        request.getRequestDispatcher("layoutMain.jsp")
                 .forward(request, response);
+
     }
 
     /* ================= UTIL ================= */

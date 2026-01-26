@@ -1,110 +1,22 @@
 $(document).ready(function () {
 
-    const productId = $("#productId").val();
-    const contextPath = $("#contextPath").val();
+    /* =====================================================
+       GLOBAL VARS
+    ===================================================== */
+    const productId = $('#productId').val();
+    const contextPath = $('#contextPath').val();
 
-    let currentRating = "";
-    let currentSort = "newest";
     let currentPage = 1;
-    const pageSize = 5;
+    let currentRating = '';
+    let currentSort = 'newest';
+    let isLoading = false;
 
-    /* ================= ADD TO CART ================= */
-    $('.btn-add-cart').on('click', function (e) {
-        e.preventDefault();
-
-        const form = $(this).closest('form');
-
-        $.ajax({
-            url: form.attr('action'),
-            method: 'POST',
-            data: form.serialize(),
-            success: () => showToast('Đã thêm sản phẩm vào giỏ hàng 🛒'),
-            error: () => showToast('Có lỗi xảy ra ❌')
-        });
-    });
-
-    /* ================= SCROLL TO REVIEW ================= */
-    $('.scroll-review').on('click', function (e) {
-        e.preventDefault();
-        $('html, body').animate({
-            scrollTop: $('.product-reviews').offset().top - 80
-        }, 500);
-    });
-
-    /* ================= TOGGLE DESCRIPTION ================= */
-    const desc = $('.description-content');
-    const btnToggle = $('.btn-toggle-desc');
-
-    if (desc.outerHeight() > 200) {
-        desc.addClass('collapsed');
-        btnToggle.show();
-    } else {
-        btnToggle.hide();
-    }
-
-    btnToggle.on('click', function () {
-        desc.toggleClass('collapsed');
-        $(this).text(desc.hasClass('collapsed') ? 'Xem thêm' : 'Thu gọn');
-    });
-
-    /* ================= LOAD REVIEWS ================= */
-    function loadReviews(reset = false) {
-
-        if (reset) {
-            currentPage = 1;
-            $("#reviewContainer").html("");
-        }
-
-        $.ajax({
-            url: contextPath + "/reviews",
-            method: "GET",
-            data: {
-                productId,
-                rating: currentRating,
-                sort: currentSort,
-                page: currentPage,
-                size: pageSize
-            },
-            success: function (html) {
-                if (reset) {
-                    $("#reviewContainer").html(html);
-                } else {
-                    $("#reviewContainer").append(html);
-                }
-
-                $("#loadMoreReview").toggle($.trim(html) !== "");
-            },
-            error: () => showToast("Không thể tải đánh giá ❌")
-        });
-    }
-
-    loadReviews(true);
-
-    /* ================= FILTER ================= */
-    $('.filter-btn').on('click', function () {
-        $('.filter-btn').removeClass('active');
-        $(this).addClass('active');
-
-        const rating = $(this).data('rating');
-        currentRating = rating === "all" ? "" : rating;
-
-        loadReviews(true);
-    });
-
-    $('.review-sort').on('change', function () {
-        currentSort = $(this).val();
-        loadReviews(true);
-    });
-
-    $('#loadMoreReview').on('click', function () {
-        currentPage++;
-        loadReviews(false);
-    });
-
-    /* ================= IMAGE ZOOM ================= */
+    /* =====================================================
+       IMAGE ZOOM MODAL
+    ===================================================== */
     $('.btn-zoom').on('click', function () {
-
-        const imgSrc = $('.product-image img').attr('src');
+        const imgSrc = $('.product-gallery img').attr('src');
+        if (!imgSrc) return;
 
         const modal = $(`
             <div class="image-modal">
@@ -117,21 +29,117 @@ $(document).ready(function () {
         `);
 
         $('body').append(modal);
+
         setTimeout(() => modal.addClass('show'), 10);
 
-        modal.on('click', '.modal-overlay, .modal-close', () => {
+        modal.on('click', '.modal-overlay, .modal-close', function () {
             modal.removeClass('show');
             setTimeout(() => modal.remove(), 300);
         });
     });
 
-    /* ================= TOAST ================= */
-    function showToast(message) {
-        const toast = $(`<div class="toast-message">${message}</div>`);
-        $('body').append(toast);
+    /* =====================================================
+       QUANTITY CONTROL
+    ===================================================== */
+    $('.qty-btn.plus').on('click', function () {
+        const input = $(this).closest('.quantity-control').find('.qty-input');
+        let val = parseInt(input.val()) || 1;
+        const max = parseInt(input.attr('max')) || 999;
 
-        setTimeout(() => toast.addClass('show'), 50);
-        setTimeout(() => toast.removeClass('show').remove(), 2600);
+        if (val < max) {
+            input.val(val + 1);
+        }
+    });
+
+    $('.qty-btn.minus').on('click', function () {
+        const input = $(this).closest('.quantity-control').find('.qty-input');
+        let val = parseInt(input.val()) || 1;
+
+        if (val > 1) {
+            input.val(val - 1);
+        }
+    });
+
+    /* =====================================================
+       ADD TO CART (AJAX)
+    ===================================================== */
+    $('.add-cart').on('click', function (e) {
+        e.preventDefault();
+
+        const form = $(this).closest('.buy-form');
+
+        $.ajax({
+            url: form.attr('action'),
+            method: 'POST',
+            data: form.serialize(),
+            success: function () {
+                showToast('Đã thêm vào giỏ hàng 🛒');
+            },
+            error: function () {
+                showToast('Có lỗi xảy ra ❌');
+            }
+        });
+    });
+
+
+    function loadReviews(reset = false) {
+        if (isLoading) return;
+        isLoading = true;
+
+        if (reset) {
+            currentPage = 1;
+            $('#reviewContainer').empty();
+        }
+
+        $.ajax({
+            url: contextPath + '/reviews',
+            method: 'GET',
+            data: {
+                productId: productId,
+                rating: currentRating,
+                sort: currentSort,
+                page: currentPage,
+                size: 5
+            },
+            success: function (html) {
+                if ($.trim(html) === '') {
+                    $('#loadMoreReview').hide();
+                } else {
+                    $('#reviewContainer').append(html);
+                    $('#loadMoreReview').show();
+                }
+            },
+            complete: function () {
+                isLoading = false;
+            },
+            error: function () {
+                showToast('Không tải được đánh giá ❌');
+                isLoading = false;
+            }
+        });
+    }
+
+
+    $('.filter-btn').on('click', function () {
+        $('.filter-btn').removeClass('active');
+        $(this).addClass('active');
+
+        currentRating = $(this).data('rating') || '';
+        loadReviews(true);
+    });
+
+    $('.sort-select').on('change', function () {
+        currentSort = $(this).val();
+        loadReviews(true);
+    });
+
+    $('#loadMoreReview').on('click', function () {
+        currentPage++;
+        loadReviews(false);
+    });
+
+    if ($('#reviewContainer').length) {
+        loadReviews(true);
     }
 
 });

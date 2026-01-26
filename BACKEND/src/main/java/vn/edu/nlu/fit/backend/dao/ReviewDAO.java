@@ -71,11 +71,11 @@ public class ReviewDAO {
     // Review summary
     public ReviewSummary getReviewSummaryByProductId(int productId) {
         String sql = """
-            SELECT COUNT(*) AS total_reviews,
-                   AVG(rating) AS avg_rating
-            FROM reviews
-            WHERE product_id = ?
-        """;
+        SELECT COUNT(*) AS total_reviews,
+               AVG(rating) AS avg_rating
+        FROM reviews
+        WHERE product_id = ?
+    """;
 
         try (Connection conn = DBContext.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -86,6 +86,10 @@ public class ReviewDAO {
             if (rs.next()) {
                 int total = rs.getInt("total_reviews");
                 double avg = rs.getDouble("avg_rating");
+
+                if (rs.wasNull()) {
+                    avg = 0.0;
+                }
 
                 return new ReviewSummary(
                         total,

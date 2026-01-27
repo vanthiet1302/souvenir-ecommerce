@@ -19,7 +19,7 @@ public class HomeDAO {
     /**
      * ================= HOME – SECTION CHÍNH =================
      * - 5 category bán chạy nhất
-     * - Mỗi category có 8 sản phẩm bán chạy
+     * - Hiển thị 8 sản phẩm bán chạy nhất của mỗi category
      */
     public List<Category> getTopCategoriesForHome() {
         List<Category> categories = categoryDAO.getTopSellingCategories(5);
@@ -35,8 +35,7 @@ public class HomeDAO {
     /**
      * ================= HOME – EXTENSION SECTION =================
      * - Các category không nằm trong top bán chạy
-     * - + Sản phẩm đánh giá tốt
-     * - + Sản phẩm mới
+     * - Hiển thị 8 sản phẩm bán chạy nhất
      */
     public List<Category> getExtensionSections() {
         List<Category> result = new ArrayList<>();
@@ -45,15 +44,18 @@ public class HomeDAO {
         List<Integer> topCategoryIds =
                 categoryDAO.getTopSellingCategoryIds(5);
 
-        // 1. Category còn lại
+        // 1. Category còn lại (giới hạn 3 category)
         List<Category> remainCategories =
                 categoryDAO.getCategoriesNotIn(topCategoryIds);
 
+        int count = 0;
         for (Category category : remainCategories) {
+            if (count >= 3) break; // Chỉ lấy 3 category
             List<Product> products =
                     productDAO.getTopSellingByCategory(category.getId(), 8);
             category.setProducts(products);
             result.add(category);
+            count++;
         }
 
         // 2. Category logic – Đánh giá tốt

@@ -33,8 +33,6 @@ public class UserDAO {
                 user.setAvatar(rs.getString("avatar"));
                 user.setRole(rs.getString("role"));
                 user.setStatus(rs.getString("status"));
-                user.setGender(rs.getString("gender"));
-                user.setDob(rs.getString("dob"));
                 user.setCreatedAt(rs.getString("created_at"));
                 return user;
             }
@@ -48,10 +46,8 @@ public class UserDAO {
        2. ĐĂNG KÝ
      ========================= */
     public boolean register(String email, String password, String fullName, String phone) {
-        String sql = """
-                INSERT INTO users (full_name, email, password, phone, status, role, avatar)
-                VALUES (?, ?, ?, ?, 'Active', 'User', 'default-avatar.png')
-                """;
+        String sql = "INSERT INTO users (full_name, email, password, phone, status, role, avatar) " +
+                "VALUES (?, ?, ?, ?, 'Active', 'User', 'default-avatar.png')";
 
         try (Connection conn = new DBContext().getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -72,11 +68,8 @@ public class UserDAO {
        3. QUÊN MẬT KHẨU
      ========================= */
     public boolean setResetCode(String accountInfo, String code) {
-        String sql = """
-                UPDATE users
-                SET reset_token = ?, token_expiry = DATE_ADD(NOW(), INTERVAL 5 MINUTE)
-                WHERE email = ? OR phone = ?
-                """;
+        String sql = "UPDATE users SET reset_token = ?, token_expiry = DATE_ADD(NOW(), INTERVAL 5 MINUTE) " +
+                "WHERE email = ? OR phone = ?";
 
         try (Connection conn = new DBContext().getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -93,12 +86,8 @@ public class UserDAO {
     }
 
     public boolean verifyCode(String accountInfo, String code) {
-        String sql = """
-                SELECT id FROM users
-                WHERE (email = ? OR phone = ?)
-                AND reset_token = ?
-                AND token_expiry > NOW()
-                """;
+        String sql = "SELECT id FROM users WHERE (email = ? OR phone = ?) " +
+                "AND reset_token = ? AND token_expiry > NOW()";
 
         try (Connection conn = new DBContext().getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -115,11 +104,8 @@ public class UserDAO {
     }
 
     public boolean resetPassword(String accountInfo, String newPassword) {
-        String sql = """
-                UPDATE users
-                SET password = ?, reset_token = NULL, token_expiry = NULL
-                WHERE email = ? OR phone = ?
-                """;
+        String sql = "UPDATE users SET password = ?, reset_token = NULL, token_expiry = NULL " +
+                "WHERE email = ? OR phone = ?";
 
         try (Connection conn = new DBContext().getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -192,35 +178,18 @@ public class UserDAO {
         return false;
     }
 
-    public boolean updateAvatar(int userId, String fileName) {
-        String sql = "UPDATE users SET avatar = ? WHERE id = ?";
-
-        try (Connection conn = new DBContext().getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-
-            ps.setString(1, fileName);
-            ps.setInt(2, userId);
-            return ps.executeUpdate() > 0;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
     /* =========================
        6. ĐỊA CHỈ
      ========================= */
+
+    // THÊM ĐỊA CHỈ – nếu là địa chỉ đầu tiên thì set mặc định
     public boolean addAddress(int userId, String detail, String city, String district, String ward) {
 
         if (detail == null || detail.isBlank()) return false;
 
         String checkSql = "SELECT COUNT(*) FROM addresses WHERE user_id = ?";
-        String insertSql = """
-                INSERT INTO addresses
-                (user_id, address_detail, city, district, ward, is_default)
-                VALUES (?, ?, ?, ?, ?, ?)
-                """;
+        String insertSql = "INSERT INTO addresses (user_id, address_detail, city, district, ward, is_default) " +
+                "VALUES (?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = new DBContext().getConnection()) {
 
@@ -228,7 +197,9 @@ public class UserDAO {
             try (PreparedStatement checkPs = conn.prepareStatement(checkSql)) {
                 checkPs.setInt(1, userId);
                 ResultSet rs = checkPs.executeQuery();
-                if (rs.next() && rs.getInt(1) == 0) isFirst = true;
+                if (rs.next() && rs.getInt(1) == 0) {
+                    isFirst = true;
+                }
             }
 
             try (PreparedStatement ps = conn.prepareStatement(insertSql)) {
@@ -247,6 +218,7 @@ public class UserDAO {
         return false;
     }
 
+
     public List<Address> getAddressesByUserId(int userId) {
         List<Address> list = new ArrayList<>();
         String sql = "SELECT * FROM addresses WHERE user_id = ? ORDER BY is_default DESC, id DESC";
@@ -260,7 +232,7 @@ public class UserDAO {
             while (rs.next()) {
                 Address addr = new Address();
                 addr.setId(rs.getInt("id"));
-                addr.setUserId(rs.getInt("user_id"));
+                addr.setUserId(rs.getInt("user_id"));          // ✅ FIX QUAN TRỌNG
                 addr.setAddressDetail(rs.getString("address_detail"));
                 addr.setWard(rs.getString("ward"));
                 addr.setDistrict(rs.getString("district"));
@@ -273,6 +245,7 @@ public class UserDAO {
         }
         return list;
     }
+
 
     public boolean updateAddress(int addressId, String detail, String ward, String district, String city) {
         String sql = "UPDATE addresses SET address_detail = ?, ward = ?, district = ?, city = ? WHERE id = ?";
@@ -310,7 +283,7 @@ public class UserDAO {
 
     public void setDefaultAddress(int userId, int addressId) {
         String resetSql = "UPDATE addresses SET is_default = 0 WHERE user_id = ?";
-        String setSql = "UPDATE addresses SET is_default = 1 WHERE id = ? AND user_id = ?";
+        String setSql   = "UPDATE addresses SET is_default = 1 WHERE id = ? AND user_id = ?";
 
         try (Connection conn = new DBContext().getConnection()) {
             conn.setAutoCommit(false);
@@ -330,5 +303,195 @@ public class UserDAO {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    /* =========================
+       ADMIN METHODS
+     ========================= */
+    public int getTotalCustomers() {
+        String sql = "SELECT COUNT(*) as total FROM users WHERE role = 'User'";
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt("total");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public List<User> getAllCustomers() {
+        List<User> list = new ArrayList<>();
+        String sql = "SELECT * FROM users WHERE role = 'User' ORDER BY id DESC";
+
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                User user = new User();
+                user.setId(rs.getInt("id"));
+                user.setFullName(rs.getString("full_name"));
+                user.setEmail(rs.getString("email"));
+                user.setPhone(rs.getString("phone"));
+                user.setAvatar(rs.getString("avatar"));
+                user.setRole(rs.getString("role"));
+                user.setStatus(rs.getString("status"));
+                user.setCreatedAt(rs.getString("created_at"));
+                list.add(user);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public List<User> getAllUsers() {
+        List<User> list = new ArrayList<>();
+        String sql = "SELECT * FROM users ORDER BY id DESC";
+
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                User user = new User();
+                user.setId(rs.getInt("id"));
+                user.setFullName(rs.getString("full_name"));
+                user.setEmail(rs.getString("email"));
+                user.setPhone(rs.getString("phone"));
+                user.setAvatar(rs.getString("avatar"));
+                user.setRole(rs.getString("role"));
+                user.setStatus(rs.getString("status"));
+                user.setCreatedAt(rs.getString("created_at"));
+                list.add(user);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public List<User> getCustomersWithPagination(int offset, int limit) {
+        List<User> list = new ArrayList<>();
+        String sql = "SELECT * FROM users WHERE role = 'User' ORDER BY id DESC LIMIT ? OFFSET ?";
+
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, limit);
+            ps.setInt(2, offset);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                User user = new User();
+                user.setId(rs.getInt("id"));
+                user.setFullName(rs.getString("full_name"));
+                user.setEmail(rs.getString("email"));
+                user.setPhone(rs.getString("phone"));
+                user.setAvatar(rs.getString("avatar"));
+                user.setRole(rs.getString("role"));
+                user.setStatus(rs.getString("status"));
+                user.setCreatedAt(rs.getString("created_at"));
+                list.add(user);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public User getUserById(int id) {
+        String sql = "SELECT * FROM users WHERE id = ?";
+
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                User user = new User();
+                user.setId(rs.getInt("id"));
+                user.setFullName(rs.getString("full_name"));
+                user.setEmail(rs.getString("email"));
+                user.setPhone(rs.getString("phone"));
+                user.setAvatar(rs.getString("avatar"));
+                user.setRole(rs.getString("role"));
+                user.setStatus(rs.getString("status"));
+                user.setCreatedAt(rs.getString("created_at"));
+                return user;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public boolean updateUserStatus(int userId, String status) {
+        String sql = "UPDATE users SET status = ? WHERE id = ?";
+
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, status);
+            ps.setInt(2, userId);
+            return ps.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean insertUser(String fullName, String email, String password, String phone) {
+        String sql = "INSERT INTO users (full_name, email, password, phone, status, role, avatar) " +
+                "VALUES (?, ?, ?, ?, 'Active', 'User', 'default-avatar.png')";
+
+        try (Connection conn = new DBContext().getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, fullName);
+            ps.setString(2, email);
+            ps.setString(3, PasswordUtil.hashPassword(password));
+            ps.setString(4, phone);
+            return ps.executeUpdate() > 0;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean updateUser(int userId, String fullName, String email, String phone) {
+        String sql = "UPDATE users SET full_name = ?, email = ?, phone = ? WHERE id = ?";
+
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, fullName);
+            ps.setString(2, email);
+            ps.setString(3, phone);
+            ps.setInt(4, userId);
+            return ps.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean deleteUser(int userId) {
+        String sql = "DELETE FROM users WHERE id = ?";
+
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, userId);
+            return ps.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }

@@ -4,14 +4,14 @@ public class Product {
 
     private int id;
     private Integer categoryId;
-    private String categoryName;      // JOIN categories
+    private String categoryName;
     private String name;
     private String description;
-    private String shortDescription;  // dùng cho top section
+    private String shortDescription;
     private double originalPrice;
     private int discountPercent = 0;  // % giảm giá - mặc định 0
     private Double salePrice;         // Giá sau giảm
-    private String image;             // dùng trực tiếp cho JSP
+    private String image;
     private int stockQuantity;
     private int totalSold;
     private double avgRating;

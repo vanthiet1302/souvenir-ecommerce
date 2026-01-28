@@ -4,14 +4,16 @@ import java.util.List;
 
 public class HomePageDTO {
 
-    // Banner slideshow
+    /* ===== CATEGORY SECTIONS ===== */
     private List<HomeCategoryDTO> bannerCategories;
-
-    // Section category bán chạy
     private List<HomeCategoryDTO> topCategorySections;
-
-    // Extension section
     private List<HomeCategoryDTO> extensionSections;
+
+    /* ===== PRODUCT CARD SECTIONS ===== */
+    private List<ProductCardDTO> topRatedProductCards;
+    private List<ProductCardDTO> newestProductCards;
+
+    // ================= GETTER / SETTER =================
 
     public List<HomeCategoryDTO> getBannerCategories() {
         return bannerCategories;
@@ -35,5 +37,21 @@ public class HomePageDTO {
 
     public void setExtensionSections(List<HomeCategoryDTO> extensionSections) {
         this.extensionSections = extensionSections;
+    }
+
+    public List<ProductCardDTO> getTopRatedProductCards() {
+        return topRatedProductCards;
+    }
+
+    public void setTopRatedProductCards(List<ProductCardDTO> topRatedProductCards) {
+        this.topRatedProductCards = topRatedProductCards;
+    }
+
+    public List<ProductCardDTO> getNewestProductCards() {
+        return newestProductCards;
+    }
+
+    public void setNewestProductCards(List<ProductCardDTO> newestProductCards) {
+        this.newestProductCards = newestProductCards;
     }
 }

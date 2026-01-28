@@ -14,7 +14,11 @@ public class ProductCardDTO {
     private int totalSold;
     private double avgRating;
     private int reviewCount;
-
+    public boolean hasDiscount() {
+        return discountPercent != null
+                && discountPercent > 0
+                && discountedPrice != null;
+    }
     // getter / setter đầy đủ
 
     public int getId() {

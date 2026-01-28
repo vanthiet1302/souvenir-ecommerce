@@ -25,9 +25,21 @@ public class HomeController extends HttpServlet {
 
         HomePageDTO dto = homeService.getHomePageData();
 
+        /* ===== PAGE DATA ===== */
         request.setAttribute("data", dto);
 
-        request.getRequestDispatcher("/WEB-INF/views/home/homepage.jsp")
+        /* ===== HEADER MODE ===== */
+        request.setAttribute("headerMode", "MENU");
+
+        /* ===== LAYOUT CONFIG ===== */
+        request.setAttribute("pageTitle", "Trang chủ");
+        request.setAttribute("pageCss", "HomePageMain.css");
+        request.setAttribute("pageJs", "HomePage.js");
+        request.setAttribute("contentPage", "/home.jsp");
+
+        /* ===== FORWARD TO LAYOUT ===== */
+        request.getRequestDispatcher("/layoutMain.jsp")
                 .forward(request, response);
     }
+
 }

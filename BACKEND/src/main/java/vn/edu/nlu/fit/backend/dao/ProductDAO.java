@@ -12,9 +12,38 @@ import java.util.List;
 
 public class ProductDAO {
 
-    /* =====================================================
-       BASE SELECT (KHÔNG WHERE – KHÔNG ORDER – KHÔNG LIMIT)
-       ===================================================== */
+    private static final String SEARCH_SELECT = """
+    SELECT
+        p.id,
+        p.category_id,
+        p.name,
+        p.description,
+        p.original_price,
+        p.image_url,
+        p.stock_quantity,
+        p.total_sold,
+
+        COALESCE(ROUND(AVG(r.rating), 1), 0) AS avg_rating,
+        COUNT(r.id) AS review_count,
+
+        COALESCE(MAX(pr.discount_percent), 0) AS discount_percent,
+        CASE
+            WHEN MAX(pr.discount_percent) IS NOT NULL
+            THEN ROUND(p.original_price * (100 - MAX(pr.discount_percent)) / 100, 2)
+            ELSE NULL
+        END AS sale_price,
+
+        c.category_name
+
+    FROM products p
+    LEFT JOIN categories c ON p.category_id = c.id
+    LEFT JOIN reviews r ON p.id = r.product_id
+    LEFT JOIN promotions pr
+        ON p.id = pr.product_id
+       AND (pr.start_date IS NULL OR pr.start_date <= NOW())
+       AND (pr.end_date IS NULL OR pr.end_date >= NOW())
+"""
+            ;
     private static final String BASE_SELECT = """
         SELECT
             p.id,
@@ -26,10 +55,22 @@ public class ProductDAO {
             p.stock_quantity,
             p.total_sold,
             COALESCE(ROUND(AVG(r.rating), 1), 0) AS avg_rating,
-            COUNT(r.id) AS review_count
+            COUNT(r.id) AS review_count,
+        
+            COALESCE(MAX(pr.discount_percent), 0) AS discount_percent,
+            CASE
+                WHEN MAX(pr.discount_percent) IS NOT NULL
+                THEN ROUND(p.original_price * (100 - MAX(pr.discount_percent)) / 100, 2)
+                ELSE NULL
+            END AS sale_price
+        
         FROM products p
-        LEFT JOIN reviews r
-            ON p.id = r.product_id
+        LEFT JOIN reviews r ON p.id = r.product_id
+        LEFT JOIN promotions pr
+            ON p.id = pr.product_id
+           AND (pr.start_date IS NULL OR pr.start_date <= NOW())
+           AND (pr.end_date IS NULL OR pr.end_date >= NOW())
+        
         GROUP BY
             p.id,
             p.category_id,
@@ -220,23 +261,12 @@ public class ProductDAO {
     public List<Product> getRelatedProducts(int categoryId, int excludeId, int limit) {
 
         String sql = """
-        SELECT
-            p.id,
-            p.category_id,
-            p.name,
-            p.description,
-            p.original_price,
-            p.image_url,
-            p.stock_quantity,
-            p.total_sold,
-            COALESCE(ROUND(AVG(r.rating), 1), 0) AS avg_rating,
-            COUNT(r.id) AS review_count
-        FROM products p
-        LEFT JOIN reviews r ON p.id = r.product_id
-        WHERE p.category_id = ?
-          AND p.id <> ?
-        GROUP BY p.id
-        ORDER BY p.total_sold DESC
+        SELECT * FROM (
+            """ + BASE_SELECT + """
+        ) t
+        WHERE t.category_id = ?
+          AND t.id <> ?
+        ORDER BY t.total_sold DESC
         LIMIT ?
     """;
 
@@ -253,13 +283,13 @@ public class ProductDAO {
             while (rs.next()) {
                 list.add(mapProduct(rs));
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         return list;
     }
+
 
 
     /* ================= COMMON ================= */
@@ -296,8 +326,13 @@ public class ProductDAO {
                 rs.getDouble("avg_rating"),
                 rs.getInt("review_count")
         );
-        p.setDiscountPercent(rs.getInt("discount_percent"));
-        p.setSalePrice(rs.getObject("sale_price") != null ? rs.getDouble("sale_price") : null);
+
+        int discount = rs.getInt("discount_percent");
+        if (discount > 0) {
+            p.setDiscountPercent(discount);
+            p.setSalePrice(rs.getDouble("sale_price"));
+        }
+
         return p;
     }
 
@@ -361,11 +396,12 @@ public class ProductDAO {
 
     public boolean insertProduct(Product product) {
         String sql = """
-            INSERT INTO products (category_id, name, description, original_price, 
-                                 discount_percent, sale_price, image_url, stock_quantity, 
-                                 total_sold, avg_rating, review_count)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, 0, 0)
-        """;
+        INSERT INTO products (
+            category_id, name, description, original_price,
+            image_url, stock_quantity, total_sold, avg_rating, review_count
+        )
+        VALUES (?, ?, ?, ?, ?, ?, 0, 0, 0)
+    """;
 
         try (Connection conn = DBContext.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -374,10 +410,8 @@ public class ProductDAO {
             ps.setString(2, product.getName());
             ps.setString(3, product.getDescription());
             ps.setDouble(4, product.getOriginalPrice());
-            ps.setInt(5, product.getDiscountPercent());
-            ps.setObject(6, product.getSalePrice());
-            ps.setString(7, product.getImage());
-            ps.setInt(8, product.getStockQuantity());
+            ps.setString(5, product.getImage());
+            ps.setInt(6, product.getStockQuantity());
 
             return ps.executeUpdate() > 0;
         } catch (Exception e) {
@@ -388,12 +422,11 @@ public class ProductDAO {
 
     public boolean updateProduct(Product product) {
         String sql = """
-            UPDATE products 
-            SET category_id = ?, name = ?, description = ?, 
-                original_price = ?, discount_percent = ?, sale_price = ?,
-                image_url = ?, stock_quantity = ?
-            WHERE id = ?
-        """;
+        UPDATE products
+        SET category_id = ?, name = ?, description = ?,
+            original_price = ?, image_url = ?, stock_quantity = ?
+        WHERE id = ?
+    """;
 
         try (Connection conn = DBContext.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -402,11 +435,9 @@ public class ProductDAO {
             ps.setString(2, product.getName());
             ps.setString(3, product.getDescription());
             ps.setDouble(4, product.getOriginalPrice());
-            ps.setInt(5, product.getDiscountPercent());
-            ps.setObject(6, product.getSalePrice());
-            ps.setString(7, product.getImage());
-            ps.setInt(8, product.getStockQuantity());
-            ps.setInt(9, product.getId());
+            ps.setString(5, product.getImage());
+            ps.setInt(6, product.getStockQuantity());
+            ps.setInt(7, product.getId());
 
             return ps.executeUpdate() > 0;
         } catch (Exception e) {
@@ -431,16 +462,25 @@ public class ProductDAO {
 
     /* ================= SEARCH ================= */
     public List<Product> searchProducts(String keyword) {
+
         List<Product> list = new ArrayList<>();
-        String sql = """
-            SELECT p.*, c.category_name
-            FROM products p
-            LEFT JOIN categories c ON p.category_id = c.id
-            WHERE LOWER(p.name) LIKE LOWER(?) 
-               OR LOWER(p.description) LIKE LOWER(?) 
-               OR LOWER(c.category_name) LIKE LOWER(?)
-            ORDER BY p.total_sold DESC, p.avg_rating DESC
-        """;
+
+        String sql = SEARCH_SELECT + """
+        WHERE LOWER(p.name) LIKE LOWER(?)
+           OR LOWER(p.description) LIKE LOWER(?)
+           OR LOWER(c.category_name) LIKE LOWER(?)
+        GROUP BY
+            p.id,
+            p.category_id,
+            p.name,
+            p.description,
+            p.original_price,
+            p.image_url,
+            p.stock_quantity,
+            p.total_sold,
+            c.category_name
+        ORDER BY p.total_sold DESC, avg_rating DESC
+    """;
 
         try (Connection conn = DBContext.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -451,25 +491,17 @@ public class ProductDAO {
             ps.setString(3, searchPattern);
 
             ResultSet rs = ps.executeQuery();
+
             while (rs.next()) {
-                Product p = new Product();
-                p.setId(rs.getInt("id"));
-                p.setCategoryId(rs.getInt("category_id"));
-                p.setCategoryName(rs.getString("category_name"));
-                p.setName(rs.getString("name"));
-                p.setDescription(rs.getString("description"));
-                p.setOriginalPrice(rs.getDouble("original_price"));
-                p.setImage(rs.getString("image_url"));
-                p.setStockQuantity(rs.getInt("stock_quantity"));
-                p.setTotalSold(rs.getInt("total_sold"));
-                p.setAvgRating(rs.getDouble("avg_rating"));
-                p.setReviewCount(rs.getInt("review_count"));
-                list.add(p);
+                list.add(mapProduct(rs));
             }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         return list;
     }
+
 }
 

@@ -7,7 +7,7 @@ import java.sql.SQLException;
 public class DBContext {
 
     private static final String SERVER_NAME = "localhost";
-    private static final String DB_NAME = "inola";
+    private static final String DB_NAME = "inola_db";
     private static final String PORT_NUMBER = "3306";
     private static final String USERNAME = "root";
     private static final String PASSWORD = "";

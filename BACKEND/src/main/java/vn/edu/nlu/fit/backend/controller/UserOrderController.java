@@ -20,15 +20,21 @@ public class UserOrderController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        HttpSession session = request.getSession();
-        User user = (User) session.getAttribute("user");
+        HttpSession session = request.getSession(false);
 
+        if (session == null) {
+            response.sendRedirect(request.getContextPath() + "/login");
+            return;
+        }
+
+        User user = (User) session.getAttribute("userInSession");
         if (user == null) {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
 
         String action = request.getParameter("action");
+        action = (action != null) ? action.trim() : "";
 
         if ("detail".equals(action)) {
             viewOrderDetail(request, response, user);
@@ -37,23 +43,40 @@ public class UserOrderController extends HttpServlet {
         }
     }
 
-    private void viewOrderList(HttpServletRequest request, HttpServletResponse response, User user)
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        // Get user's orders
-        List<Order> orders = orderDAO.getOrdersByUserId(user.getId());
-
-        request.setAttribute("orders", orders);
-        request.getRequestDispatcher("/user/orders.jsp").forward(request, response);
+        response.sendRedirect(request.getContextPath() + "/user/orders");
     }
 
-    private void viewOrderDetail(HttpServletRequest request, HttpServletResponse response, User user)
+    private void viewOrderList(HttpServletRequest request,
+                               HttpServletResponse response,
+                               User user)
             throws ServletException, IOException {
 
-        int orderId = Integer.parseInt(request.getParameter("id"));
+        List<Order> orderList = orderDAO.getOrdersByUserId(user.getId());
+
+        request.setAttribute("orderList", orderList);
+        request.getRequestDispatcher("/user/userorder.jsp")
+                .forward(request, response);
+    }
+
+    private void viewOrderDetail(HttpServletRequest request,
+                                 HttpServletResponse response,
+                                 User user)
+            throws ServletException, IOException {
+
+        int orderId;
+        try {
+            orderId = Integer.parseInt(request.getParameter("id"));
+        } catch (NumberFormatException e) {
+            response.sendRedirect(request.getContextPath() + "/user/orders");
+            return;
+        }
+
         Order order = orderDAO.getOrderById(orderId);
 
-        // Check if order belongs to user
         if (order == null || order.getUserId() != user.getId()) {
             response.sendRedirect(request.getContextPath() + "/user/orders");
             return;
@@ -63,6 +86,8 @@ public class UserOrderController extends HttpServlet {
 
         request.setAttribute("order", order);
         request.setAttribute("orderItems", orderItems);
-        request.getRequestDispatcher("/user/order-detail.jsp").forward(request, response);
+
+        request.getRequestDispatcher("/user/userorder.jsp")
+                .forward(request, response);
     }
 }

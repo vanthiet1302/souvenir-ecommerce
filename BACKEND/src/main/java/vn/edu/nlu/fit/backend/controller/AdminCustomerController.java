@@ -6,6 +6,7 @@ import jakarta.servlet.http.*;
 import vn.edu.nlu.fit.backend.dao.UserDAO;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
 @WebServlet("/admin/customers")
 public class AdminCustomerController extends HttpServlet {
@@ -14,7 +15,9 @@ public class AdminCustomerController extends HttpServlet {
 
     @Override
     public void init() {
-        userDAO = new UserDAO();
+
+            userDAO = new UserDAO();
+
     }
 
     @Override

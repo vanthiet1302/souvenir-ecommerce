@@ -1,17 +1,23 @@
-package vn.edu.nlu.fit.backend.controller;
+package vn.edu.nlu.fit.backend.controller.UserController;
 
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.*;
 import vn.edu.nlu.fit.backend.dao.UserDAO;
 import vn.edu.nlu.fit.backend.model.User;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
+import java.util.UUID;
 
 @WebServlet(name = "ProfileController", value = "/user/profile")
+@MultipartConfig(
+        fileSizeThreshold = 1024 * 1024,      // 1MB
+        maxFileSize = 5 * 1024 * 1024,         // 5MB
+        maxRequestSize = 10 * 1024 * 1024      // 10MB
+)
 public class ProfileController extends HttpServlet {
 
     private final UserDAO dao = new UserDAO();
@@ -28,9 +34,9 @@ public class ProfileController extends HttpServlet {
             return;
         }
 
-        // FIX: luôn load lại danh sách địa chỉ
         request.setAttribute("listAddr", dao.getAddressesByUserId(user.getId()));
-        request.getRequestDispatcher("/user/userprofile.jsp").forward(request, response);
+        request.getRequestDispatcher("/user/userprofile.jsp")
+                .forward(request, response);
     }
 
     @Override
@@ -53,6 +59,7 @@ public class ProfileController extends HttpServlet {
 
         switch (action) {
 
+            /* ================= UPDATE PROFILE ================= */
             case "update_profile" -> {
                 String fullName = request.getParameter("fullName");
                 String phone = request.getParameter("phone");
@@ -68,6 +75,39 @@ public class ProfileController extends HttpServlet {
                 }
             }
 
+            /* ================= CHANGE AVATAR ================= */
+            case "change_avatar" -> {
+                Part avatarPart = request.getPart("avatarFile");
+
+                if (avatarPart != null && avatarPart.getSize() > 0) {
+
+                    // Lấy tên file gốc
+                    String fileName = Paths.get(avatarPart.getSubmittedFileName())
+                            .getFileName().toString();
+
+                    // Tạo tên file mới tránh trùng
+                    String newFileName = UUID.randomUUID() + "_" + fileName;
+
+                    // Thư mục lưu avatar
+                    String uploadDir = request.getServletContext()
+                            .getRealPath("/assets/image/Avatar");
+
+                    File dir = new File(uploadDir);
+                    if (!dir.exists()) dir.mkdirs();
+
+                    // Lưu file
+                    avatarPart.write(uploadDir + File.separator + newFileName);
+
+                    // Update DB
+                    dao.updateAvatar(user.getId(), newFileName);
+
+                    // Update session
+                    user.setAvatar(newFileName);
+                    session.setAttribute("userInSession", user);
+                }
+            }
+
+            /* ================= ADDRESS ================= */
             case "add_address" -> {
                 dao.addAddress(
                         user.getId(),
@@ -79,24 +119,30 @@ public class ProfileController extends HttpServlet {
             }
 
             case "update_address" -> {
-                int addressId = Integer.parseInt(request.getParameter("addressId"));
-                dao.updateAddress(
-                        addressId,
-                        request.getParameter("detail"),
-                        request.getParameter("ward"),
-                        request.getParameter("district"),
-                        request.getParameter("city")
-                );
+                try {
+                    int addressId = Integer.parseInt(request.getParameter("addressId"));
+                    dao.updateAddress(
+                            addressId,
+                            request.getParameter("detail"),
+                            request.getParameter("ward"),
+                            request.getParameter("district"),
+                            request.getParameter("city")
+                    );
+                } catch (NumberFormatException ignored) {}
             }
 
             case "delete_address" -> {
-                int addressId = Integer.parseInt(request.getParameter("addressId"));
-                dao.deleteAddress(addressId);
+                try {
+                    int addressId = Integer.parseInt(request.getParameter("addressId"));
+                    dao.deleteAddress(addressId);
+                } catch (NumberFormatException ignored) {}
             }
 
             case "set_default_address" -> {
-                int addressId = Integer.parseInt(request.getParameter("addressId"));
-                dao.setDefaultAddress(user.getId(), addressId);
+                try {
+                    int addressId = Integer.parseInt(request.getParameter("addressId"));
+                    dao.setDefaultAddress(user.getId(), addressId);
+                } catch (NumberFormatException ignored) {}
             }
         }
 

@@ -1,46 +1,13 @@
-/* ============ 1. RESET & BASE ===================== */
-*,
-*::before,
-*::after {
-    box-sizing: border-box;
-}
-
-html {
-    scroll-behavior: smooth;
-}
-
-body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background-color: #F3F3F3;
-    color: #333;
-}
-
-img {
-    max-width: 100%;
-    display: block;
-}
-
-a {
-    text-decoration: none;
-    color: inherit;
-}
-
-button {
-    border: none;
-    background: none;
-    cursor: pointer;
-}
-
-/* ================ 2. LAYOUT CHUNG ============================= */
+/* ================== 1. PAGE CONTAINER ================== */
 .page-container {
     max-width: 1400px;
     margin: 0 auto;
     padding: 0 24px;
 }
 
-/* ============ 3. SLIDESHOW BANNER ============================= */
-.slideshow-container {
+
+/* ================== 2. SLIDESHOW BANNER ================== */
+.page-container .slideshow-container {
     position: relative;
     width: 100%;
     height: 500px;
@@ -49,25 +16,25 @@ button {
     margin-bottom: 40px;
 }
 
-.slide {
+.page-container .slide {
     display: none;
     width: 100%;
     height: 100%;
 }
 
-.slide:first-child {
+.page-container .slide:first-child {
     display: block;
 }
 
-.slide img {
+.page-container .slide img {
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
 
-/* ===== NAV BUTTON ===== */
-.slideshow-container .prev,
-.slideshow-container .next {
+/* ===== Banner Nav ===== */
+.page-container .slideshow-container .prev,
+.page-container .slideshow-container .next {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
@@ -80,16 +47,21 @@ button {
     transition: 0.3s;
 }
 
-.slideshow-container .prev:hover,
-.slideshow-container .next:hover {
+.page-container .slideshow-container .prev:hover,
+.page-container .slideshow-container .next:hover {
     background: rgba(0,0,0,0.85);
 }
 
-.slideshow-container .prev { left: 16px; }
-.slideshow-container .next { right: 16px; }
+.page-container .slideshow-container .prev {
+    left: 16px;
+}
 
-/* ===== DOTS ===== */
-.dots {
+.page-container .slideshow-container .next {
+    right: 16px;
+}
+
+/* ===== Banner Dots ===== */
+.page-container .dots {
     position: absolute;
     bottom: 18px;
     left: 50%;
@@ -97,7 +69,7 @@ button {
     z-index: 10;
 }
 
-.dot {
+.page-container .dot {
     display: inline-block;
     width: 12px;
     height: 12px;
@@ -107,83 +79,42 @@ button {
     transition: background-color 0.3s;
 }
 
-.dot.active,
-.dot:hover {
+.page-container .dot.active,
+.page-container .dot:hover {
     background-color: #fff;
 }
 
-/* ================ 4. PRODUCT SECTION (CHUNG) ========================== */
-.product-section {
+
+/* ================== 3. TOP CATEGORY SECTIONS ================== */
+.page-container .product-section {
     position: relative;
     margin-bottom: 80px;
 }
 
-.product-section h2 {
+.page-container .product-section h2 {
     font-size: 24px;
     font-weight: 700;
     margin-bottom: 24px;
 }
 
-.product-list {
+.page-container .product-list {
     display: flex;
     flex-wrap: wrap;
     gap: 20px;
 }
 
-/* ============== 5. PRODUCT CARD ====================== */
-.product-card {
-    width: 23.5%;
-    background: #fff;
-    border-radius: 14px;
-    overflow: hidden;
-    border: 1px solid #e8e8e8;
-    transition: 0.25s;
+/* ===== FIX LAYOUT PRODUCT CARD (HOME) ===== */
+.page-container .product-list .product-card {
+    width: calc((100% - 60px) / 4); /* 4 card / hàng */
+    flex-shrink: 0;
 }
 
-.product-card:hover {
-    box-shadow: 0 6px 18px rgba(0,0,0,0.12);
-    transform: translateY(-4px);
-}
 
-.img-box {
-    height: 240px;
-    overflow: hidden;
-    border-bottom: 1px solid #eee;
-}
-
-.img-box img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.product-name {
-    font-size: 16px;
-    font-weight: 500;
-    padding: 8px;
-    height: 42px;
-    line-height: 21px;
-    overflow: hidden;
-}
-
-.price-container {
-    padding: 0 8px;
-    font-size: 18px;
-    font-weight: bold;
-}
-
-.product-sold {
-    padding: 8px;
-    display: flex;
-    justify-content: space-between;
-    border-top: 1px solid #eee;
-    font-size: 14px;
-}
-
-/* ================== 6. SEE MORE BUTTON ============================ */
-.see-more-btn {
-    display: inline-block;
-    margin-top: 24px;
+/* ================== 4. SEE MORE BUTTON (HOME ONLY) ================== */
+.page-container .see-more-btn {
+    display: block;
+    width: fit-content;
+    margin: 24px auto 0;
     padding: 10px 32px;
     background: #000;
     color: #fff;
@@ -192,51 +123,53 @@ button {
     transition: 0.3s;
 }
 
-.see-more-btn:hover {
+
+.page-container .see-more-btn:hover {
     background: #333;
     transform: scale(1.05);
 }
 
-/* ===================  7. EXTENSION SECTION (SLIDER)========= */
-.horizontal-section {
+
+/* ================== 5. EXTENSION CATEGORY SLIDER ================== */
+#extension.horizontal-section {
     display: flex;
     gap: 24px;
     align-items: center;
 }
 
-.left-content {
+#extension .left-content {
     width: 220px;
 }
 
-.right-content {
+#extension .right-content {
     position: relative;
     flex: 1;
 }
 
-.product-slider-wrapper {
+#extension .product-slider-wrapper {
     overflow: hidden;
 }
 
-.product-slider {
+#extension .product-slider {
     display: flex;
     gap: 16px;
     transition: transform 0.4s ease;
 }
 
-/* ===== CATEGORY CARD ===== */
-.category-card {
+/* ===== Category Card ===== */
+#extension .category-card {
     min-width: 220px;
     text-align: center;
 }
 
-.category-card img {
+#extension .category-card img {
     height: 160px;
     object-fit: cover;
     border-radius: 12px;
 }
 
-/* ===== SLIDER BUTTON ===== */
-.slider-btn {
+/* ===== Slider Buttons ===== */
+#extension .slider-btn {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
@@ -248,15 +181,65 @@ button {
     z-index: 5;
 }
 
-.slider-btn.prev { left: -12px; }
-.slider-btn.next { right: -12px; }
+#extension .slider-btn.prev {
+    left: -12px;
+}
 
-/* ================== 8. RESPONSIVE ================= */
+#extension .slider-btn.next {
+    right: -12px;
+}
+
+
+/* ================== 6. RELATED PRODUCTS SECTIONS ================== */
+.section.related-products {
+    margin-bottom: 80px;
+}
+
+.section.related-products .related-title {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 24px;
+}
+
+.section.related-products .related-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+/* ===== FIX LAYOUT PRODUCT CARD (RELATED) ===== */
+.section.related-products .related-grid .product-card {
+    width: calc((100% - 60px) / 4); /* 4 card / hàng */
+    flex-shrink: 0;
+}
+
+
+/* ================== 7. RESPONSIVE ================== */
 @media (max-width: 992px) {
-    .product-card { width: 48%; }
+
+    .page-container .product-list .product-card,
+    .section.related-products .related-grid .product-card {
+        width: calc((100% - 20px) / 2); /* 2 card / hàng */
+    }
+
+    .page-container .slideshow-container {
+        height: 360px;
+    }
 }
 
 @media (max-width: 600px) {
-    .product-card { width: 100%; }
-    .slideshow-container { height: 280px; }
+
+    .page-container .product-list .product-card,
+    .section.related-products .related-grid .product-card {
+        width: 100%; /* 1 card / hàng */
+    }
+
+    .page-container .slideshow-container {
+        height: 280px;
+    }
+
+    #extension.horizontal-section {
+        flex-direction: column;
+        align-items: flex-start;
+    }
 }

@@ -3,75 +3,40 @@ package vn.edu.nlu.fit.backend.dao;
 import vn.edu.nlu.fit.backend.model.Category;
 import vn.edu.nlu.fit.backend.model.Product;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class HomeDAO {
 
-    private final CategoryDAO categoryDAO;
-    private final ProductDAO productDAO;
+    private final CategoryDAO categoryDAO = new CategoryDAO();
+    private final ProductDAO productDAO = new ProductDAO();
 
-    public HomeDAO() {
-        this.categoryDAO = new CategoryDAO();
-        this.productDAO = new ProductDAO();
+    /* ========= 1. BANNER ========= */
+    /* ========= 1. BANNER = TOP SELLING ========= */
+    public List<Category> getBannerCategories(int limit) {
+        return categoryDAO.getTopSellingCategories(limit);
     }
 
-    /**
-     * ================= HOME – SECTION CHÍNH =================
-     * - 5 category bán chạy nhất
-     * - Hiển thị 8 sản phẩm bán chạy nhất của mỗi category
-     */
-    public List<Category> getTopCategoriesForHome() {
-        List<Category> categories = categoryDAO.getTopSellingCategories(5);
+    /* ========= 2. TOP CATEGORY + PRODUCT ========= */
+    public List<Category> getTopCategoriesWithProducts(int categoryLimit, int productLimit) {
+
+        List<Category> categories =
+                categoryDAO.getTopSellingCategories(categoryLimit);
 
         for (Category category : categories) {
             List<Product> products =
-                    productDAO.getTopSellingByCategory(category.getId(), 8);
+                    productDAO.getTopSellingByCategory(category.getId(), productLimit);
+
             category.setProducts(products);
         }
         return categories;
     }
 
-    /**
-     * ================= HOME – EXTENSION SECTION =================
-     * - Các category không nằm trong top bán chạy
-     * - Hiển thị 8 sản phẩm bán chạy nhất
-     */
-    public List<Category> getExtensionSections() {
-        List<Category> result = new ArrayList<>();
 
-        // ID của top 5 category
-        List<Integer> topCategoryIds =
-                categoryDAO.getTopSellingCategoryIds(5);
-
-        // 1. Category còn lại (giới hạn 3 category)
-        List<Category> remainCategories =
-                categoryDAO.getCategoriesNotIn(topCategoryIds);
-
-        int count = 0;
-        for (Category category : remainCategories) {
-            if (count >= 3) break; // Chỉ lấy 3 category
-            List<Product> products =
-                    productDAO.getTopSellingByCategory(category.getId(), 8);
-            category.setProducts(products);
-            result.add(category);
-            count++;
-        }
-
-        // 2. Category logic – Đánh giá tốt
-        Category topRated = new Category();
-        topRated.setId(-1);
-        topRated.setName("SẢN PHẨM ĐÁNH GIÁ TỐT");
-        topRated.setProducts(productDAO.getTopRatedProducts(8));
-        result.add(topRated);
-
-        // 3. Category logic – Sản phẩm mới
-        Category newest = new Category();
-        newest.setId(-2);
-        newest.setName("SẢN PHẨM MỚI");
-        newest.setProducts(productDAO.getNewestProducts(8));
-        result.add(newest);
-
-        return result;
+    /* ========= 3. EXTENSION = CATEGORY CÒN LẠI ========= */
+    public List<Category> getExtensionCategories(int limit) {
+        List<Integer> topIds = categoryDAO.getTopSellingCategoryIds(5);
+        List<Category> remain = categoryDAO.getCategoriesNotIn(topIds);
+        return remain.subList(0, Math.min(limit, remain.size()));
     }
+
 }

@@ -311,7 +311,7 @@
                             <i class="fas fa-check-circle"></i> Đặt hàng
                         </button>
 
-                        <a href="${pageContext.request.contextPath}/shoppingcart"
+                        <a href="${pageContext.request.contextPath}/cart"
                            style="display: block; text-align: center; margin-top: 15px; color: #666;">
                             <i class="fas fa-arrow-left"></i> Quay lại giỏ hàng
                         </a>

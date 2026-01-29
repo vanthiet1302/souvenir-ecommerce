@@ -31,6 +31,9 @@ public class HomeController extends HttpServlet {
         /* ===== HEADER MODE ===== */
         request.setAttribute("headerMode", "MENU");
 
+        /* ===== HEADER OVERLAY ===== */
+        request.setAttribute("enableHeaderOverlay", false);
+
         /* ===== LAYOUT CONFIG ===== */
         request.setAttribute("pageTitle", "Trang chủ");
         request.setAttribute("pageCss", "HomePageMain.css");

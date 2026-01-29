@@ -1,6 +1,7 @@
 package vn.edu.nlu.fit.backend.controller;
 
 import vn.edu.nlu.fit.backend.model.Review;
+import vn.edu.nlu.fit.backend.model.User;
 import vn.edu.nlu.fit.backend.service.ReviewService;
 
 import jakarta.servlet.ServletException;
@@ -63,4 +64,44 @@ public class ReviewController extends HttpServlet {
             return def;
         }
     }
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        response.setContentType("application/json;charset=UTF-8");
+
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("user") == null) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
+        }
+
+        int userId = ((User) session.getAttribute("user")).getId();
+
+        int productId = parseInt(request.getParameter("productId"), -1);
+        int rating = parseInt(request.getParameter("rating"), 0);
+        String comment = request.getParameter("comment");
+
+        if (productId <= 0 || rating < 1 || rating > 5 || comment == null || comment.isBlank()) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return;
+        }
+
+        if (!reviewService.canReview(userId, productId)) {
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            return;
+        }
+
+
+        Review review = new Review();
+        review.setUserId(userId);
+        review.setProductId(productId);
+        review.setRating(rating);
+        review.setComment(comment);
+
+        reviewService.addReview(review);
+
+        response.setStatus(HttpServletResponse.SC_OK);
+    }
+
 }

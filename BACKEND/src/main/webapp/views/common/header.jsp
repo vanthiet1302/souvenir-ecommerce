@@ -93,24 +93,54 @@
 
         </div>
 
-        <!-- MENU / BREADCRUMB -->
+        <!-- ===== MENU / BREADCRUMB ===== -->
         <c:if test="${headerMode == null || headerMode == 'MENU'}">
             <nav class="menu-bar">
                 <c:forEach var="c" items="${topCategories}">
-                    <a href="${pageContext.request.contextPath}/product-type?id=${c.id}">
-                            ${c.name}
-                    </a>
+                    <c:choose>
+
+                        <c:when test="${headerMode == 'MENU'}">
+                            <a href="#Loai${c.id}">
+                                    ${c.name}
+                            </a>
+                        </c:when>
+
+                        <c:otherwise>
+                            <a href="${pageContext.request.contextPath}/home#Loai${c.id}">
+                                    ${c.name}
+                            </a>
+                        </c:otherwise>
+
+                    </c:choose>
                 </c:forEach>
             </nav>
         </c:if>
 
         <c:if test="${headerMode == 'BREADCRUMB'}">
             <div class="breadcrumb">
-                <a href="${pageContext.request.contextPath}/home">Trang chủ</a>
+
+                <!-- HOME -->
+                <a href="${pageContext.request.contextPath}/home">
+                    Trang chủ
+                </a>
+
                 <span>›</span>
-                <span>${breadcrumbCategory.name}</span>
-                <span>›</span>
-                <span>${breadcrumbProduct.name}</span>
+
+                <!-- CATEGORY -->
+                <c:if test="${not empty breadcrumbCategory}">
+                    <a href="${pageContext.request.contextPath}/category?id=${breadcrumbCategory.id}">
+                            ${breadcrumbCategory.name}
+                    </a>
+                </c:if>
+
+                <!-- PRODUCT (OPTIONAL) -->
+                <c:if test="${not empty breadcrumbProduct}">
+                    <span>›</span>
+                    <span class="current">
+                            ${breadcrumbProduct.name}
+                    </span>
+                </c:if>
+
             </div>
         </c:if>
 
@@ -150,5 +180,8 @@
     });
 </script>
 
+<c:if test="${enableHeaderOverlay}">
+    <div id="headerOverlay" class="overlay"></div>
+</c:if>
 
 <script src="${pageContext.request.contextPath}/assets/js/SearchAutocomplete.js"></script>

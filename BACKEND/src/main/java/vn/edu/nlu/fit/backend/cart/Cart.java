@@ -63,7 +63,7 @@ public class Cart implements Serializable {
         AtomicInteger total = new AtomicInteger();
         // Duyệt qua danh sách các món hàng (data.values())
         data.values().forEach(item -> {
-            total.addAndGet(item.getQuantity()); // Cộng dồn số lượng từng món
+            total.addAndGet(item.getQuantity());
         });
         return total.get();
     }

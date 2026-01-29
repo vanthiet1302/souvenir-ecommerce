@@ -19,25 +19,20 @@ public class AddCart extends HttpServlet {
             throws ServletException, IOException {
 
         HttpSession session = request.getSession();
-
         User user = (User) session.getAttribute("userInSession");
 
         // ===== CHƯA LOGIN =====
         if (user == null) {
-
-            String ajaxHeader = request.getHeader("X-Requested-With");
-            if ("XMLHttpRequest".equals(ajaxHeader)) {
+            if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
                 response.setContentType("application/json");
                 response.setCharacterEncoding("UTF-8");
-                PrintWriter out = response.getWriter();
-                out.print("""
+                response.getWriter().print("""
                         {
                           "success": false,
                           "requireLogin": true,
-                          "message": "Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng"
+                          "message": "Vui lòng đăng nhập"
                         }
                         """);
-                out.flush();
                 return;
             }
 
@@ -46,7 +41,7 @@ public class AddCart extends HttpServlet {
             return;
         }
 
-        // ===== LẤY DỮ LIỆU =====
+        // ===== PARAM =====
         int productId;
         int quantity;
 
@@ -59,44 +54,45 @@ public class AddCart extends HttpServlet {
         }
 
         Product product = new ProductDAO().getProductById(productId);
-        if (product == null) {
+        if (product == null || quantity <= 0 || quantity > product.getStockQuantity()) {
             response.sendRedirect(request.getContextPath() + "/home");
             return;
         }
 
         // ===== CART =====
         Cart cart = (Cart) session.getAttribute("cart");
-        if (cart == null) {
-            cart = new Cart();
-        }
+        if (cart == null) cart = new Cart();
 
         cart.addItem(product, quantity);
         session.setAttribute("cart", cart);
 
+        // ===== BUY NOW =====
+        if ("true".equals(request.getParameter("buyNow"))) {
+            response.sendRedirect(request.getContextPath() + "/checkout");
+            return;
+        }
+
         // ===== AJAX =====
-        String ajaxHeader = request.getHeader("X-Requested-With");
-        if ("XMLHttpRequest".equals(ajaxHeader)) {
+        if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
             PrintWriter out = response.getWriter();
             out.print("""
                     {
                       "success": true,
-                      "message": "Đã thêm vào giỏ hàng",
                       "cartCount": %d
                     }
                     """.formatted(cart.totalQuantity()));
-            out.flush();
             return;
         }
 
-        // ===== FORM THƯỜNG =====
+        // ===== FORM =====
         response.sendRedirect(request.getHeader("Referer"));
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws IOException {
         response.sendRedirect(request.getContextPath() + "/home");
     }
 }

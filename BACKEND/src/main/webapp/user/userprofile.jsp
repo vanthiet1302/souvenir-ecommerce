@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/User.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/HomePageAlter.css">
 </head>
+<jsp:include page="/views/common/header-user.jsp"/>
 
 <body>
 
@@ -141,38 +142,100 @@
 
             <!-- ADDRESS -->
             <div class="profile-card">
-                <div class="card-header">
+                <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;">
                     <h2>Địa chỉ</h2>
+
+                    <c:if test="${param.view ne 'add-address'}">
+                        <a href="${pageContext.request.contextPath}/user/profile?view=add-address"
+                           class="btn-add-address">
+                            + Thêm địa chỉ
+                        </a>
+                    </c:if>
                 </div>
 
-                <c:choose>
-                    <c:when test="${not empty listAddr}">
-                        <c:forEach items="${listAddr}" var="addr">
-                            <div class="address-item">
-                                <strong>${sessionScope.userInSession.fullName}</strong>
-                                <c:if test="${addr.isDefault == 1}">
-                                    <span style="color:#5a2d81;font-weight:600;"> (Mặc định)</span>
-                                </c:if>
-                                <p class="address-text">
-                                        ${addr.addressDetail}, ${addr.ward},
-                                        ${addr.district}, ${addr.city}
-                                </p>
-                            </div>
-                        </c:forEach>
-                    </c:when>
-                    <c:otherwise>
-                        <div style="text-align:center;padding:20px;color:#999;">
-                            Bạn chưa có địa chỉ nào.
+                <!-- FORM ADD -->
+                <c:if test="${param.view == 'add-address'}">
+                    <form action="${pageContext.request.contextPath}/user/address/add"
+                          method="post"
+                          class="profile-form"
+                          style="max-width:600px;">
+
+                        <div class="form-group">
+                            <label>Địa chỉ chi tiết</label>
+                            <input type="text" name="addressDetail"
+                                   placeholder="Số nhà, tên đường..." required>
                         </div>
-                    </c:otherwise>
-                </c:choose>
+
+                        <div class="form-group">
+                            <label>Phường / Xã</label>
+                            <input type="text" name="ward" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Quận / Huyện</label>
+                            <input type="text" name="district" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Tỉnh / Thành phố</label>
+                            <input type="text" name="city" required>
+                        </div>
+
+                        <div style="margin-top:20px;">
+                            <button type="submit" class="btn-save">Lưu địa chỉ</button>
+                            <a href="${pageContext.request.contextPath}/user/profile"
+                               style="margin-left:14px;">Hủy</a>
+                        </div>
+                    </form>
+                </c:if>
+
+                <!-- LIST -->
+                <c:if test="${param.view ne 'add-address'}">
+                    <c:choose>
+                        <c:when test="${not empty listAddr}">
+                            <c:forEach items="${listAddr}" var="addr">
+                                <div class="address-item">
+
+                                    <div class="address-header">
+                                        <strong>${sessionScope.userInSession.fullName}</strong>
+                                        <c:if test="${addr.isDefault == 1}">
+                                            <span class="address-default">Mặc định</span>
+                                        </c:if>
+                                    </div>
+
+                                    <p class="address-text">
+                                            ${addr.addressDetail}, ${addr.ward},
+                                            ${addr.district}, ${addr.city}
+                                    </p>
+
+                                    <div class="address-actions">
+                                        <c:if test="${addr.isDefault == 0}">
+                                            <a href="${pageContext.request.contextPath}/user/address/default?id=${addr.id}">
+                                                Đặt mặc định
+                                            </a>
+
+                                            <a href="${pageContext.request.contextPath}/user/address/delete?id=${addr.id}"
+                                               onclick="return confirm('Bạn có chắc muốn xóa địa chỉ này?')"
+                                               class="danger">
+                                                Xóa
+                                            </a>
+                                        </c:if>
+                                    </div>
+
+                                </div>
+                            </c:forEach>
+                        </c:when>
+
+                        <c:otherwise>
+                            <div style="text-align:center;padding:20px;color:#999;">
+                                Bạn chưa có địa chỉ nào.
+                            </div>
+                        </c:otherwise>
+                    </c:choose>
+                </c:if>
             </div>
 
-        </main>
-    </div>
-</div>
-
-<jsp:include page="/views/common/footer.jsp"/>
+        <jsp:include page="/views/common/footer.jsp"/>
 
 <!-- ===== JS ĐỔI AVATAR ===== -->
 <script>

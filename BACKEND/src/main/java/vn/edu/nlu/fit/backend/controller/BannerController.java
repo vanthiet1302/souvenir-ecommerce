@@ -27,7 +27,7 @@ public class BannerController extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         BannerDAO dao = new BannerDAO();
         req.setAttribute("banners", dao.getAll());
-        req.getRequestDispatcher("/admin/banner.jsp").forward(req, resp);
+        req.getRequestDispatcher("/admin/banners.jsp").forward(req, resp);
     }
 
     @Override

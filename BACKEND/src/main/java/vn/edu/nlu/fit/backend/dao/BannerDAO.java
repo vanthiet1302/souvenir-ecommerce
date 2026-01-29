@@ -1,7 +1,7 @@
 package vn.edu.nlu.fit.backend.dao;
 
 import vn.edu.nlu.fit.backend.model.Banner;
-import vn.edu.nlu.fit.backend.util.DBContext; // Giả sử bạn để DBContext ở đây
+import vn.edu.nlu.fit.backend.util.DBContext;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

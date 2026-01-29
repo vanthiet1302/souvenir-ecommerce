@@ -27,7 +27,7 @@ public class ChangePassController extends HttpServlet {
             return;
         }
 
-        request.getRequestDispatcher("/views/user/change-password.jsp")
+        request.getRequestDispatcher("/user/userchange-pas.jsp")
                 .forward(request, response);
     }
 
@@ -67,7 +67,7 @@ public class ChangePassController extends HttpServlet {
             }
         }
 
-        request.getRequestDispatcher("/views/user/change-password.jsp")
+        request.getRequestDispatcher("/user/userchange-pas.jsp")
                 .forward(request, response);
     }
 }

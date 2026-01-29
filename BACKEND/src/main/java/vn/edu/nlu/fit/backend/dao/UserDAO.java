@@ -218,37 +218,88 @@ public class UserDAO {
         return false;
     }
 
+    public Address getAddressById(int id) {
+        String sql = "SELECT * FROM addresses WHERE id = ?";
+        try (Connection conn = new DBContext().getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                Address addr = new Address();
+                addr.setId(rs.getInt("id"));
+                addr.setUserId(rs.getInt("user_id"));
+                addr.setAddressDetail(rs.getString("address_detail"));
+                addr.setWard(rs.getString("ward"));
+                addr.setDistrict(rs.getString("district"));
+                addr.setCity(rs.getString("city"));
+                addr.setIsDefault(rs.getInt("is_default"));
+                return addr;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    public boolean deleteAddress(int addressId, int userId) {
+        String sql = "DELETE FROM addresses WHERE id = ? AND user_id = ?";
+
+        try (Connection conn = new DBContext().getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, addressId);
+            ps.setInt(2, userId);
+            return ps.executeUpdate() > 0;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 
     public List<Address> getAddressesByUserId(int userId) {
         List<Address> list = new ArrayList<>();
-        String sql = "SELECT * FROM addresses WHERE user_id = ? ORDER BY is_default DESC, id DESC";
 
-        try (Connection conn = new DBContext().getConnection();
+        String sql = "SELECT * FROM addresses WHERE user_id = ?";
+
+        try (Connection conn = DBContext.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, userId);
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
-                Address addr = new Address();
-                addr.setId(rs.getInt("id"));
-                addr.setUserId(rs.getInt("user_id"));          // ✅ FIX QUAN TRỌNG
-                addr.setAddressDetail(rs.getString("address_detail"));
-                addr.setWard(rs.getString("ward"));
-                addr.setDistrict(rs.getString("district"));
-                addr.setCity(rs.getString("city"));
-                addr.setIsDefault(rs.getInt("is_default"));
-                list.add(addr);
+                Address a = new Address();
+                a.setId(rs.getInt("id"));
+                a.setUserId(rs.getInt("user_id"));
+                a.setAddressDetail(rs.getString("address_detail"));
+                a.setWard(rs.getString("ward"));
+                a.setDistrict(rs.getString("district"));
+                a.setCity(rs.getString("city"));
+                a.setIsDefault(rs.getInt("is_default"));
+                list.add(a);
             }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         return list;
     }
 
 
-    public boolean updateAddress(int addressId, String detail, String ward, String district, String city) {
-        String sql = "UPDATE addresses SET address_detail = ?, ward = ?, district = ?, city = ? WHERE id = ?";
+    public boolean updateAddress(
+            int addressId,
+            int userId,
+            String detail,
+            String ward,
+            String district,
+            String city
+    ) {
+        String sql = "UPDATE addresses " +
+                "SET address_detail = ?, ward = ?, district = ?, city = ? " +
+                "WHERE id = ? AND user_id = ?";
 
         try (Connection conn = new DBContext().getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -258,6 +309,8 @@ public class UserDAO {
             ps.setString(3, district);
             ps.setString(4, city);
             ps.setInt(5, addressId);
+            ps.setInt(6, userId);
+
             return ps.executeUpdate() > 0;
 
         } catch (Exception e) {

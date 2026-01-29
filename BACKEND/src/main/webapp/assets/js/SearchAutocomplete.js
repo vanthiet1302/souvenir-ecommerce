@@ -1,168 +1,158 @@
 /**
- * Search Autocomplete with Suggestions
+ * Search Autocomplete – FINAL FIX (100% SYNC)
  */
+document.addEventListener('DOMContentLoaded', function () {
 
-document.addEventListener('DOMContentLoaded', function() {
-    const searchInput = document.getElementById('search');
+    const searchInput = document.querySelector('.search-bar');
     if (!searchInput) return;
-    
-    const contextPath = searchInput.closest('form').action.split('/search')[0];
-    let debounceTimer;
-    let suggestionsBox;
-    
-    // Create suggestions box
+
+    const wrapper = searchInput.closest('.search-wrapper');
+    if (!wrapper) return;
+
+    // ===== CONTEXT PATH (FROM JSP) =====
+    const contextInput = document.getElementById('contextPath');
+    const contextPath = contextInput ? contextInput.value : '';
+
+    let debounceTimer = null;
+    let suggestionsBox = null;
+    let selectedIndex = -1;
+
+    // ===== CREATE BOX (GẮN VÀO SEARCH-WRAPPER) =====
     function createSuggestionsBox() {
         if (suggestionsBox) return suggestionsBox;
-        
+
         suggestionsBox = document.createElement('div');
         suggestionsBox.className = 'search-suggestions';
         suggestionsBox.style.display = 'none';
-        
-        // Insert after search input's parent
-        const searchContainer = searchInput.closest('.center');
-        if (searchContainer) {
-            searchContainer.style.position = 'relative';
-            searchContainer.appendChild(suggestionsBox);
-        }
-        
+
+        wrapper.appendChild(suggestionsBox);
+
         return suggestionsBox;
     }
-    
-    // Format price
+
+    // ===== FORMAT PRICE =====
     function formatPrice(price) {
         return new Intl.NumberFormat('vi-VN').format(price) + ' ₫';
     }
-    
-    // Show suggestions
+
+    // ===== NORMALIZE IMAGE =====
+    function normalizeImage(img) {
+        if (!img) return '';
+
+        img = img.replace(/\s+/g, '');
+
+        const match = img.match(/(\/assets\/.*?\.(jpg|jpeg|png|webp))/i);
+        return match ? match[1] : img;
+    }
+
+    // ===== RENDER =====
     function showSuggestions(products) {
-        const box = createSuggestionsBox();
-        
-        if (products.length === 0) {
+        const box = document.getElementById('searchSuggestionsBox') || createSuggestionsBox();
+
+        // 1. Kiểm tra dữ liệu đầu vào
+        if (!Array.isArray(products) || products.length === 0) {
             box.style.display = 'none';
+            box.innerHTML = ''; // Xóa trắng nội dung cũ
             return;
         }
-        
-        let html = '<div class="suggestions-list">';
-        
-        products.forEach(product => {
-            const imageUrl = product.image.startsWith('http') 
-                ? product.image 
-                : contextPath + product.image;
-                
-            html += `
-                <a href="${contextPath}/product?id=${product.id}" class="suggestion-item">
-                    <img src="${imageUrl}" 
-                         alt="${product.name}"
-                         onerror="this.src='https://placehold.co/50x50?text=No+Image'">
-                    <div class="suggestion-info">
-                        <div class="suggestion-name">${product.name}</div>
-                        <div class="suggestion-price">${formatPrice(product.price)}</div>
-                    </div>
-                </a>
-            `;
-        });
-        
-        html += '</div>';
-        box.innerHTML = html;
+
+        selectedIndex = -1;
+
+        // 2. Render HTML dựa trên layout đã có
+        box.innerHTML = `
+        <div class="suggestions-list">
+            ${products.map(p => {
+            // Đảm bảo có giá trị image, nếu không dùng placeholder
+            const imagePath = p.image ? p.image : '/assets/images/placeholder.png';
+
+            // Sử dụng p.price (đã gán ở Backend) hoặc p.salePrice làm dự phòng
+            const displayPrice = p.price || p.salePrice || 0;
+
+            return `
+                    <a href="${contextPath}/product-detail?id=${encodeURIComponent(p.id)}"
+                       class="suggestion-item">
+                        <img src="${contextPath}${imagePath}"
+                             onerror="this.src='${contextPath}/assets/images/placeholder.png'">
+                        <div class="suggestion-info">
+                            <div class="suggestion-name" title="${p.name}">${p.name}</div>
+                            <div class="suggestion-price">
+                                ${formatPrice(displayPrice)}
+                            </div>
+                        </div>
+                    </a>
+                `;
+        }).join('')}
+        </div>
+    `;
+
         box.style.display = 'block';
     }
-    
-    // Hide suggestions
+
     function hideSuggestions() {
         if (suggestionsBox) {
             suggestionsBox.style.display = 'none';
         }
     }
-    
-    // Fetch suggestions
-    function fetchSuggestions(query) {
-        if (query.trim().length < 2) {
+
+    // ===== FETCH =====
+    function fetchSuggestions(keyword) {
+        if (!keyword || keyword.trim().length < 2) {
             hideSuggestions();
             return;
         }
-        
-        fetch(`${contextPath}/search-suggestions?q=${encodeURIComponent(query)}`)
-            .then(response => response.json())
-            .then(products => {
-                showSuggestions(products);
-            })
-            .catch(error => {
-                console.error('Error fetching suggestions:', error);
-                hideSuggestions();
-            });
+
+        fetch(`${contextPath}/search-suggestions?q=${encodeURIComponent(keyword.trim())}`)
+            .then(res => res.ok ? res.json() : [])
+            .then(showSuggestions)
+            .catch(hideSuggestions);
     }
-    
-    // Input event with debounce
-    searchInput.addEventListener('input', function(e) {
+
+    // ===== EVENTS =====
+    searchInput.addEventListener('input', function (e) {
         clearTimeout(debounceTimer);
-        
-        const query = e.target.value;
-        
         debounceTimer = setTimeout(() => {
-            fetchSuggestions(query);
-        }, 300); // Wait 300ms after user stops typing
+            fetchSuggestions(e.target.value);
+        }, 300);
     });
-    
-    // Focus event
-    searchInput.addEventListener('focus', function(e) {
-        const query = e.target.value;
-        if (query.trim().length >= 2) {
-            fetchSuggestions(query);
+
+    searchInput.addEventListener('focus', function () {
+        if (searchInput.value.trim().length >= 2) {
+            fetchSuggestions(searchInput.value);
         }
     });
-    
-    // Click outside to close
-    document.addEventListener('click', function(e) {
-        if (!searchInput.contains(e.target) && 
-            (!suggestionsBox || !suggestionsBox.contains(e.target))) {
+
+    document.addEventListener('click', function (e) {
+        if (!wrapper.contains(e.target)) {
             hideSuggestions();
         }
     });
-    
-    // Keyboard navigation
-    let selectedIndex = -1;
-    
-    searchInput.addEventListener('keydown', function(e) {
+
+    searchInput.addEventListener('keydown', function (e) {
         if (!suggestionsBox || suggestionsBox.style.display === 'none') return;
-        
+
         const items = suggestionsBox.querySelectorAll('.suggestion-item');
-        if (items.length === 0) return;
-        
-        switch(e.key) {
-            case 'ArrowDown':
-                e.preventDefault();
-                selectedIndex = Math.min(selectedIndex + 1, items.length - 1);
-                updateSelection(items);
-                break;
-                
-            case 'ArrowUp':
-                e.preventDefault();
-                selectedIndex = Math.max(selectedIndex - 1, -1);
-                updateSelection(items);
-                break;
-                
-            case 'Enter':
-                if (selectedIndex >= 0 && selectedIndex < items.length) {
-                    e.preventDefault();
-                    items[selectedIndex].click();
-                }
-                break;
-                
-            case 'Escape':
-                hideSuggestions();
-                selectedIndex = -1;
-                break;
+        if (!items.length) return;
+
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            selectedIndex = Math.min(selectedIndex + 1, items.length - 1);
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            selectedIndex = Math.max(selectedIndex - 1, -1);
+        } else if (e.key === 'Enter' && selectedIndex >= 0) {
+            e.preventDefault();
+            items[selectedIndex].click();
+        } else if (e.key === 'Escape') {
+            hideSuggestions();
+            return;
         }
-    });
-    
-    function updateSelection(items) {
-        items.forEach((item, index) => {
-            if (index === selectedIndex) {
-                item.classList.add('selected');
+
+        items.forEach((item, i) => {
+            item.classList.toggle('selected', i === selectedIndex);
+            if (i === selectedIndex) {
                 item.scrollIntoView({ block: 'nearest' });
-            } else {
-                item.classList.remove('selected');
             }
         });
-    }
+    });
+
 });

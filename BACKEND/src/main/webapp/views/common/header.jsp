@@ -175,6 +175,21 @@
                     userDropdown.classList.remove("show");
                     userDropdown.style.display = "none";
                 }
+                const isShowing = userDropdown.classList.contains("show");
+                if (isShowing) {
+                    userDropdown.classList.remove("show");
+                    userDropdown.style.display = "none";
+                } else {
+                    userDropdown.classList.add("show");
+                    userDropdown.style.display = "block";
+                }
+            });
+
+            document.addEventListener("click", function (e) {
+                if (!userToggle.contains(e.target) && !userDropdown.contains(e.target)) {
+                    userDropdown.classList.remove("show");
+                    userDropdown.style.display = "none";
+                }
             });
         }
     });
@@ -183,5 +198,7 @@
 <c:if test="${enableHeaderOverlay}">
     <div id="headerOverlay" class="overlay"></div>
 </c:if>
+
+<script src="${pageContext.request.contextPath}/assets/js/SearchAutocomplete.js"></script>
 
 <script src="${pageContext.request.contextPath}/assets/js/SearchAutocomplete.js"></script>

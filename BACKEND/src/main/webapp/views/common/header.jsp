@@ -1,6 +1,63 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
+<style>
+    /* ===== USER DROPDOWN ===== */
+    .user-bar {
+        position: relative;
+    }
+
+    .user-box {
+        cursor: pointer;
+        user-select: none;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-weight: 500;
+    }
+
+    .user-dropdown {
+        display: none;
+        position: absolute;
+        top: 38px;
+        right: 0;
+        background: #fff;
+        min-width: 200px;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        border-radius: 8px;
+        z-index: 999;
+        overflow: hidden;
+    }
+
+    .user-dropdown.show {
+        display: block;
+    }
+
+    .user-dropdown a {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 14px;
+        color: #333;
+        text-decoration: none;
+        font-size: 14px;
+    }
+
+    .user-dropdown a:hover {
+        background: #f6f6f6;
+    }
+
+    .user-dropdown .logout {
+        color: #c0392b;
+    }
+
+    .dropdown-divider {
+        height: 1px;
+        background: #eee;
+        margin: 6px 0;
+    }
+</style>
+
 <div class="header-wrapper">
     <header class="header-container page-container">
 
@@ -50,13 +107,12 @@
         <!-- ===== MAIN HEADER ===== -->
         <div class="main-header">
 
-            <!-- LEFT -->
             <div class="left">
                 <button id="menuBtn" class="menu-toggle">
                     <i class="fa fa-bars"></i>
                 </button>
 
-                <div class="dropdown-menu" id="dropdownMenu" aria-hidden="true">
+                <div class="dropdown-menu" id="dropdownMenu">
                     <c:forEach var="c" items="${categories}">
                         <a href="${pageContext.request.contextPath}/product-type?id=${c.id}">
                                 ${c.name}
@@ -72,20 +128,15 @@
                 </div>
             </div>
 
-            <!-- CENTER -->
             <div class="center">
-                <div class="search-wrapper">
-                    <form action="${pageContext.request.contextPath}/search" method="get">
-                        <input type="text" name="keyword" class="search-bar"
-                               placeholder="Tìm kiếm sản phẩm...">
-                        <button type="submit" class="search-btn">
-                            <i class="fa fa-search"></i>
-                        </button>
-                    </form>
-                </div>
+                <form action="${pageContext.request.contextPath}/search" method="get" class="search-wrapper">
+                    <input type="text" name="keyword" class="search-bar" placeholder="Tìm kiếm sản phẩm...">
+                    <button type="submit" class="search-btn">
+                        <i class="fa fa-search"></i>
+                    </button>
+                </form>
             </div>
 
-            <!-- RIGHT -->
             <div class="right">
                 <a href="${pageContext.request.contextPath}/cart" class="cart">
                     <i class="fa fa-shopping-cart"></i>

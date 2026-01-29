@@ -137,41 +137,64 @@
     gap: 16px;
 }
 
+/* ===== QUANTITY + ADD CART ===== */
 .quantity-actions {
     display: flex;
-    gap: 16px;
     align-items: center;
+    gap: 20px;
 }
 
+/* Khối số lượng dạng pill */
 .quantity-control {
+    width: 180px;
+    height: 48px;
+    border: 1.5px solid #e5e5e5;
+    border-radius: 999px;
+    background: #fff;
+
     display: flex;
-    width: 120px;
-    border: 1px solid var(--border-normal);
-    border-radius: 8px;
-    overflow: hidden;
+    align-items: center;
+    justify-content: center;
 }
 
-.qty-btn {
-    width: 36px;
-    background: #f5f5f5;
-    font-size: 18px;
+/* Input số lượng */
+.qty-input {
+    width: 60px;
+    border: none;
+    outline: none;
+    background: transparent;
+
+    text-align: center;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+/* Ẩn spinner mặc định */
+.qty-input::-webkit-inner-spin-button,
+.qty-input::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
 }
 
 .qty-input {
-    width: 48px;
-    border: none;
-    text-align: center;
+    -moz-appearance: textfield;
 }
 
-/* CTA */
+/* Nút thêm vào giỏ */
 .add-cart {
     flex: 1;
     height: 48px;
-    border-radius: 10px;
-    border: 1px solid #000;
+    border-radius: 999px;
+    border: 2px solid #000;
     background: #fff;
+
     font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
 }
+
 
 .buy-now-full {
     height: 52px;
@@ -235,6 +258,66 @@
     width: 35%;
     background: var(--bg-light);
     font-weight: 500;
+}
+/* ================= IMAGE ZOOM MODAL ================= */
+
+.image-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.image-modal.show {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.image-modal .modal-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.75);
+}
+
+.image-modal .modal-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.9);
+    background: #fff;
+    padding: 12px;
+    border-radius: 10px;
+    max-width: 90vw;
+    max-height: 90vh;
+    transition: transform 0.3s ease;
+}
+
+.image-modal.show .modal-content {
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.image-modal img {
+    display: block;
+    max-width: 100%;
+    max-height: 80vh;
+    object-fit: contain;
+    border-radius: 6px;
+}
+
+.image-modal .modal-close {
+    position: absolute;
+    top: -12px;
+    right: -12px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+    background: #000;
+    color: #fff;
+    font-size: 20px;
+    cursor: pointer;
 }
 
 
@@ -397,9 +480,146 @@
     grid-template-columns: repeat(5, 1fr);
     gap: 20px;
 }
-/* =====================================================
-   RESPONSIVE
-===================================================== */
+/* ================= REVIEW MODAL (OVERLAY) ================= */
+
+.review-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    display: none;
+    pointer-events: none;
+    visibility: hidden;
+}
+
+.review-modal.show {
+    display: block;
+    pointer-events: auto;
+    visibility: visible;
+}
+
+/* Lớp nền tối */
+.review-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+}
+
+/* Hộp form */
+.review-box {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 480px;
+    max-width: 90%;
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+}
+
+/* Nút đóng */
+.review-close {
+    position: absolute;
+    top: 10px;
+    right: 14px;
+    font-size: 22px;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+/* Star rating */
+.rating-stars {
+    margin: 12px 0;
+}
+
+.rating-stars i {
+    font-size: 26px;
+    cursor: pointer;
+    color: #ddd;
+    transition: color 0.2s;
+}
+
+.rating-stars i.active {
+    color: #f5a623;
+}
+
+.rating-stars i:hover,
+.rating-stars i:hover ~ i {
+    color: #ddd;
+}
+
+.rating-stars i:hover {
+    color: #f5a623;
+}
+/* Textarea */
+#reviewText {
+    width: 100%;
+    height: 120px;
+    resize: none;
+    margin-top: 12px;
+}
+
+/* Submit */
+.submit-review {
+    width: 100%;
+    margin-top: 16px;
+    padding: 10px;
+    border-radius: 8px;
+    font-weight: 600;
+    background: var(--color-primary);
+    color: #fff;
+}
+/* ===== FIX QUANTITY CONTROL – MATCH JSP ===== */
+.buy-form .quantity-control {
+    position: relative;
+    z-index: 5;
+
+    width: 180px;
+    height: 48px;
+    border: 1.5px solid #e5e5e5;
+    border-radius: 999px;
+    background: #fff;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 12px;
+}
+
+.buy-form .qty-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1;
+    cursor: pointer;
+    pointer-events: auto;
+}
+
+.buy-form .qty-input {
+    width: 50px;
+    border: none;
+    outline: none;
+    background: transparent;
+    text-align: center;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+/* hide spinner */
+.buy-form .qty-input::-webkit-inner-spin-button,
+.buy-form .qty-input::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+.buy-form .qty-input {
+    -moz-appearance: textfield;
+}
+
+/* ==================== RESPONSIVE ================== */
 @media (max-width: 992px) {
     .product-top {
         grid-template-columns: 1fr;

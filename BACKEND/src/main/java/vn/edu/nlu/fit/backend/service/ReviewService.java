@@ -20,4 +20,11 @@ public class ReviewService {
                 productId, rating, sort, offset, limit
         );
     }
+    public boolean canReview(int userId, int productId) {
+        return reviewDAO.hasPurchased(userId, productId);
+    }
+
+    public boolean addReview(Review review) {
+        return reviewDAO.addReview(review);
+    }
 }

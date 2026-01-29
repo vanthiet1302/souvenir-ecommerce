@@ -102,6 +102,31 @@ public class ReviewDAO {
 
         return new ReviewSummary(0, 0.0);
     }
+    public boolean hasPurchased(int userId, int productId) {
+        String sql = """
+        SELECT 1
+        FROM orders o
+        JOIN order_items oi ON o.id = oi.order_id
+        WHERE o.user_id = ?
+          AND oi.product_id = ?
+        LIMIT 1
+    """;
+
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, userId);
+            ps.setInt(2, productId);
+
+            ResultSet rs = ps.executeQuery();
+            return rs.next();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 
     // Count reviews by rating
     public Map<Integer, Integer> countReviewsByRating(int productId) {

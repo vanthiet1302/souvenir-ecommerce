@@ -59,6 +59,7 @@ public class ProductTypeController extends HttpServlet {
         /* ===== 4. HEADER ===== */
         request.setAttribute("headerMode", "BREADCRUMB");
         request.setAttribute("breadcrumbCategory", dto.getCategory());
+        request.setAttribute("enableHeaderOverlay", true);
 
         /* ===== 5. PAGE DATA ===== */
         request.setAttribute("data", dto);

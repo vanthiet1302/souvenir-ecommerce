@@ -175,19 +175,21 @@
                         </div>
                     </div>
 
-                    <button class="review-action-btn">Đánh giá sản phẩm</button>
+                    <button class="review-action-btn">
+                        Đánh giá sản phẩm
+                    </button>
                 </div>
 
                 <!-- RIGHT -->
                 <div class="review-mright">
 
                     <div class="review-filter-bar">
-                        <button class="filter-btn active">Tất cả</button>
-                        <button class="filter-btn">5 ★</button>
-                        <button class="filter-btn">4 ★</button>
-                        <button class="filter-btn">3 ★</button>
-                        <button class="filter-btn">2 ★</button>
-                        <button class="filter-btn">1 ★</button>
+                        <button class="filter-btn active" data-rating="">Tất cả</button>
+                        <button class="filter-btn" data-rating="5">5 ★</button>
+                        <button class="filter-btn" data-rating="4">4 ★</button>
+                        <button class="filter-btn" data-rating="3">3 ★</button>
+                        <button class="filter-btn" data-rating="2">2 ★</button>
+                        <button class="filter-btn" data-rating="1">1 ★</button>
 
                         <select class="sort-select">
                             <option>Mới nhất</option>
@@ -222,3 +224,39 @@
     </div>
 </section>
 
+<!-- ================= IMAGE ZOOM MODAL ================= -->
+<div class="image-modal" id="imageModal">
+    <div class="modal-overlay"></div>
+    <div class="modal-content">
+        <img id="zoomImage" src="" alt="Zoom image">
+        <button class="modal-close">&times;</button>
+    </div>
+</div>
+
+<!-- ================= REVIEW MODAL ================= -->
+<div class="review-modal" id="reviewModal" >
+    <div class="review-overlay"></div>
+
+    <div class="review-box">
+        <button class="review-close">&times;</button>
+
+        <h3>Đánh giá sản phẩm</h3>
+
+        <div class="rating-stars" data-rating="0">
+            <i data-value="1">★</i>
+            <i data-value="2">★</i>
+            <i data-value="3">★</i>
+            <i data-value="4">★</i>
+            <i data-value="5">★</i>
+        </div>
+
+        <textarea id="reviewText"
+                  maxlength="700"
+                  placeholder="Viết nhận xét của bạn (tối đa 700 ký tự)">
+        </textarea>
+
+        <button type="button" class="submit-review">
+            Gửi đánh giá
+        </button>
+    </div>
+</div>

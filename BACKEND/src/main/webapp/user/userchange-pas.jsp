@@ -1,12 +1,12 @@
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
-<%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đơn hàng của tôi - INOLA</title>
+    <title>Đổi mật khẩu - INOLA</title>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/HomePageFooter.css">
@@ -17,7 +17,6 @@
 <body>
 
 <div class="page-container">
-
     <div class="account-container">
 
         <!-- ===== SIDEBAR ===== -->
@@ -48,20 +47,17 @@
                         <i class="fa-solid fa-user-circle"></i> Hồ Sơ Của Tôi
                     </a>
                 </li>
-
-                <li class="active">
+                <li>
                     <a href="${pageContext.request.contextPath}/user/orders">
                         <i class="fa-solid fa-receipt"></i> Đơn Hàng
                     </a>
                 </li>
-
                 <li>
                     <a href="${pageContext.request.contextPath}/user/review">
                         <i class="fa-solid fa-star"></i> Đánh Giá Của Tôi
                     </a>
                 </li>
-
-                <li>
+                <li class="active">
                     <a href="${pageContext.request.contextPath}/user/change-password">
                         <i class="fa-solid fa-key"></i> Đổi Mật Khẩu
                     </a>
@@ -72,56 +68,42 @@
         <!-- ===== CONTENT ===== -->
         <main class="account-content">
 
-            <h2 style="margin-bottom:20px;">Đơn hàng của tôi</h2>
+            <div class="profile-card">
+                <h2>Đổi mật khẩu</h2>
 
-            <div class="order-content">
-                <div class="table-responsive">
-                    <table class="order-list-table">
-                        <thead>
-                        <tr>
-                            <th>MÃ ĐƠN HÀNG</th>
-                            <th>SẢN PHẨM</th>
-                            <th>NGÀY ĐẶT</th>
-                            <th>TỔNG TIỀN</th>
-                            <th>TRẠNG THÁI</th>
-                        </tr>
-                        </thead>
-                        <tbody>
+                <!-- THÔNG BÁO -->
+                <c:if test="${not empty error}">
+                    <div class="form-error">${error}</div>
+                </c:if>
 
-                        <c:forEach items="${orderList}" var="o">
-                            <tr>
-                                <td>
-                                    <a href="${pageContext.request.contextPath}/user/orders?action=detail&id=${o.id}">
-                                        #${o.id}
-                                    </a>
-                                </td>
-                                <td>
-                                    <strong>${o.productName}</strong>
-                                    <span>x${o.quantity}</span>
-                                </td>
-                                <td>
-                                    <fmt:formatDate value="${o.orderDate}" pattern="dd/MM/yyyy"/>
-                                </td>
-                                <td>
-                                    <fmt:formatNumber value="${o.totalPrice}" pattern="#,###"/>₫
-                                </td>
-                                <td>
-                                    <span class="badge">${o.statusName}</span>
-                                </td>
-                            </tr>
-                        </c:forEach>
+                <c:if test="${not empty success}">
+                    <div class="form-success">${success}</div>
+                </c:if>
 
-                        <c:if test="${empty orderList}">
-                            <tr>
-                                <td colspan="5" style="text-align:center;padding:40px;color:#999;">
-                                    Bạn chưa có đơn hàng nào.
-                                </td>
-                            </tr>
-                        </c:if>
+                <!-- FORM ĐỔI MẬT KHẨU -->
+                <form action="${pageContext.request.contextPath}/user/change-password"
+                      method="post"
+                      class="profile-form">
 
-                        </tbody>
-                    </table>
-                </div>
+                    <div class="form-group">
+                        <label>Mật khẩu hiện tại</label>
+                        <input type="password" name="currentPassword" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Mật khẩu mới</label>
+                        <input type="password" name="newPassword" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Xác nhận mật khẩu mới</label>
+                        <input type="password" name="confirmPassword" required>
+                    </div>
+
+                    <button type="submit" class="btn-save">
+                        Cập nhật mật khẩu
+                    </button>
+                </form>
             </div>
 
         </main>

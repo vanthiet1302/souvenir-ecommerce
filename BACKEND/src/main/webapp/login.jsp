@@ -2,7 +2,7 @@
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <!DOCTYPE html>
 <html lang="vi">
-    <head>
+<head>
     <meta charset="UTF-8">
     <title>Đăng nhập - INOLA</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -58,7 +58,7 @@
                         <i class="fa-brands fa-google"></i> Đăng ký với Google
                     </button>
 
-                    <%-- Link trỏ về Servlet SignupController --%>
+
                     <a href="${pageContext.request.contextPath}/signup" class="btn_register light_bg" style="text-decoration: none; display: block; text-align: center;">
                         <i class="fa fa-user-plus"></i> Đăng ký tài khoản mới
                     </a>

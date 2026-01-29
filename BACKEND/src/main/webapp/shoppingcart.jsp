@@ -83,7 +83,7 @@
                 </div>
 
                 <button class="checkout-btn">
-                    <a href="${pageContext.request.contextPath}/checkout"
+                    <a href="${pageContext.request.contextPath}/order-success"
                        style="color: white; text-decoration: none; font-weight: bold;"
                        onclick="return confirm('Bạn xác nhận thanh toán đơn hàng này?')">
                         XÁC NHẬN THANH TOÁN

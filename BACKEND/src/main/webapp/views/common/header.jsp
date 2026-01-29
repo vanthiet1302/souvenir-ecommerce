@@ -8,16 +8,33 @@
         <div class="user-bar">
             <div class="right">
                 <c:choose>
-                    <c:when test="${not empty authUser}">
+                    <c:when test="${not empty sessionScope.userInSession}">
                         <div class="user-box" id="userToggle">
-                            <span>Xin chào, ${authUser.fullName}</span>
+            <span class="user-name">
+                Xin chào, ${sessionScope.userInSession.fullName}
+            </span>
                             <i class="fa fa-caret-down"></i>
                         </div>
 
                         <div class="user-dropdown" id="userDropdown">
-                            <a href="${pageContext.request.contextPath}/profile">Tài khoản</a>
-                            <a href="${pageContext.request.contextPath}/orders">Đơn hàng</a>
-                            <a href="${pageContext.request.contextPath}/logout" class="logout">Đăng xuất</a>
+
+                            <a href="${pageContext.request.contextPath}/user/profile">
+                                <i class="fa fa-user"></i> Tài khoản
+                            </a>
+
+                            <a href="${pageContext.request.contextPath}/user/orders">
+                                <i class="fa fa-receipt"></i> Đơn hàng
+                            </a>
+
+                            <a href="${pageContext.request.contextPath}/user/review">
+                                <i class="fa fa-star"></i> Đánh giá
+                            </a>
+
+                            <div class="dropdown-divider"></div>
+
+                            <a href="${pageContext.request.contextPath}/logout" class="logout">
+                                <i class="fa fa-sign-out-alt"></i> Đăng xuất
+                            </a>
                         </div>
                     </c:when>
 
@@ -83,7 +100,6 @@
         <!-- ===== MENU / BREADCRUMB ===== -->
         <c:if test="${headerMode == null || headerMode == 'MENU'}">
             <nav class="menu-bar">
-
                 <c:forEach var="c" items="${topCategories}">
                     <c:choose>
 
@@ -101,10 +117,8 @@
 
                     </c:choose>
                 </c:forEach>
-
             </nav>
         </c:if>
-
 
         <c:if test="${headerMode == 'BREADCRUMB'}">
             <div class="breadcrumb">
@@ -136,6 +150,24 @@
 
     </header>
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const userToggle = document.getElementById("userToggle");
+        const userDropdown = document.getElementById("userDropdown");
+
+        if (userToggle && userDropdown) {
+            userToggle.addEventListener("click", function (e) {
+                e.stopPropagation();
+                userDropdown.classList.toggle("show");
+            });
+
+            document.addEventListener("click", function () {
+                userDropdown.classList.remove("show");
+            });
+        }
+    });
+</script>
 
 <c:if test="${enableHeaderOverlay}">
     <div id="headerOverlay" class="overlay"></div>

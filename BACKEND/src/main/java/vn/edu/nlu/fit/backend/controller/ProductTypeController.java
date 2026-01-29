@@ -11,7 +11,7 @@ import jakarta.servlet.http.*;
 import java.io.IOException;
 
 @WebServlet("/category")
-public class ProductTypeController extends HttpServlet {
+public class    ProductTypeController extends HttpServlet {
 
     private ProductTypeService productTypeService;
 

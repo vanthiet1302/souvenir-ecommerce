@@ -68,10 +68,10 @@
                         ${data.product.shortDescription}
                     </p>
 
+
                     <form action="${pageContext.request.contextPath}/cart/add"
                           method="post"
                           class="buy-form">
-
                         <input type="hidden" name="productId" value="${data.product.id}">
 
                         <div class="quantity-actions">

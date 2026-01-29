@@ -21,11 +21,7 @@
                 <i class="fa-solid fa-receipt"></i> Đơn Hàng
             </a>
         </li>
-        <li class="${pageContext.request.requestURI.contains('userfavourite') ? 'active' : ''}">
-            <a href="${pageContext.request.contextPath}/user/userfavourite.jsp">
-                <i class="fa-solid fa-heart"></i> Sản Phẩm Yêu Thích
-            </a>
-        </li>
+
         <li class="${pageContext.request.requestURI.contains('userreview') ? 'active' : ''}">
             <a href="${pageContext.request.contextPath}/user/userreview.jsp">
                 <i class="fa-solid fa-star"></i> Đánh Giá Của Tôi

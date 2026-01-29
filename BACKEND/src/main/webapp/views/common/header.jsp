@@ -52,17 +52,21 @@
 
             <!-- LEFT -->
             <div class="left">
-                <button id="menuBtn" class="menu-toggle">
-                    <i class="fa fa-bars"></i>
-                </button>
+                <div class="menu-wrapper">
+                    <button type="button" id="menuBtn" class="menu-toggle" aria-expanded="false">
+                        <i class="fa fa-bars"></i>
+                    </button>
 
-                <div class="dropdown-menu" id="dropdownMenu" aria-hidden="true">
-                    <c:forEach var="c" items="${categories}">
-                        <a href="${pageContext.request.contextPath}/product-type?id=${c.id}">
-                                ${c.name}
-                        </a>
-                    </c:forEach>
+                    <div class="dropdown-menu" id="dropdownMenu" aria-hidden="true">
+                        <c:forEach var="c" items="${categories}">
+                            <a href="${pageContext.request.contextPath}/?id=${c.id}">
+                                    ${c.name}
+                            </a>
+                        </c:forEach>
+                    </div>
                 </div>
+
+
 
                 <div class="logo">
                     <a href="${pageContext.request.contextPath}/home">

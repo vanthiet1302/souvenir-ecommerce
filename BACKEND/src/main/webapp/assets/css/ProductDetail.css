@@ -137,41 +137,64 @@
     gap: 16px;
 }
 
+/* ===== QUANTITY + ADD CART ===== */
 .quantity-actions {
     display: flex;
-    gap: 16px;
     align-items: center;
+    gap: 20px;
 }
 
+/* Khối số lượng dạng pill */
 .quantity-control {
+    width: 180px;
+    height: 48px;
+    border: 1.5px solid #e5e5e5;
+    border-radius: 999px;
+    background: #fff;
+
     display: flex;
-    width: 120px;
-    border: 1px solid var(--border-normal);
-    border-radius: 8px;
-    overflow: hidden;
+    align-items: center;
+    justify-content: center;
 }
 
-.qty-btn {
-    width: 36px;
-    background: #f5f5f5;
-    font-size: 18px;
+/* Input số lượng */
+.qty-input {
+    width: 60px;
+    border: none;
+    outline: none;
+    background: transparent;
+
+    text-align: center;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+/* Ẩn spinner mặc định */
+.qty-input::-webkit-inner-spin-button,
+.qty-input::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
 }
 
 .qty-input {
-    width: 48px;
-    border: none;
-    text-align: center;
+    -moz-appearance: textfield;
 }
 
-/* CTA */
+/* Nút thêm vào giỏ */
 .add-cart {
     flex: 1;
     height: 48px;
-    border-radius: 10px;
-    border: 1px solid #000;
+    border-radius: 999px;
+    border: 2px solid #000;
     background: #fff;
+
     font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
 }
+
 
 .buy-now-full {
     height: 52px;
@@ -547,6 +570,53 @@
     font-weight: 600;
     background: var(--color-primary);
     color: #fff;
+}
+/* ===== FIX QUANTITY CONTROL – MATCH JSP ===== */
+.buy-form .quantity-control {
+    position: relative;
+    z-index: 5;
+
+    width: 180px;
+    height: 48px;
+    border: 1.5px solid #e5e5e5;
+    border-radius: 999px;
+    background: #fff;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 12px;
+}
+
+.buy-form .qty-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1;
+    cursor: pointer;
+    pointer-events: auto;
+}
+
+.buy-form .qty-input {
+    width: 50px;
+    border: none;
+    outline: none;
+    background: transparent;
+    text-align: center;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+/* hide spinner */
+.buy-form .qty-input::-webkit-inner-spin-button,
+.buy-form .qty-input::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+.buy-form .qty-input {
+    -moz-appearance: textfield;
 }
 
 /* ==================== RESPONSIVE ================== */

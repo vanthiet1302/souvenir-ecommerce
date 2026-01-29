@@ -59,16 +59,13 @@ public class CategoryDAO {
     // Top selling categories
     public List<Category> getTopSellingCategories(int limit) {
         String sql = """
-        SELECT c.id,
-               c.category_name,
-               c.image,
-               COALESCE(SUM(p.total_sold), 0) AS total_sold
-        FROM categories c
-        LEFT JOIN products p ON c.id = p.category_id
-        GROUP BY c.id, c.category_name, c.image
-        ORDER BY total_sold DESC
-        LIMIT ?
-    """;
+            SELECT c.id, c.category_name, c.image
+            FROM categories c
+            JOIN products p ON c.id = p.category_id
+            GROUP BY c.id, c.category_name, c.image
+            ORDER BY SUM(p.total_sold) DESC
+            LIMIT ?
+        """;
 
         List<Category> list = new ArrayList<>();
 

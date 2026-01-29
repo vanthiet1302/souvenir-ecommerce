@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/User.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/HomePageAlter.css">
 </head>
+<jsp:include page="/views/common/header-user.jsp"/>
 
 <body>
 

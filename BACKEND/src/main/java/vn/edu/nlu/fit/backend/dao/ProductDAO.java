@@ -313,6 +313,42 @@ public class ProductDAO {
         return list;
     }
 
+    public List<Product> searchProductsByName(String keyword, int limit) {
+        List<Product> list = new ArrayList<>();
+        String sql = BASE_SELECT + """
+            WHERE LOWER(name) LIKE LOWER(?)
+            ORDER BY total_sold DESC, avg_rating DESC
+            LIMIT ?
+        """;
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            String searchPattern = "%" + keyword + "%";
+            ps.setString(1, searchPattern);
+            ps.setInt(2, limit);
+
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Product p = new Product();
+                p.setId(rs.getInt("id"));
+                p.setCategoryId(rs.getInt("category_id"));
+                p.setName(rs.getString("name"));
+                p.setDescription(rs.getString("description"));
+                p.setOriginalPrice(rs.getDouble("original_price"));
+                p.setDiscountPercent(rs.getInt("discount_percent"));
+                p.setSalePrice(rs.getDouble("sale_price"));
+                p.setImage(rs.getString("image_url"));
+                p.setStockQuantity(rs.getInt("stock_quantity"));
+                p.setTotalSold(rs.getInt("total_sold"));
+                p.setAvgRating(rs.getDouble("avg_rating"));
+                p.setReviewCount(rs.getInt("review_count"));
+                list.add(p);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
     private Product mapProduct(ResultSet rs) throws Exception {
         Product p = new Product(
                 rs.getInt("id"),

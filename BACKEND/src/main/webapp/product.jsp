@@ -93,10 +93,12 @@
                         </div>
 
                         <button type="submit"
-                                formaction="${pageContext.request.contextPath}/checkout"
+                                name="buyNow"
+                                value="true"
                                 class="buy-now-full">
                             MUA NGAY
                         </button>
+
 
                     </form>
                 </div>

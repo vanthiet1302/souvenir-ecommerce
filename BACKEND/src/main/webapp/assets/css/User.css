@@ -1,6 +1,112 @@
 /* ==================================================
    1. RESET & GLOBAL STYLES (Dùng chung cho tất cả)
    ================================================== */
+/* BẮT BUỘC: cha phải relative */
+.user-bar {
+    position: relative;
+}
+/* Đảm bảo khung chứa được định vị đúng */
+.user-bar .right {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+/* Nút bấm hiển thị tên người dùng */
+.user-box {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 10px;
+    transition: background 0.2s;
+}
+
+.user-box:hover {
+    background: rgba(0,0,0,0.05);
+    border-radius: 4px;
+}
+
+/* Dropdown menu */
+.user-dropdown {
+    position: absolute;
+    top: 130%; /* Cách một khoảng so với thanh header */
+    right: 0;
+    background: #fff;
+    min-width: 180px;
+    border-radius: 8px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    display: none; /* Mặc định ẩn */
+    z-index: 9999;
+    overflow: hidden; /* Để bo góc các item bên trong */
+    border: 1px solid #eee;
+}
+
+.user-dropdown.show {
+    display: block; /* Hiển thị khi có class .show */
+}
+
+/* Các link bên trong menu */
+.user-dropdown a {
+    display: flex !important; /* Đảm bảo ghi đè các style ẩn khác */
+    padding: 12px 16px;
+    color: #333;
+    font-size: 14px;
+    align-items: center;
+    gap: 10px;
+    transition: background 0.2s;
+}
+
+.user-dropdown a:hover {
+    background: #f8f9fa;
+    color: #573478;
+}
+
+.dropdown-divider {
+    height: 1px;
+    background: #eee;
+    margin: 5px 0;
+}
+/* Dropdown */
+.user-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 8px;
+
+    background: #fff;
+    min-width: 200px;
+    border-radius: 8px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+
+    display: none;
+    z-index: 9999; /* QUAN TRỌNG */
+}
+
+/* Khi mở */
+.user-dropdown.show {
+    display: block;
+}
+
+/* Item */
+.user-dropdown a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    font-size: 14px;
+    color: #333;
+    text-decoration: none;
+}
+
+.user-dropdown a:hover {
+    background: #f6f6f6;
+}
+
+.user-dropdown .logout {
+    color: #c0392b;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -8,11 +114,6 @@
     font-family: "Poppins", sans-serif;
 }
 
-body {
-    background-image: url("FRONTEND/Source/Image/Banner/img1.jpg"); /* Nền xám nhạt */
-    color: #333;
-    line-height: 1.6;
-}
 
 a {
     text-decoration: none;

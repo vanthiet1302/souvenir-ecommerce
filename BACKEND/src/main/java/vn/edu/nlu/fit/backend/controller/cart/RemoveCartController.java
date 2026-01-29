@@ -2,10 +2,7 @@ package vn.edu.nlu.fit.backend.controller.cart;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.*;
 import vn.edu.nlu.fit.backend.cart.Cart;
 
 import java.io.IOException;
@@ -33,10 +30,8 @@ public class RemoveCartController extends HttpServlet {
             int productId = Integer.parseInt(request.getParameter("productId"));
             cart.removeItem(productId);
             session.setAttribute("cart", cart);
-        } catch (NumberFormatException ignored) {
-        }
+        } catch (Exception ignored) {}
 
-        // Quay lại trang giỏ hàng
         response.sendRedirect(request.getContextPath() + "/cart");
     }
 

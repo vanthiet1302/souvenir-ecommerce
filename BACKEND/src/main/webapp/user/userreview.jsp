@@ -15,6 +15,7 @@
 </head>
 
 <body>
+<jsp:include page="/views/common/header-user.jsp"/>
 
 <div class="page-container">
 

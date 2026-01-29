@@ -24,7 +24,7 @@ public class CheckoutController extends HttpServlet {
 
         // Check if cart is empty
         if (cart == null || cart.totalQuantity() == 0) {
-            response.sendRedirect(request.getContextPath() + "/shoppingcart");
+            response.sendRedirect(request.getContextPath() + "/cart");
             return;
         }
 
@@ -44,7 +44,7 @@ public class CheckoutController extends HttpServlet {
         User user = (User) session.getAttribute("user");
 
         if (cart == null || cart.totalQuantity() == 0) {
-            response.sendRedirect(request.getContextPath() + "/shoppingcart");
+            response.sendRedirect(request.getContextPath() + "/cart");
             return;
         }
 

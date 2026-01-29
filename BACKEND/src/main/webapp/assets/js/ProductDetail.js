@@ -1,5 +1,4 @@
 $(document).ready(function () {
-
     /* =================== GLOBAL VARIABLES ================================ */
     const productId = $('#productId').val();
     const contextPath = $('#contextPath').val();
@@ -26,6 +25,23 @@ $(document).ready(function () {
             $('#zoomImage').attr('src', '');
         }
     );
+    /* ===== QUANTITY PLUS / MINUS – FINAL ===== */
+    $(document).on('click', '.qty-btn', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const $control = $(this).closest('.quantity-control');
+        const $input = $control.find('.qty-input');
+
+        let value = parseInt($input.val(), 10) || 1;
+        const min = parseInt($input.attr('min'), 10) || 1;
+        const max = parseInt($input.attr('max'), 10) || 999;
+
+        if ($(this).hasClass('plus') && value < max) value++;
+        if ($(this).hasClass('minus') && value > min) value--;
+
+        $input.val(value);
+    });
 
     /* ====================== ESC KEY – CLOSE MODALS ================================ */
     $(document).on('keydown', function (e) {

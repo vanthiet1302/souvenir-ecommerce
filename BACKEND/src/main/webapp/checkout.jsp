@@ -173,7 +173,7 @@
 </head>
 <body>
 <div class="page-container">
-    <jsp:include page="/views/common/header.jsp"/>
+    <jsp:include page="/views/common/header-user.jsp"/>
 
     <main class="checkout-container">
         <h1 style="margin-bottom: 30px;">Thanh toán đơn hàng</h1>

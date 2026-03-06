@@ -17,3 +17,6 @@ target/
 .DS_Store
 Thumbs.db
 
+# Properties
+*.properties
+

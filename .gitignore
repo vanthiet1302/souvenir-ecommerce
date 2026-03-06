@@ -18,5 +18,5 @@ target/
 Thumbs.db
 
 # Properties
-*.properties
+application.properties
 

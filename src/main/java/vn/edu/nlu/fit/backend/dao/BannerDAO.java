@@ -3,6 +3,7 @@ package vn.edu.nlu.fit.backend.dao;
 import vn.edu.nlu.fit.backend.model.Banner;
 import vn.edu.nlu.fit.backend.util.DBContext;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -130,6 +131,10 @@ public class BannerDAO {
             throw new RuntimeException(e);
 //        } catch (ClassNotFoundException e) {
 //            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
         return list;
     }

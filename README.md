@@ -3,4 +3,4 @@
 **Issue**
 
 - [x] Static resources were not loading correctly.
-- [x] Default Page Fix
+- [x] Fixing default page issue.

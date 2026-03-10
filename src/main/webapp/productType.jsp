@@ -51,7 +51,6 @@
 
             <!-- ================= RIGHT CONTENT ================= -->
             <main class="product-type-content">
-
                 <div class="category-banner">
                     <img src="${pageContext.request.contextPath}/assets/images/Banner/${data.category.image}"
                          alt="${data.category.name}">

@@ -16,7 +16,7 @@
                 <!-- LEFT -->
                 <div class="product-left-wrapper">
                     <div class="product-gallery">
-                        <img src="${pageContext.request.contextPath}${data.product.image}"
+                        <img src="${data.product.image}"
                              alt="${data.product.name}">
                         <button type="button" class="btn-zoom">🔍</button>
                     </div>

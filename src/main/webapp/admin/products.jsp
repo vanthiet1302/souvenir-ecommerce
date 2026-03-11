@@ -79,7 +79,7 @@
                             <tr>
                                 <td>${p.id}</td>
                                 <td>
-                                    <img src="${pageContext.request.contextPath}/${p.imageUrl}"
+                                    <img src="${p.imageUrl}"
                                          alt="${p.name}"
                                          style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;"
                                          onerror="this.src='https://placehold.co/50x50?text=No+Image'">

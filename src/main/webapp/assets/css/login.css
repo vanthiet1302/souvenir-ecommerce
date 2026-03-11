@@ -196,7 +196,7 @@ body {
 /* ===== CỘT PHẢI ===== */
 .login_right {
     flex: 1;
-    background-image: url("../../../Source/Image/Product/Cá nhân hóa/imgbut.jpg");
+    background-image: url("../images/User/imgbut.jpg");
     display: flex;
     justify-content: center;
     align-items: center;

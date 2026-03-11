@@ -73,7 +73,7 @@
                 <div class="cart-item-card" data-product-id="${item.product.id}">
 
                     <div class="item-image">
-                        <img src="${pageContext.request.contextPath}${item.product.imageUrl}"
+                        <img src="${item.product.imageUrl}"
                              alt="${item.product.name}">
                     </div>
 
